@@ -1,0 +1,23 @@
+### Formatting text ###
+
+If you want to use [Markdown](http://michelf.com/projects/php-markdown/concepts/), which sort of makes it easy to put links, headings, lists etc into your text files then just save your text files with .text instead of .txt. Actually FS-CMS uses PHP [Markdown Extra](http://michelf.com/projects/php-markdown/extra/) which as a few extra things if you get frustrated with the standard set of Markdown formatting options.
+
+### Ordering of content ###
+
+You can control the ordering of files by putting a 2 digit number + underscore '_' at the beginning of the filename or folder name. This will be removed automatically before it is used for display.
+
+### Changing the Site name ###
+
+By default FS-CMS takes the domain name as the site title. If you want to change this to something more sexy then uncomment (remove the // at the beginning of the line) the line from the index.php file:
+
+	//	define('SITE_TITLE', 'Website name here');
+
+so it should read something like
+
+	define('SITE_TITLE', 'Sexy Website Title');
+
+_Note: I might add an simpler way to do this e.g. if you include a file called _SITE_TITLE.txt in the content folder with the first line containing the website name. This might be a good way to do all configuration variables(!)._
+
+### Save time ###
+
+Its so easy to use FS-CMS that you'll have time to work on your beard!

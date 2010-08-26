@@ -1,0 +1,6 @@
+To download *Web Gizmo* just:
+
+# Click in the link to the zip file bellow. 
+# Once it has finished downloading unzip by double clicking the gizmo.zip file. It should extract to a folder called "gizmo".
+# Login to your host via FTP and copy eveything _inside_ the gizmo folder to to your web root (something like "public_html" or "httpdocs" etc).
+# DONE! you should be up and running. You can replace everything in the "content" folder with your own web content.

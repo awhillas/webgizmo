@@ -1,0 +1,48 @@
+Web Gizmo is Content Management System (CMS) that was designed with the **"Less is More"** philosophy in mind. Here is what Web Gizmo _does NOT do_:
+
+- **No database!** Doesn't require a database. Instead it just uses the file system with some very simple naming conventions. In other words: Folders = Webpage
+- **No forms!** All "content management" is done via FTP. If you can manage your files on your computer you already know enough to use Web Gizmo. No new complex user interface to learn.
+- **No configuration!** In most cases you should be able to simple FTP Web Gizmo to your host along with your web content (files) and your done. Too Easy!
+
+We took out the trickiest parts of setting up and running a dynamic website to create **THE SIMPLEST** _website system in the world_!
+	
+### Features ###
+
+OK so it also has some nice features too which do not add complexity (promise!).
+
+- **Drag-n-drop content**. You can just drag (via FTP) new images, text, video, audio to your content folder and it immediately appears on your website.
+- Supports **[Textile](http://textile.thresholdstate.com/)** and **[Markdown](http://michelf.com/projects/php-markdown/)** which makes editing your text content [quick&easy](http://michelf.com/projects/php-markdown/concepts/)
+- **PHP code highlighting** automatically for any PHP files in the /content folder. See the Code Examples for details. This is for the PHP geeks. Will add support for other languages as the need arrises.
+- Only one copy per-server required. So multiple sites can use a single copy of Web Gizmo thus making maintenance for the system admin easy!
+	
+### Requirements ###
+
+All your host will require is: 
+
+1. **PHP 5.3** or higher enabled on your account and 
+2. the **FTP details** for your account 
+
+and you can have a website in 5 minutes that is easy to setup and maintain! If yo don't know about ether of these ask your hosting provider  about it.
+
+### Styling ###
+
+You will still need to know HTML+CSS to customise the look of your site. We're expecting to add many templates that you can download and just FTP to the right place and they will just work.
+
+Web Gizmo uses the [Savant3](http://phpsavant.com/) PHP tempting engine, which like Web Gizmo uses follows the philosophy "less is more" and is thus [very easy](http://devzone.zend.com/article/9075) to use if you know a (_very_) little PHP (or know how to copy and paste it :)
+
+### Status ###
+
+Web Gizmo is still in Alpha at the moment, which means it might be a bit buggy and simple but it aims for simplicity so bug should not be too hard to _exterminate_ quickly.
+
+### Give it a go & let us know ###
+
+There are [support forums](http://www.tsd.net.au/forums/tsd-support/fs-csm-suport) at if you want to try it out and give us some feedback.
+
+
+Thanks for reading to the end!
+
+word
+
+Alex
+
+[Taylor Square Designs](http://www.tsd.net.au)

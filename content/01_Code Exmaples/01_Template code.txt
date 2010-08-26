@@ -1,0 +1,1 @@
+This is the most basic example of what the Savant3 template code can look like. (Note: This is also an example of what PHP code will look like if you put it in the /content folder):
