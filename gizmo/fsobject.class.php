@@ -7,18 +7,22 @@
  * @package Web Gizmo
  * @author Alexander R B Whillas
  **/
-class FSObject
+class FSObject extends SplFileInfo
 {
 	/**
 	 * Holds the file object
 	 *
 	 * @var SplFileInfo Object
 	 **/
-	private $_file;
+//	private $_file;
 	
-	protected function __construct($File)
+	public function __construct($path)
 	{
-		$this->_file = $File;
+		if(!is_a($path, 'SplFileInfo'))
+		{
+			$path = $File->getRealPath();
+		}
+		parent::__construct($path);
 	}
 
 	/**
@@ -33,7 +37,16 @@ class FSObject
 		if(!is_a($File, 'SplFileInfo'))
 		{
 			if(is_string($File))
-				$File = new SplFileInfo($File);
+			{
+				if(file_exists($File))
+					$File = new SplFileInfo($File);
+				else
+				{
+					trigger_error('File does not exist?  '.print_r($File, TRUE));
+
+					return null;					
+				}
+			}
 			else
 			{
 				trigger_error('Expecting file path (String) or File (SplFileInfo), passed: '.print_r($File, TRUE));
