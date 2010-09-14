@@ -257,6 +257,7 @@ class FS
 	/**
 	 * Handle HTTP request
 	 * @todo Send some HTTP headers here with the right mimetype and cacheing info...?
+	 * @todo Lookup the correct template to use instead of hard coding 'index.tpl.php'
 	 */
 	public function HttpRequest($format = 'html')
 	{
@@ -520,7 +521,7 @@ class FS
 			case 'dec':
 			case 'decending': 
 				ksort($content);
-				$content = array_reverse();
+				$content = array_reverse($content);
 			
 			case 'asc':
 			case 'ascending':

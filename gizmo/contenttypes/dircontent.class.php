@@ -1,5 +1,5 @@
 <?php
-class DirContent extends FileContent
+class DirContent extends FSDir
 {	
 	function html($format = 'xhtml1.1')
 	{

@@ -41,9 +41,9 @@ class Path
 	 * PHP5.3 only :(
 	 * @see Path::query()
 	 */
-	public function __invoke($filter = null, $order = null, $iterator_type = 'dir')
+	public function __invokequery($query, $recursively = FALSE, $divider = '.')
 	{
-		return $this->query($filter, $order, $iterator_type);
+		return $this->query($query, $recursively, $divider);
 	}
 	
 	/**
@@ -55,7 +55,8 @@ class Path
 	}
 	
 	/**
-	 * getter function
+	 * Get'er function for the path string
+	 * 
 	 * @return String	The path string
 	 **/
 	function get()
@@ -77,9 +78,9 @@ class Path
 	/**
 	 * @return Array	The parts of the path string in an Array.
 	 */
-	function parts()
+	function parts($split_on = '/')
 	{
-		return explode('/', $this->get());
+		return explode($split_on, $this->get());
 	}
 	
 	function set($path)
@@ -169,28 +170,47 @@ class Path
 	}
 	
 	/**
-	 * List files on the given Path.
+	 * Process a query string.
 	 * 
-	 * @param	$filter		Array	List of filters to apply to the listing where the 
-	 * 		keys can be the name of any method of a SplFileInfo object and the values
-	 * 		do the filtering. i.e. array('isFile' => true, 'getSize' => '200') would 
-	 * 		get only files of size 200 bytes. TODO: Make this more complex
-	 * @param	$order		Array	List of file properties to order the output by.
-	 * @param	$iterator_type	String	Ether 'dir' for just this directory or 'recursive'
-	 * 		for all sub directories of this Path. Defaults to 'dir'.
+	 * @param	$query	String	The query string which is a list of filters 
+	 * 							and sorters each optionally followed by a 
+	 * 							parameter and all joined together with the $divider
+	 * 
 	 * @return 	Object	GizQuery object for further filtering
-	 * @todo Sort output before we return it here. Implement QuickSort? 
-	 **/
-	function query($filter = null, $order = null, $iterator_type = 'dir')
+	 * 
+	 * @todo Sort output before we return it here. user usort()
+	 */
+	public function query($query, $recursively = FALSE, $divider = '.')
+	{
+		$gq = new GizQuery($this->retrieve($recursively));
+		
+		return $gq->run($query, $divider);
+	}
+	
+	/**
+	 * Get a list of File System Objects (FSObjects) for the current path.
+	 * 
+	 * @param	$recursively	Boolean		Get the list of FS objects recursively?  
+	 */
+	public function retrieve($recursively = FALSE)
 	{
 		$out = array();
 		
-		foreach ($this->getIt($filter, $iterator_type) as $File)
+		if($recursively)
 		{
-			// Since cloning $File doesn't work
-			$out[$File->getRealPath()] = new SplFileInfo($File->getRealPath());
+			$contents = new RecursiveDirectoryIterator($this->get());
 		}
-		return new GizQuery($out);
+		else
+		{
+			$contents = new DirectoryIterator($this->get());
+		}
+		
+		foreach ($contents as $File)
+		{
+			// FSObject's factory method
+			$out[$File->getRealPath()] = FSObject::make($File);
+		}
+		return $out;
 	}
 	
 	/**
@@ -198,7 +218,7 @@ class Path
 	 */
 	function folders($regex = '')
 	{
-		return $this->query(array('isDir' => true))->name($regex);
+		return $this->query('folders')->name($regex);
 	}
 	
 	/**
@@ -206,7 +226,7 @@ class Path
 	 */
 	function files($regex = '')
 	{
-		return $this->query(array('isFile' => true))->name($regex);
+		return $this->query('files')->name($regex);
 	}
 	
 	/**
@@ -218,17 +238,19 @@ class Path
 	 * 		recursive directory iterator.
 	 *
 	 * @return FilteredDirectoryIterator
+	 * 
+	 * @todo Should simplify this as filtering is now done after the Iterator returns its result.
 	 **/
 	function getIt($filters = null, $iterator_type = 'dir')
 	{
 		switch($iterator_type)
 		{
 			case 'recursive':
-				return new FilteredRecursiveDirectoryIterator($this->get(), $filters);
+				return new RecursiveDirectoryIterator($this->get());
 			
 			case 'dir':
 			default:
-				return new FilteredDirectoryIterator($this->get(), $filters);
+				return new DirectoryIterator($this->get());
 		}
 	}
 	

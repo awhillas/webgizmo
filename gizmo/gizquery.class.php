@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Encapsulate a list of FSObjets which are a result of a query (command chain).
+ * 
+ * Typically the List of FSObjects would come from a Path but as successive 
+ * filters and sorters can be applied to it this list might end up bearing 
+ * no relation to the original directory content pointed to by the original 
+ * Path object. 
+ *
+ * @package Web Gizmo
+ * @author Alexander Whillas
+ **/
 class GizQuery implements Iterator
 {
 	/**
@@ -29,12 +39,67 @@ class GizQuery implements Iterator
 			return '[empty]';
 	}
 	
-	function tally()
+	/**
+	 * Parse a query string and return a new GizQuery object.
+	 * 
+	 * @return 	GizQuery	This GizQuery object
+	 */
+	public function run($query, $divider = '.')
+	{
+//var_dump($query);		
+		if(is_string($query))
+		{
+			$commands = explode($divider, $query);
+		}
+		else
+		{
+			trigger_error('Query must be a String');
+			
+			return new GizQuery(array());
+		}
+		
+		$filter_list = GizFilter::getList();
+		
+		$sorter_list = GizSorter::getList();
+		
+		if(count($this->_file_list))
+			while ($cmd = array_shift($commands)) 
+			{
+				// Assume the next part is a paramter if its not a known filter or sorter
+				$param = null;
+				if(
+					isset($commands[0]) 
+					AND ( 
+						!in_array($commands[0], $filter_list) 
+						OR !in_array($commands[0], $sorter_list) 
+					)
+				) {
+					$param = array_shift($commands);
+				}
+
+				if(in_array($cmd, $filter_list))
+				{
+					$this->_file_list = GizFilter::go($cmd, $this->_file_list, $param);
+				}
+			
+				if(in_array($cmd, $sorter_list))
+				{
+					$this->_file_list = GizSorter::go($cmd, $this->_file_list, $param);
+				}
+			}
+			
+		return $this;		
+	}
+	
+	/**
+	 * Count the number of files
+	 */
+	function tally()	// can't call this simply 'count()'
 	{
 		return count($this->_file_list);
 	}
 	
-	function items($index = null)	// can't call this simple 'list()'
+	function get($index = null)	// can't call this simply 'list()'
 	{
 		if(is_null($index))
 			return $this->_file_list;
@@ -53,7 +118,7 @@ class GizQuery implements Iterator
 	 */
 	function rand()
 	{
-		return $this->items(array_rand($this->items()));
+		return $this->get(array_rand($this->get()));
 	}
 	
 	/**
@@ -62,7 +127,7 @@ class GizQuery implements Iterator
 	 */
 	function first()
 	{
-		return end(array_reverse($this->items()));
+		return end(array_reverse($this->get()));
 	}
 		
 	/**
@@ -98,17 +163,23 @@ class GizQuery implements Iterator
 	}
 
 	/**
-	 * Return GizQuery of all the sub-folders of the folders
+	 * Return GizQuery of all the content in the sub-folders of the folders in the current list.
 	 */
 	function contents($regex = '')
 	{
 		$out = array();
-		
-		foreach ($this->filter(array('isDir' => true)) as $item) 
+
+		foreach($this->run('folders') as $folder)
 		{
-			if($result = Path::open($item->getPathname())->query(array('name' => $regex)) and $result->tally())
-				$out[] = $result;
+			if($folder->getPath()->query('')->tally())
+				$out[] = $folder;
 		}
+		
+		// foreach ($this->filter(array('isDir' => true)) as $item) 
+		// {
+		// 	if($result = Path::open($item->getPathname())->query(array('name' => $regex)) and $result->tally())
+		// 		$out[] = $result;
+		// }
 		return GizQuery::merge($out);
 	}
 	
@@ -121,7 +192,7 @@ class GizQuery implements Iterator
 		
 		foreach($gizes as $gq)
 			if(is_a($gq, 'GizQuery'))
-				$out = array_merge($out, $gq->items());
+				$out = array_merge($out, $gq->get());
 		
 		return new GizQuery($out);
 	}

@@ -2,11 +2,7 @@ I know I said "no configuration" and out of the box FS-CMS just works (or should
 
 ### How do I "set" a variable ###
 
-Well there are 2 ways you can do this: 
-
-1. The easiest way is to put a text file in /content folder with the name of the variable you want to set starting with an underscore "_", and with the value on the first line of that file. So for example to set the SITE_TITLE variable you would put a file called "_SITE_TITLE.txt" in the /content folder and in that file you would have "My Site about Monkeys!" on the first line (If you were making a site about Monkeys that is).
-
-2. The other way to do it would be to define a PHP constant in the index.php file, which is a little bit more techie (but not much). So for example making a new line just after the first line "<?php" in the index.php file you would put the following line of PHP code:
+Define a PHP constant in the index.php file, which is a little bit more techie (but not much). So for example making a new line just after the first line "<?php" in the index.php file you would put the following line of PHP code:
 	~~~
 	define('SITE_TITLE', 'My Site about my cat Fluffy!');
 	~~~

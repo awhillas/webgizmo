@@ -12,8 +12,6 @@
  **/
 abstract class FileContent
 {
-	const DEFAULT_CONTENT_CLASS = 'GenericFileContent';
-	
 	/**
 	 * @var SplFileInfo
 	 * @see http://www.php.net/manual/en/class.splfileinfo.php
@@ -219,12 +217,13 @@ abstract class FileContent
 	 */
 	function getFileURL()
 	{
-		
 //		return CONTENT_DIR . FS::getPath() . '/'. $this->get()->getFilename();
 //		return FS::getURL($this->get());
+		
+		// subtract the WEB_ROOT from the RealPath of the current file
 		return BASE_URL_PATH.Path::open(WEB_ROOT, true)->from($this->get()->getRealPath());
+		
 //		return BASE_URL_PATH.FS::get()->contentRoot->from($this->get()->getRealPath());
-
 	}
 	
 	/**
@@ -240,19 +239,5 @@ abstract class FileContent
 	 */
 	function cssID()
 	{
-	}
-}
-
-/**
- * Class for handling file extensions we don't understand (have no extension to class mapping for)
- *
- * @package Web Gizmo
- * @author Alexander R B Whillas
- **/
-class GenericFileContent extends FileContent
-{	
-	function html($format = 'xhtml1.1') 
-	{
-		return '<a href="'. $this->getURL() .'" class="GenericFileContent">'. $this->getCleanName() .'</a>';
 	}
 }
