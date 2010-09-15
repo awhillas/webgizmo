@@ -1,13 +1,18 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Web Image file
  * 
  * Will create an IMG tag in the HTML.
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
-class ImageFileContent extends FileContent
+class ImageFileContent extends FSFile
 {
 	function html($format = 'xhtml1.1')
 	{

@@ -12,14 +12,15 @@
  * @author Alexander R B Whillas
  * @version $Id$
  * @copyright Taylor Square Designs P/L, 19 April, 2010
- * @package Gizmo
+ * @package WebGizmo
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
 /**
  * General purpose HTML tag function.
  * Can be used to generate any HTML markup
  *
- * @return void
+ * @return String	A well formed HTML tag
  * @author Alexander R B Whillas
  **/
 function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs = array())
@@ -62,7 +63,7 @@ function li($content, $class = '', $id = '')
 }
 
 /**
- * Unordered List <ul>
+ * Unordered List
  */
 function ul($list_items, $class = '', $id = '', $attrs = array())
 {
@@ -70,7 +71,7 @@ function ul($list_items, $class = '', $id = '', $attrs = array())
 }
 
 /**
- * Ordered List <ol>
+ * Ordered List
  */
 function ol($list_items, $class = '', $id = '', $attrs = array())
 {
@@ -80,7 +81,7 @@ function ol($list_items, $class = '', $id = '', $attrs = array())
 /**
  * undocumented function
  *
- * @return void
+ * @return String
  * @author Alexander R B Whillas
  **/
 function a($href, $text, $class = '', $id = '', $attrs = array())

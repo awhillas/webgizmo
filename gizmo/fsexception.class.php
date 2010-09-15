@@ -1,5 +1,11 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * If you intend on creating a lot of custom exceptions, you may find this code
  * useful. I've created an interface and an abstract exception class that ensures
  * that all parts of the built-in Exception class are preserved in child classes. It
@@ -14,7 +20,7 @@ class TestException extends CustomException {}
 ?>
 </code>
  *
- * @package Web Gizmo
+ * @package WebGizmo
  * @see http://www.php.net/manual/en/language.exceptions.php#91159
  **/
 interface IException
@@ -32,6 +38,12 @@ interface IException
     public function __construct($message = null, $code = 0);
 }
 
+/**
+ * undocumented class
+ *
+ * @package WebGizmo
+ * @abstract
+ **/
 abstract class FSException extends Exception implements IException
 {
     protected $message = 'Unknown exception';     // Exception message

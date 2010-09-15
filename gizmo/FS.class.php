@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
 // // // // // // // // // // // // // // // // //
 // Path constants
 // // // // // // // // // // // // // // // // //
@@ -6,49 +12,82 @@
 // Can be overriden in the index.php file so can be shared by multipule websites.
 // @todo perhap wrap these up in a Class?
 
+/**
+ * @global	string	
+ */
 if (!defined('WEB_ROOT')) 		define('WEB_ROOT', 		dirname($_SERVER['SCRIPT_FILENAME'])); 
+/**
+ * @global	string	
+ */
 if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
+/**
+ * @global	string	
+ */
 if (!defined('INCLUDES_PATH'))	define('INCLUDES_PATH',	GIZMO_PATH.'/includes');
+/**
+ * @global	string	
+ */
 if (!defined('PLUGINS_PATH'))	define('PLUGINS_PATH',	GIZMO_PATH.'/plugins');
+/**
+ * @global	string	
+ */
 if (!defined('CONTENT_DIR')) 	define('CONTENT_DIR', 	'/content');
+/**
+ * @global	string	
+ */
 if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
 
 // // // // // // // // // // // // // // // // //
 // Behaviour Settings
 // // // // // // // // // // // // // // // // //
 
+/**
+ * @global	string	
+ */
 if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
 
 /**
  * mod_rewrite is on.
- * @var	Boolean
+ * @global	Boolean
  */
 if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
 /**
  * If gizmo is not in the root then add this to base URL (i.e. beginning of all link URLs)
  * @see FS::getURL
- * @var	String
+ * @global	String
  */
 if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '/');
 
+/**
+ * @global	string	
+ */
 if (!defined('MULTI_LINGUAL'))	define('MULTI_LINGUAL',	false);
+/**
+ * @global	string	
+ */
 if (!defined('DEFAULT_LANGUAGE'))	define('DEFAULT_LANGUAGE',	'en');
 
 /**
  * Character set used, used for htmlentities() function and HTML document header
- * @var	String
+ * @global	String
  * @see http://php.net/manual/en/function.htmlentities.php
  * @see FS::strip
  **/
 if (!defined('CHAR_ENCODING'))	define('CHAR_ENCODING',	'UTF-8');
 
 /////// Content Variables...
+/**
+ * @global	string	
+ */
 if (!defined('SITE_TITLE'))		define('SITE_TITLE', 	$_SERVER['SERVER_NAME']);
+/**
+ * @global	string	
+ */
 if (!defined('THEME_DIR'))		define('THEME_DIR',		'/default');
 
 /**
  * The name of the default render class
- * @var	String
+ * @global	String
  */
 if (!defined('CONTENT_RENDERER'))	define('CONTENT_RENDERER', 'BasicRender');
 
@@ -61,13 +100,15 @@ if(version_compare(PHP_VERSION, '5.0.0') <= 0)
 	trigger_error('You need at least PHP 5.0 to use Web Gizmo! You have version '.PHP_VERSION, E_ERROR);
 
 // Make sure our Classes get included automatically
+set_include_path(
+	implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH))
+);
 spl_autoload_extensions('.class.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
-set_include_path(
-	get_include_path()
-	. implode(PATH_SEPARATOR, array(GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH))
-);
 
+/**
+ * HTML tag rendfering functions lib.
+ */
 include 'includes/html.php';
 
 
@@ -78,6 +119,7 @@ include 'includes/html.php';
  * It was called FS as Gizmo was original called FS-CMS.
  * Is a Singleton, with the static get() method. 
  *
+ * @package	WebGizmo
  * @todo Put some more Exception throwing + handling in
  */
 class FS
@@ -96,13 +138,6 @@ class FS
 	private $EXCLUDE_FILES = array('.', '..', '.DS_Store', 'Thumbs.db');
 	
 	/**
-	 * List of Path objects.
-	 * Used to store variables by __get & __set
-	 * @var Array
-	 */
-	private $_paths = array();
-		
-	/**
 	 * Array of Content objects
 	 * @var Array
 	 */
@@ -110,22 +145,21 @@ class FS
 	
 	/**
 	 * Path to the content directory
-	 * @var Path object 
+	 * @var Path 
 	 */
 	public $path;
 	
 	/**
-	 * @var String
-	 * @todo Should be a Path object
+	 * @var Path
 	 */
 	public $contentRoot;
 	
 	/**
-	 * @var	Object	Path object
+	 * @var	Path
 	 */
 	public $templatesRoot;
 	
-	function __construct($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR)
+	private function __construct($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR)
 	{
 		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
 		$this->contentRoot = (MULTI_LINGUAL)
@@ -149,7 +183,7 @@ class FS
 	/**
 	 * Singleton constructor function.
 	 *
-	 * @return 	Object	FS object.
+	 * @return 	FS	Global instance of the FS object
 	 **/
 	public static function get($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR) 
 	{
@@ -160,32 +194,13 @@ class FS
         return self::$_instance;
 	}
 	
-	public function __set($name, $path) 
-	{
-		if(!isset($this->_paths[$name]))
-			$this->_paths[$name] = new Path($path);
-	}
-	
-	public function __get($name)
-	{
-		if(isset($this->_paths[$name]))
-			return $this->_paths[$name];
-
-		// TODO: make this throw and exception instead?
-		$trace = debug_backtrace();
-		trigger_error(
-			'Undefined property via __get(): ' . $name .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
-			E_USER_NOTICE);
-		return null;
-	}
-	
 	/**
 	 * So when this object is used as a function the 'parse' method is invoked
 	 * Handy in the Savant templates where an instance of FS is already instantiated
 	 * 
 	 * @see FS::parse()
+	 * @param	Array	of SplFileInfo objects
+	 * @return 	Array	Array of FileContent
 	 */
 	public function __invoke($files_list) 
 	{
@@ -256,7 +271,10 @@ class FS
 
 	/**
 	 * Handle HTTP request
-	 * @todo Send some HTTP headers here with the right mimetype and cacheing info...?
+	 * 
+	 * @return 	String	Content in the form of the requested $format
+	 * 
+	 * @todo Send some HTTP headers here with the right MIME type and cacheing info...?
 	 * @todo Lookup the correct template to use instead of hard coding 'index.tpl.php'
 	 */
 	public function HttpRequest($format = 'html')
@@ -265,6 +283,7 @@ class FS
 		{
 			if($tpl = $this->getTemplate($format))
 			{
+				$tpl->format = $format;
 				$tpl->fs = &$this;
 				$tpl->here = &$this->path;
 				$tpl->title = SITE_TITLE;
@@ -353,6 +372,9 @@ class FS
 	/**
 	 * Strip leading numbers + underscore from the given string
 	 * + escape HTML special characters
+	 * 
+	 * @return 	String
+	 * 
 	 * @todo make this work (with reg. expr.'s?)
 	 */
 	public static function clean($value = '')
@@ -390,12 +412,24 @@ class FS
 		
 		return $out;		
 	}
+
+	/**
+	 * Get a list of language codes the content is available in.
+	 * Look at the top level of the Content folder and assume 
+	 * the first level is a list of language codes.
+	 *
+	 * @return Array
+	 **/
+	function getContentLanaguages()
+	{
+		return array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR));
+	}
 	
 	/**
 	 * Determine the Language of the content
 	 *
 	 * @return String	ISO639 Two-letter primary language code
-	 * @see http://www.w3.org/TR/REC-html40/struct/dirlang.html
+	 * @link http://www.w3.org/TR/REC-html40/struct/dirlang.html
 	 **/
 	function getLanguage()
 	{
@@ -441,18 +475,6 @@ class FS
 	}
 	
 	/**
-	 * Get a list of language code the content is available in.
-	 * Look at the top level of the Content folder and assume 
-	 * the first level is a list of language codes.
-	 *
-	 * @return void
-	 **/
-	function getContentLanaguages()
-	{
-		return array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR));
-	}
-	
-	/**
 	 * Get the CGI virtual 'path' variable value
 	 *
 	 * @return String	The current virtual path (relative to the base URL)
@@ -461,11 +483,15 @@ class FS
 	 */
 	public static function getPath()
 	{		
-		return (isset($_GET['path'])) ? new Path($_GET['path']): new Path('/');
+		return (isset($_GET['path'])) 
+			? new Path($_GET['path'])
+			: new Path('/');
 	}
 	
 	/**
 	 * Make CSS classes specific to the current path for use in the HTML <body> tag for example
+	 * 
+	 * @return 	String
 	 */
 	public function pathCSS($path = null)
 	{		
@@ -500,35 +526,11 @@ class FS
 	}
 	
 	/**
-	 * @return Array	of FileContent objects the the current virtual path.
+	 * @return String	Rendered content in the given format
 	 **/
-	public function getContent($filter = null, $sort = 'ascending')
+	public function getContent($format, $query = '')
 	{
-		// Use the Path object to get a filtered list of files (files only here).
-		// NB: Local vaiable $here = $this->path in the template
-		$list = $this->path->getIt($filter);	// query is just a wrapper for getIt() anyway
-
-		// Parse the list of files, wraping each in one of the FileContent objects based on its extention. 
-		// NB: Local variable $fs = $this in the template.
-		$content  = $this->parse($list);
-		
-		switch($sort)
-		{
-			case 'random':
-			case 'rand':
-				shuffle($content);
-			
-			case 'dec':
-			case 'decending': 
-				ksort($content);
-				$content = array_reverse($content);
-			
-			case 'asc':
-			case 'ascending':
-			default:
-				ksort($content);
-		}
-		return $content;
+		return GizLayoutor::make($format)->render($this->path);
 	}
 	
 	/**
@@ -544,6 +546,8 @@ class FS
 	 * 
 	 * @param	String	$only	Filter out everything except 'files' or 'folders' 
 	 * @return 	String	HTML
+	 * @todo 	Replace this with FS::getContent()
+	 * @deprecated Since query language came into effect. Use FS::getContent() instead.
 	 **/
 	public function render($only = 'files', $format = 'html')
 	{

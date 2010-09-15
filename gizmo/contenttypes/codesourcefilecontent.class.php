@@ -1,6 +1,23 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * GeSHi library
+ */
 include_once(INCLUDES_PATH.'/geshi/gefunctions_parce.php'); 
 
+/**
+ * Handler for source code.
+ * 
+ * Uses the GeSHi syntax highlighting library
+ *
+ * @package WebGizmo
+ * @link  http://qbnz.com/highlighter/
+ **/
 class CodeSourceFileContent extends TextFileContent
 {	
 	protected $_display_filename = 'full';

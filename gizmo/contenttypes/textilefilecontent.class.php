@@ -1,5 +1,15 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * The Textile parser class
+ */
 include_once(INCLUDES_PATH.'/classTextile.php');
+
 /**
  * Textile: A Humane Web Text Generator
  * 
@@ -7,7 +17,7 @@ include_once(INCLUDES_PATH.'/classTextile.php');
  * It's used in web applications, content management systems, blogging software 
  * and online forums.
  *
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander R B Whillas
  * @see http://textile.thresholdstate.com/
  **/

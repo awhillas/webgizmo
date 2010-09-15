@@ -1,20 +1,26 @@
 <?php
 /**
- * File System Object class
- * 
- * A general wrapper for a File System Object. 
- *
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+
+/**
+ * File System Object
+ * 
+ * A general wrapper for a File System Object.
+ *
+ * @package WebGizmo
  **/
 class FSObject extends SplFileInfo
 {
 	/**
-	 * Holds the file object
+	 * Path to the file 
 	 *
-	 * @var SplFileInfo Object
+	 * @var Path
 	 **/
-//	private $_file;
+	protected $_path;
 	
 	public function __construct($path)
 	{
@@ -22,6 +28,8 @@ class FSObject extends SplFileInfo
 		{
 			$path = $File->getRealPath();
 		}
+		$this->_path = new Path($path, true);
+		
 		parent::__construct($path);
 	}
 

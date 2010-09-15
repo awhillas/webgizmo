@@ -1,14 +1,20 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Apply one of a set of filters to an array of Files (FSObject).
  * 
  * Use the static go() method to do the dirty work. 
  *
  * @see GizCommand, GizSorter
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander Whillas
  **/
-class GizFilter 
+class GizFilter extends GizCommand
 {
 	var $filter;
 	

@@ -1,7 +1,21 @@
 <?php
-//include_once(INCLUDES_PATH.'/rtf2html/functions_parce.php');
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * Not working right now :(
+ */
 include_once(INCLUDES_PATH.'/rtfclass.php');
 
+/**
+ * Handler for RTF files
+ * 
+ * @todo MAke this work somehow. Write an RTF parser for PHP???
+ * @package	Web Gizmo
+ **/
 class RTFFileContent extends TextFileContent
 {	
 	protected $_rtf;

@@ -1,5 +1,11 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Encapsulate a list of FSObjets which are a result of a query (command chain).
  * 
  * Typically the List of FSObjects would come from a Path but as successive 
@@ -7,8 +13,7 @@
  * no relation to the original directory content pointed to by the original 
  * Path object. 
  *
- * @package Web Gizmo
- * @author Alexander Whillas
+ * @package WebGizmo
  **/
 class GizQuery implements Iterator
 {
@@ -43,10 +48,13 @@ class GizQuery implements Iterator
 	 * Parse a query string and return a new GizQuery object.
 	 * 
 	 * @return 	GizQuery	This GizQuery object
+	 * 
+	 * @todo Clean this up to loop over array('GizSorter', 'GizFilter') and potentially make plugable filters/sorters.
 	 */
 	public function run($query, $divider = '.')
 	{
-//var_dump($query);		
+		$out = array();
+		
 		if(is_string($query))
 		{
 			$commands = explode($divider, $query);
@@ -79,16 +87,16 @@ class GizQuery implements Iterator
 
 				if(in_array($cmd, $filter_list))
 				{
-					$this->_file_list = GizFilter::go($cmd, $this->_file_list, $param);
+					$out = GizFilter::go($cmd, $this->_file_list, $param);
 				}
 			
 				if(in_array($cmd, $sorter_list))
 				{
-					$this->_file_list = GizSorter::go($cmd, $this->_file_list, $param);
+					$out = GizSorter::go($cmd, $this->_file_list, $param);
 				}
 			}
 			
-		return $this;		
+		return new GizQuery($out);		
 	}
 	
 	/**
@@ -98,7 +106,13 @@ class GizQuery implements Iterator
 	{
 		return count($this->_file_list);
 	}
-	
+
+	/**
+	 * Get a specific element from the FSOject list or returns the whole list 
+	 * if an $index is not passed.
+	 * 
+	 * @param	$index	String	RealPath to a specific file in the list.
+	 */
 	function get($index = null)	// can't call this simply 'list()'
 	{
 		if(is_null($index))
@@ -118,6 +132,7 @@ class GizQuery implements Iterator
 	 */
 	function rand()
 	{
+		// note: array_rand() returns a key.
 		return $this->get(array_rand($this->get()));
 	}
 	

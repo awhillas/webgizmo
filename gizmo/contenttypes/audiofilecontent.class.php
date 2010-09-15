@@ -1,14 +1,33 @@
 <?php
-// Show video controls on the <video> tag
+/**
+ * @package Web Gizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * @global	boolean	Show video controls on the <video> tag
+ **/
 if(!defined('GZ_AUDIO_CONTROLS')) 	define('GZ_AUDIO_CONTROLS', true);
-// If true, then the video will start playing as soon as it is ready
+
+/**
+ * @global	boolean	If true, then the video will start playing as soon as it is ready
+ **/
 if(!defined('GZ_AUDIO_AUTOPLAY')) 	define('GZ_AUDIO_AUTOPLAY', false);
-// If true, the video will start over again, every time it is finished.
+
+/**
+ * @global	boolean	If true, the video will start over again, every time it is finished.
+ **/
 if(!defined('GZ_AUDIO_LOOP')) 		define('GZ_AUDIO_LOOP', false);
-// If true, the video will be loaded at page load, and ready to run. Ignored if "autoplay" is true.
+
+/**
+ * @global	If true, the video will be loaded at page load, and ready to run. Ignored if "autoplay" is true.
+ **/
 if(!defined('GZ_AUDIO_PRELOAD')) 	define('GZ_AUDIO_PRELOAD', false);
 
-// Text to display when the browser doesn't support the HTML5 <video> tag.
+/**
+ * @global	String	Text to display when the browser doesn't support the HTML5 <video> tag.
+ **/
 if(!defined('GZ_AUDIO_NOT_SUPPORTED_MESSAGE')) 	
 	define('GZ_AUDIO_NOT_SUPPORTED_MESSAGE', 'Your browser does not support the audio tag.');
 
@@ -17,10 +36,9 @@ if(!defined('GZ_AUDIO_NOT_SUPPORTED_MESSAGE'))
  * 
  * Will create an IMG tag in the HTML.
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
-class AudioFileContent extends FileContent
+class AudioFileContent extends FSFile
 {
 	function html($format = 'xhtml1.1')
 	{

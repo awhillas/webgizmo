@@ -1,9 +1,15 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * GizPlug - a Gizmo Plugin
  *
- * @package gizmo
- * @author Alexander Whillas
+ * @package WebGizmo
+ * @subpackage	GizPlugins
  **/
 class GizPlug
 {

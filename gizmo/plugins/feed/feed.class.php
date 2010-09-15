@@ -1,6 +1,19 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
 
-class Feed
+/**
+ * RSS Feed reader class
+ *
+ * @package WebGizmo
+ * @subpackage	GizPlugins
+ * 
+ * @todo make the Feed class work using SimplePie
+ **/
+class Feed extends GizPlugin
 {
 	private $_feed;
 	
@@ -15,7 +28,6 @@ class Feed
 
 		// Pasre with SimpleXML
 		$this->_feed = new SimpleXMLElement($xmlstr);
-		
 	}
 
 	function first()

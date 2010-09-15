@@ -1,8 +1,14 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Command processor interface for use in processing arrays of Files (FSObject)
  *
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander Whillas
  **/
 abstract class GizCommand

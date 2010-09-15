@@ -1,13 +1,19 @@
 <?php
 /**
- * Text files
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * handelr for text files
  * 
  * Will try to handle whitespace nicely.
  *
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander R B Whillas
  **/
-class TextFileContent extends FileContent
+class TextFileContent extends FSFile
 {	
 	/**
 	 * Raw contents of the Text file read in by the constructor

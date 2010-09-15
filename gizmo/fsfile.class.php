@@ -1,12 +1,17 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
 
 /**
  * File System File class
  * 
  * Represents a File System File object. 
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
 class FSFile extends FSObject
 {

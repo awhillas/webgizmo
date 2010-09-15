@@ -1,13 +1,22 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * The markdown library
+ */
 include_once(INCLUDES_PATH.'/PHP Markdown/markdown.php');
+
 /**
  * Markdown Text files
  * 
  * Uses the PHP Markdown lib for smarter conversion of text to HTML
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
- * @see http://michelf.com/projects/php-markdown/
+ * @package	Web Gizmo
+ * @link http://michelf.com/projects/php-markdown/
  **/
 class MarkdownTextFileContent extends TextFileContent
 {		

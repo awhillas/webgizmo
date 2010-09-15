@@ -1,10 +1,16 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
 * A Path
 * 
-* Encapsulate common path calculations.
-*
-* @author Alexander R B Whillas
+* Encapsulate common path calculations. 
+* Note: that a Path doesn't have to be real, just fit into the 
+* @package WebGizmo
 */
 class Path
 {
@@ -30,6 +36,15 @@ class Path
 			return null;
 		}
 	}
+
+	/**
+	 * Factory function for the Path object 
+	 */
+	public static function open($path, $checkPath = false)
+	{
+		return new Path($path, $checkPath);
+	}
+	
 	
 	public function __toString()
 	{
@@ -41,17 +56,9 @@ class Path
 	 * PHP5.3 only :(
 	 * @see Path::query()
 	 */
-	public function __invokequery($query, $recursively = FALSE, $divider = '.')
+	public function __invoke($query, $recursively = FALSE, $divider = '.')
 	{
 		return $this->query($query, $recursively, $divider);
-	}
-	
-	/**
-	 * Factory function for the Path object 
-	 */
-	public static function open($path, $checkPath = false)
-	{
-		return new Path($path, $checkPath);
 	}
 	
 	/**
@@ -65,18 +72,18 @@ class Path
 	}
 	
 	/**
-	 * @return 	SplFileInfo Object if its a file, NULL otherwise.
+	 * @return 	FSFile	Object if its a file, NULL otherwise.
 	 */
 	function getFile()
 	{
 		if($this->isFile())
-			return new SplFileInfo($this->get());
+			return new FSFile($this->get());
 		else
 			return NULL;
 	}
 	
 	/**
-	 * @return Array	The parts of the path string in an Array.
+	 * @return 	Array	The parts of the path string in an Array.
 	 */
 	function parts($split_on = '/')
 	{
@@ -90,6 +97,7 @@ class Path
 	
 	/**
 	 * Subtract this path _from_ the given path
+	 * 
 	 * @param	$haystack	String	Path to subtract from.
 	 * @return 	String|Boolean		The given path less this path. False if this path is not in the given path
 	 **/
@@ -137,7 +145,7 @@ class Path
 	 * If this Path is to a file then the string is appended between the path and the filename.
 	 * 
 	 * @param	$path	String	String to append to the path
-	 * @return Path object
+	 * @return 	Path	Path with the given string parsed and appended to it.
 	 * @todo Accept a Path object as well as a String
 	 */
 	function append($path)
@@ -261,42 +269,6 @@ class Path
 	public function isEmpty()
 	{
 	     return (($files = @scandir($this->get())) && count($files) <= 2);
-	}	
-	
-	/**
-	 * Quicksort for multi-dimentional array
-	 * @param	$seq		Array	Array to sort
-	 * @param	$sort_by	String	Array key used to sort on
-	 * @param	$order		String	Ether asc = ascending, des = descending
-	 * @see http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Quicksort#PHP
-	 * @todo test this works and then use it in list()
-	 */
-	// static function quicksort($seq, $sort_by, $order = 'asc') 
-	// {
-	// 	if(!count($seq)) return $seq;
-	// 
-	// 	$k = $seq[0];
-	// 	$x = $y = array();
-	// 
-	// 	$length = count($seq);
-	// 
-	// 	for($i = 1; $i < $length; $i++) 
-	// 	{ 
-	// 		if(Path::$order($seq[$i]->$sort_by(), $k->$sort_by())) 
-	// 		{
-	// 			$x[] = $seq[$i];
-	// 		} 
-	// 		else 
-	// 		{
-	// 			$y[] = $seq[$i];
-	// 		}
-	// 	}
-	// 	return array_merge(Path::quicksort($x, $sort_by, $order), array($k), Path::quicksort($y, $sort_by, $order));
-	// }
-	// // Comparison used in quicksort
-	// static function asc($a, $b) { return $a <= $b; }
-	// // Comparison used in quicksort
-	// static function des($a, $b) { return $a >= $b; }
-	
+	}
 }
 

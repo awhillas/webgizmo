@@ -1,11 +1,16 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Class for handling file extensions we don't understand (have no extension to class mapping for)
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
-class GenericFileContent extends FileContent
+class GenericFileContent extends FSFile
 {	
 	function html($format = 'xhtml1.1') 
 	{

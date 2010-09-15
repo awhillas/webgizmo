@@ -18,7 +18,7 @@
 		
 		<!-- YOUR DATA GOES HERE -->
 	
-		<?php echo $fs->render('files') ?>
+		<?php echo $fs->getContent('html') ?>
 
 	</div>
 </div>

@@ -1,29 +1,49 @@
 <?php
-// Show video controls on the <video> tag
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * @global	boolean	Show video controls on the <video> tag.
+ */
 if(!defined('GZ_VIDEO_CONTROLS')) 	define('GZ_VIDEO_CONTROLS', true);
-// If true, then the video will start playing as soon as it is ready
+
+/**
+ * @global	boolean	If true, then the video will start playing as soon as it is ready.
+ */
 if(!defined('GZ_VIDEO_AUTOPLAY')) 	define('GZ_VIDEO_AUTOPLAY', false);
-// If true, the video will start over again, every time it is finished.
+
+/**
+ * @global	boolean	If true, the video will start over again, every time it is finished.
+ */
 if(!defined('GZ_VIDEO_LOOP')) 		define('GZ_VIDEO_LOOP', false);
-// If true, the video will be loaded at page load, and ready to run. Ignored if "autoplay" is true.
+
+/**
+ * @global	boolean	If true, the video will be loaded at page load, and ready to run. Ignored if "autoplay" is true.
+ */
 if(!defined('GZ_VIDEO_PRELOAD')) 	define('GZ_VIDEO_PRELOAD', false);
 
-// Text to display when the browser doesn't support the HTML5 <video> tag.
+/**
+ * @global	string	Text to display when the browser doesn't support the HTML5 <video> tag.
+ */
 if(!defined('GZ_VIDEO_NOT_SUPPORTED_MESSAGE')) 	
 	define('GZ_VIDEO_NOT_SUPPORTED_MESSAGE', 'Your browser does not support the video tag.');
 
 /**
- * Web Image file
+ * Web Video file handler.
  * 
- * Will create an IMG tag in the HTML.
+ * Will try to be cleaver and use HTML5 tags if the browser supports them 
+ * otherwise the old <object> tag.
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
+ * 
  * @todo Needs some work to support older html formats
  * @todo Sniff the CODEC + MIME from the filename
  * @todo Perhaps turn 3 videos with the same name into 1 set of nested VIDEO tags?
  **/
-class VideoFileContent extends FileContent
+class VideoFileContent extends FSFile
 {
 	function html($format = 'xhtml1.1')
 	{

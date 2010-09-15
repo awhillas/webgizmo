@@ -1,5 +1,11 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * FileContent class
  * 
  * Represents a piece of content taken from a file. Parses the file name 
@@ -7,8 +13,7 @@
  * sub-class to instantiate to handle this contents of the file and what
  * meta data to pass on to the template for displaying the files content.
  *
- * @package Web Gizmo
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
 abstract class FileContent
 {

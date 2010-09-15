@@ -1,10 +1,15 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Contains various File (FSObject) array sorting commands
  *
  * @see GizCommand, GizFilter
- * @package Web Gizmo
- * @author Alexander Whillas
+ * @package WebGizmo
  **/
 class GizSorter extends GizCommand
 {
