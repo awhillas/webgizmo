@@ -1,0 +1,50 @@
+<?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * Layoutor - Calls the appropriate rendering function for each piece of 
+ * content and then wraps it up and returns it
+ * 
+ * Handles the wrapping of each piece of content in the appropriate markup
+ * BUT not the overall template!
+ * Also calls the appropriate render function for the format.
+ * This class is mainly for being inherited and the render() function overridden. 
+ *
+ * @package WebGizmo
+ * @abstract
+ **/
+abstract class GizLayoutor
+{
+	/**
+	 * Factory function for mapping formats to Layout render'ers
+	 *
+	 * @return void
+	 * @todo Add JSON, RSS, XML Layoutors etc.
+	 **/
+	public static function make($format = 'html')
+	{
+		switch($format)
+		{
+			case 'html4':
+			case 'html5':
+			case 'xhtml':
+			default:
+				return new HTMLLayoutor();
+		}
+		
+	}
+	
+	/**
+	 * This should be overridden and is the main point of this class.
+	 * 
+	 * @param	$Path	Path	Points to the content to render.
+	 * 
+	 * @return 	The formatted content. This is the main point of this object
+	 **/
+	abstract public function render($Path);
+	
+} // END class GizLayoutor
