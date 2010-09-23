@@ -46,24 +46,19 @@ class GizFilter extends GizCommand
 	 * @return 	Array		The $subject array after it has been filtered.
 	 */
 	public static function go($filter, $subject, $param)
-	{
+	{	
+		// We make an instance so we can pass the param.s
+		$i = new GizFilter($filter, $param);
+		
 		// Are we filtering on files in the array or the array itself?
 		if(in_array($filter, GizFilter::getArrayFilters()))
 		{
-			if (is_numeric($param) AND $param < count($subject))
-			{
-				if($param <= 0)
-					return array();
-					
-				return call_user_func(array($this, $filter), $subject, $param);
-			}
-			else
-				return $subject;
+			return call_user_func(array($i, $filter), $subject, $param);
 		}
 		else
 		{
 			// Not really sure if this is much of a speed improvement...?
-			return array_filter( $subject, array(new GizFilter($filter, $param), 'dispatch') );
+			return array_filter( $subject, array($i, 'dispatch') );
 		}	
 	}
 	
@@ -112,12 +107,15 @@ class GizFilter extends GizCommand
 	{
 		$out = array();
 		
+		if(is_null($n) OR empty($n))
+			$n = 1;
+		
 		// array rand returns the KEY if there is only one item requested so... 
 		if ($n == 1) 
 			$keys = array(array_rand($subject)); 
 		else 
 			$keys = array_rand($subject, $n); 
-		
+
 		foreach ($keys as $k)
 			$out[$k] = $subject[$k];                   
 		

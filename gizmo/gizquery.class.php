@@ -83,7 +83,7 @@ class GizQuery implements Iterator
 					isset($commands[0]) 
 					AND ( 
 						!in_array($commands[0], $filter_list) 
-						OR !in_array($commands[0], $sorter_list) 
+						AND !in_array($commands[0], $sorter_list) 
 					)
 				) {
 					$param = array_shift($commands);
@@ -91,12 +91,12 @@ class GizQuery implements Iterator
 
 				if(in_array($cmd, $filter_list))
 				{
-					$out = GizFilter::go($cmd, $this->_file_list, $param);
+					$out = GizFilter::go($cmd, $out, $param);
 				}
 			
 				if(in_array($cmd, $sorter_list))
 				{
-					$out = GizSorter::go($cmd, $this->_file_list, $param);
+					$out = GizSorter::go($cmd, $out, $param);
 				}
 			}
 			

@@ -30,7 +30,7 @@ class FSObject extends SplFileInfo
 		}
 		$this->_path = new Path($path, true);
 		
-		parent::__construct($path);
+		parent::__construct($this->_path->get());
 	}
 
 	/**

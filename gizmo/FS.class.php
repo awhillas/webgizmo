@@ -110,6 +110,13 @@ spl_autoload_register();	// Use default autoload implementation coz its fast
  * HTML tag rendering functions library.
  */
 include 'includes/html.php';
+/**
+ * Handy debugging functions
+ */
+include 'includes/debug.php';
+/**
+ * Nice data dump output.
+ */
 include 'includes/krumo/class.krumo.php';
 
 /**

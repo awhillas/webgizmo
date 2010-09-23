@@ -31,7 +31,7 @@ class HTMLLayoutor extends GizLayoutor
 		{		
 			foreach($Dir->getContents($query) as $FSObject)
 			{
-				// Instanciate a hadnler for the fie and render
+				// Instanciate a hadnler for the file and render
 				$out .= $FSObject->render('html');	// We can hardcode the format for now (as this IS the HTMLLayoutor)
 			}
 		}

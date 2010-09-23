@@ -192,9 +192,9 @@ class Path
 	}
 	
 	/**
-	 * Get a list of File System Objects (FSObjects) for the current path.
-	 * 
 	 * @param	$recursively	Boolean		Get the list of FS objects recursively?  
+	 * 
+	 * @return 	Array	List of File System Objects (FSObjects) for the current path.
 	 */
 	public function retrieve($recursively = FALSE)
 	{
@@ -218,7 +218,7 @@ class Path
 	}
 	
 	/**
-	 * @return 	Array	List of folders in the path.
+	 * @return 	GizQuery	List of folders in the path.
 	 */
 	function folders($regex = '')
 	{
@@ -226,7 +226,7 @@ class Path
 	}
 	
 	/**
-	 * @return 	Array	List of files in the path.
+	 * @return 	GizQuery	List of files in the path.
 	 */
 	function files($regex = '')
 	{
