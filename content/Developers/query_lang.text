@@ -1,0 +1,34 @@
+# Gizmo File systems query language
+
+## Query construction
+
+
+
+### Filters
+
+see: GizFilter class
+
+#### List filters
+
+This set of filters affects the list of files and does not look at the individual files at all.
+
+first
+last
+pick
+
+#### File filters
+
+This set of filters looks at each file and does a comparison of some sort on ones of the files properties.
+
+has
+files
+folders
+from
+to
+
+
+### Sorters
+
+??? None yet!
+
+see: GizSorter class
