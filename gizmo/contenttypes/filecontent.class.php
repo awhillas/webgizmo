@@ -62,71 +62,7 @@ abstract class FileContent
 	{
 		return $this->file;
 	}
-	
-	/**
-	 * @return String	Filename without beginning number proceeded by an underscore nor the extension.
-	 **/
-	public function getCleanName()
-	{	
-		return FS::clean($this->get()->getBasename('.'.$this->getExtention()));
-	}
-	
-	/**
-	 * @return String	The file extension
-	 **/
-	public function getExtention()
-	{
-		return end(explode('.', $this->get()->getFilename()));
-	}
 
-	/**
-	 * Polymorphic function for rendering the file content to a particular format.
-	 * 
-	 * @param	$how	The format to render. Supports 'html' (default), 'rss' and 'text' (plain text)
-	 * @param	$format	
-	 *
-	 * @return String	In the appropriate format
-	 * @todo Finish other rending formats i.e. RSS, plain text, RTF, PDF ... 
-	 **/
-	public function render($how = 'html', $format = 'xhtml1.1')
-	{
-		switch($how)
-		{
-			case 'text':
-				return $this->text($format);
-			
-			case 'rss':
-				return $this->rss($format);
-				
-			case 'html':
-			default:
-				return $this->html($format);
-		}
-	}
-
-	/**
-	 * HTML rendering
-	 * @param	$format	The HTML standard to render to. This does nothing at the 
-	 * 		moment but makes it future proof for HTML5 etc.
-	 * @return String	HTML representation of the file.
-	 */	
-	abstract public function html($format = 'xhtml1.1');
-	
-//	abstract public function xml($format = 'xml1.0');
-	
-	/**
-	 * Default text rendering
-	 */
-	public function text($format = 'utf8')
-	{
-		switch($format)
-		{
-			case 'utf8':
-			default:
-				// Force invoke __toString()
-				return utf8_encode($this);
-		}
-	}
 	
 	/**
 	 * Static Factory function which returns the appropriate 

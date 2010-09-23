@@ -52,8 +52,8 @@ if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
  */
 if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
 /**
- * If gizmo is not in the root then add this to base URL (i.e. beginning of all link URLs)
- * @see FS::getURL
+ * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
+ * @see FS::getURL()
  * @global	String
  */
 if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '/');
@@ -71,7 +71,7 @@ if (!defined('DEFAULT_LANGUAGE'))	define('DEFAULT_LANGUAGE',	'en');
  * Character set used, used for htmlentities() function and HTML document header
  * @global	String
  * @see http://php.net/manual/en/function.htmlentities.php
- * @see FS::strip
+ * @see FS::strip()
  **/
 if (!defined('CHAR_ENCODING'))	define('CHAR_ENCODING',	'UTF-8');
 
@@ -107,10 +107,10 @@ spl_autoload_extensions('.class.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
 
 /**
- * HTML tag rendfering functions lib.
+ * HTML tag rendering functions library.
  */
 include 'includes/html.php';
-
+include 'includes/krumo/class.krumo.php';
 
 /**
  * FS class
@@ -147,17 +147,17 @@ class FS
 	 * Path to the content directory
 	 * @var Path 
 	 */
-	public $path;
+	private $path;
 	
 	/**
 	 * @var Path
 	 */
-	public $contentRoot;
+	private $contentRoot;
 	
 	/**
 	 * @var	Path
 	 */
-	public $templatesRoot;
+	private $templatesRoot;
 	
 	private function __construct($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR)
 	{
@@ -181,7 +181,7 @@ class FS
 	}
 
 	/**
-	 * Singleton constructor function.
+	 * Singleton constructor/factory method.
 	 *
 	 * @return 	FS	Global instance of the FS object
 	 **/
@@ -235,6 +235,37 @@ class FS
 	public function templatePath($format = 'html')
 	{
 		return new Path($this->templatesRoot->get() .'/'. $format . THEME_DIR);
+	}
+	
+	/**
+	 * Getter for the content path
+	 *
+	 * @return String
+	 **/
+	public function contentPath()
+	{
+		return $this->path;
+	}
+	
+	/**
+	 * Getter for the content root/base path
+	 *
+	 * @return String
+	 * @author Alexander Whillas
+	 **/
+	public function contentRoot()
+	{
+		return $this->contentRoot;
+	}
+	
+	/**
+	 * Getter for the root path to the content directory
+	 *
+	 * @return String
+	 **/
+	public function templatesRoot()
+	{
+		return $this->templatesRoot;
 	}
 
 	/**

@@ -19,9 +19,9 @@ class FSDir extends FSObject
 	 * 
 	 * @return 	GizQuery	List of FSObjects in an Array.
 	 **/
-	public function getContents()
-	{
+	public function getContents($query = '')
+	{		
 		// Get the contents of the folder using the folder name as a query string.
-		$this->_path->query($this->getBasename());
+		return $this->_path->query($this->getBasename())->run($query);
 	}
 }

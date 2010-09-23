@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Web Gizmo
+ * @package WebGizmo
  * @author Alexander R B Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
@@ -52,7 +52,7 @@ class AudioFileContent extends FSFile
 		{
 			case 'html5':
 			default:
-				return audio($this->getFileURL(), 'VideoFileContent', $this->file->getFilename(), $attrs);			
+				return audio($this->getFileURL(), 'VideoFileContent', $this->getFilename(), $attrs);			
 		}
 	}
 }

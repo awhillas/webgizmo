@@ -116,6 +116,13 @@ class FSObject extends SplFileInfo
 		else
 			return false;
 	}
+	/**
+	 * @return String	Filename without beginning number proceeded by an underscore nor the extension.
+	 **/
+	public function getCleanName()
+	{	
+		return FS::clean($this->getBasename('.'.$this->getExtention($this->getBasename())));
+	}
 	
 	/**
 	 * Parse the file name for _tags_
@@ -127,10 +134,80 @@ class FSObject extends SplFileInfo
 	{
 		return array();
 	}
-	
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
-	// Abstract funcitons
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
-	
 
+	/**
+	 * Returns a Files virtual URL, that is relative to the virtual ?path=
+	 * @return String	
+	 **/
+	function getURL()
+	{		
+		return FS::getURL(FS::getPath() . '/'. $this->getFilename());
+	}
+
+	/**
+	 * Direct link to the file in the _content_ Dir.
+	 */
+	function getFileURL()
+	{
+		// subtract the WEB_ROOT from the RealPath of the current file
+		return BASE_URL_PATH.Path::open(WEB_ROOT, true)->from($this->getRealPath());
+	}
+
+	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
+	// Rendering methods
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
+	
+	/**
+	 * Polymorphic function for rendering the file content to a particular format.
+	 * 
+	 * @param	$how	The format to render. Supports 'html' (default), 'rss' and 'text' (plain text)
+	 * @param	$format	
+	 *
+	 * @return String	In the appropriate format
+	 * @todo Finish other rending formats i.e. RSS, plain text, RTF, PDF ... 
+	 **/
+	public function render($how = 'html', $format = 'xhtml1.1')
+	{
+		switch($how)
+		{
+			case 'text':
+				return $this->text($format);
+			
+			case 'rss':
+				return $this->rss($format);
+				
+			case 'html':
+			default:
+				return $this->html($format);
+		}
+	}
+	
+	/**
+	 * HTML rendering
+	 * @param	$format	The HTML standard to render to. This does nothing at the 
+	 * 		moment but makes it future proof for HTML5 etc.
+	 * @return String	HTML representation of the file.
+	 */	
+	function html($format = 'xhtml1.1') 
+	{
+		return '<a href="'. $this->getURL() .'" class="'.get_class($this).'">'. $this->getCleanName() .'</a>';
+	}
+
+//	abstract public function xml($format = 'xml1.0');
+
+	/**
+	 * Default text rendering
+	 */
+	public function text($format = 'utf8')
+	{
+		switch($format)
+		{
+			case 'utf8':
+			default:
+				// Force invoke __toString()
+				return utf8_encode($this);
+		}
+	}
+	
 }

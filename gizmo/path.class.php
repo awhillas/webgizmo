@@ -27,12 +27,8 @@ class Path
 		}
 		else
 		{
-			$trace = debug_backtrace();
-			trigger_error(
-				'Path does not exist: "' . $path .
-				'" in ' . $trace[0]['file'] .
-				' on line ' . $trace[0]['line'],
-				E_USER_NOTICE);
+			trigger_error('Path does not exist: "'.$path.'"', E_USER_NOTICE);
+			krumo(debug_backtrace());
 			return null;
 		}
 	}
@@ -191,7 +187,7 @@ class Path
 	public function query($query, $recursively = FALSE, $divider = '.')
 	{
 		$gq = new GizQuery($this->retrieve($recursively));
-		
+
 		return $gq->run($query, $divider);
 	}
 	
@@ -206,11 +202,11 @@ class Path
 		
 		if($recursively)
 		{
-			$contents = new RecursiveDirectoryIterator($this->get());
+			$contents = new FilteredRecursiveDirectoryIterator($this->get());
 		}
 		else
 		{
-			$contents = new DirectoryIterator($this->get());
+			$contents = new FilteredDirectoryIterator($this->get());
 		}
 		
 		foreach ($contents as $File)
@@ -248,17 +244,18 @@ class Path
 	 * @return FilteredDirectoryIterator
 	 * 
 	 * @todo Should simplify this as filtering is now done after the Iterator returns its result.
+	 * @deprecated
 	 **/
 	function getIt($filters = null, $iterator_type = 'dir')
 	{
 		switch($iterator_type)
 		{
 			case 'recursive':
-				return new RecursiveDirectoryIterator($this->get());
+				return new FilteredRecursiveDirectoryIterator($this->get());
 			
 			case 'dir':
 			default:
-				return new DirectoryIterator($this->get());
+				return new FilteredDirectoryIterator($this->get());
 		}
 	}
 	

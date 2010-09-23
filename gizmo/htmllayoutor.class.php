@@ -25,18 +25,13 @@ class HTMLLayoutor extends GizLayoutor
 	 **/
 	public function render($Path, $query = '')
 	{
-print_r($Path);	
 		$out = "\n\n<!-- HTMLLayoutor::render() start ... -->\n\n";
 		
 		if($Dir = FSObject::make($Path->get()) AND $Dir->isDir())
-		{
-			$content = $Dir->getContents();
-			
-			if(!empty($query))
-				$content = $content->run($query);
-				
-			foreach($content as $FSObject)
+		{		
+			foreach($Dir->getContents($query) as $FSObject)
 			{
+				// Instanciate a hadnler for the fie and render
 				$out .= $FSObject->render('html');	// We can hardcode the format for now (as this IS the HTMLLayoutor)
 			}
 		}

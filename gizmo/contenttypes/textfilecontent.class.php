@@ -36,7 +36,7 @@ class TextFileContent extends FSFile
 	{
 		parent::__construct($file);
 				
-		$this->_content = file_get_contents($this->get()->getRealPath(), FILE_TEXT);
+		$this->_content = $this->getContents(); //file_get_contents($this->get()->getRealPath(), FILE_TEXT);		
 	}
 	
 	/**
@@ -48,12 +48,12 @@ class TextFileContent extends FSFile
 	}
 	
 	/**
-	 * Function to do the standard text file handling behaviour so that descendants can optionally call it 
+	 * Function to do the standard text file handling behavior so that descendants can optionally call it 
 	 */
 	protected function renderHTML($format = 'xhtml1.1', $content)
 	{
 		$class_name = get_class($this);
-		
+
 		$title = null;
 		
 		if($this->_display_filename != 'none')
@@ -65,7 +65,7 @@ class TextFileContent extends FSFile
 					break;
 			
 				case 'full':
-					$title = $this->get()->getFilename();
+					$title = $this->getFilename();
 					break;
 			}
 				

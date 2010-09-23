@@ -53,10 +53,14 @@ class GizQuery implements Iterator
 	 */
 	public function run($query, $divider = '.')
 	{
-		$out = array();
+		$out = $this->_file_list;
 		
 		if(is_string($query))
 		{
+			// If the query is empty do nothing
+			if(empty($query))
+				return $this;
+			
 			$commands = explode($divider, $query);
 		}
 		else
@@ -65,7 +69,7 @@ class GizQuery implements Iterator
 			
 			return new GizQuery(array());
 		}
-		
+
 		$filter_list = GizFilter::getList();
 		
 		$sorter_list = GizSorter::getList();

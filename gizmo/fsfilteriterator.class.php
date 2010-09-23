@@ -1,5 +1,24 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
 
+/**
+ * @global	String	Name of the file in the content directory with a list of filename patterns to ignore.
+ */
+if(!defined('GZ_IGNORE_FILENAME')) define('GZ_IGNORE_FILENAME', '_ignore');
+
+/**
+ * Iterator class which filters files based on the Ignore list file.
+ * 
+ * If the CONTENT_DIR has a file called '_ignore' it will be opened and 
+ * each line can be a regular expression of filenames to ignore when parsing 
+ * the CONTENT_DIR folder. This is so stuff like .DS_Store files can be ignored.
+ *
+ * @package WebGizmo
+ **/
 class FSFilterIterator extends FilterIterator
 {
 	/**
@@ -11,8 +30,28 @@ class FSFilterIterator extends FilterIterator
     {	
 		$current = $this->current();
 
-		
+		foreach($this->getIgnoreList() as $pattern)
+			if(strpos($pattern, $current->getFilename()) !== false)
+			{
+				return false;
+			}
 		
         return true;
     }
+
+	protected function getIgnoreList()
+	{
+		static $list;
+		
+		if(!is_array($list))
+		{
+			$ignore_filename = FS::get()->contentRoot().'/'.GZ_IGNORE_FILENAME;
+		
+			$list = file($ignore_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		
+			$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
+		}
+		
+		return $list;
+	}
 }
