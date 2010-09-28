@@ -173,8 +173,10 @@ class FS
 	private $templatesRoot;
 	
 	/**
-	 * @param	String	Content path override, should be the absolute path to the content folder on the server. Default is WEB_ROOT + CONTENT_DIR
-	 * @param	String	Templates path override, should be the absolute path to the templates root folder on the server. Default is WEB_ROOT + TEMPLATES_DIR
+	 * @param	String	Content path override, should be the absolute path to 
+	 * 		the content folder on the server. Default is WEB_ROOT + CONTENT_DIR
+	 * @param	String	Templates path override, should be the absolute path to 
+	 * 		the templates root folder on the server. Default is WEB_ROOT + TEMPLATES_DIR
 	 */
 	private function __construct($content_path = '', $templates_path = '')
 	{
@@ -214,39 +216,19 @@ class FS
 	}
 	
 	/**
-	 * So when this object is used as a function the 'parse' method is invoked
+	 * So when this object is used as a function it returns the current content Path.
 	 * Handy in the Savant templates where an instance of FS is already instantiated
 	 * 
 	 * @see FS::parse()
 	 * @param	Array	of SplFileInfo objects
 	 * @return 	Array	Array of FileContent
+	 * @todo DO something else here. Parse is deprecisted
 	 */
-	public function __invoke($files_list) 
+	public function __invoke() 
 	{
-		return $this->parse($files_list);
+		return $this->path;
 	}
-	
-	/**
-	 * Build array of FileContent objects from an Array of FileInfo objects.
-	 * 
-	 * @param	Array	of SplFileInfo objects
-	 * @return 	Array	Array of FileContent
-	 */
-	public function parse($files_list)
-	{
-		$out = array();
 
-		foreach ($files_list as $File)	
-		{	
-			$filename = $File->getFilename();
-			
-			if (!in_array($filename, $this->EXCLUDE_FILES) and preg_match('/^[^_]/', $filename))
-			{
-				$out[$filename] = FileContent::Factory($File);
-			}
-		}		
-		return $out;
-	}
 
 	/**
 	 * @return Path object
