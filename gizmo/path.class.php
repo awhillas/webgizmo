@@ -135,7 +135,6 @@ class Path
 		return is_file($this->get());
 	}
 	
-	
 	/**
 	 * Append the given string to the path. 
 	 * If this Path is to a file then the string is appended between the path and the filename.
@@ -144,7 +143,7 @@ class Path
 	 * @return 	Path	Path with the given string parsed and appended to it.
 	 * @todo Accept a Path object as well as a String
 	 */
-	function append($path)
+	function add($path)
 	{
 		if($this->isFile())
 		{

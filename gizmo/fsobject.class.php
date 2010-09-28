@@ -141,7 +141,7 @@ class FSObject extends SplFileInfo
 	 **/
 	function getURL()
 	{		
-		return FS::getURL(FS::getPath() . '/'. $this->getFilename());
+		return FS::getURL(FS::getPath()->add($this->getFilename()));
 	}
 
 	/**

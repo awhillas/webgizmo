@@ -6,18 +6,38 @@
  **/
 
 // // // // // // // // // // // // // // // // //
+// Basic includes
+// // // // // // // // // // // // // // // // //
+
+/**
+ * HTML tag rendering functions library.
+ */
+include 'includes/html.php';
+/**
+ * Handy debugging functions
+ */
+include 'includes/debug.php';
+/**
+ * Nice data dump output.
+ */
+include 'includes/krumo/class.krumo.php';
+
+
+// // // // // // // // // // // // // // // // //
 // Path constants
 // // // // // // // // // // // // // // // // //
 
 // Can be overriden in the index.php file so can be shared by multipule websites.
-// @todo perhap wrap these up in a Class?
+// Nameing conventions for the various PATH/DIRs, names ending in:
+// 		_PATH = Server absolute paths
+// 		_DIR = Name of single directory (not a full path)
 
 /**
- * @global	string	
+ * @global	string	Server side absolute path to the "web root", where the index.php file is and the request is being served from.
  */
 if (!defined('WEB_ROOT')) 		define('WEB_ROOT', 		dirname($_SERVER['SCRIPT_FILENAME'])); 
 /**
- * @global	string	
+ * @global	string	Server path to the instillation of Gizmo i.e. where this file is.
  */
 if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
 /**
@@ -42,12 +62,12 @@ if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
 // // // // // // // // // // // // // // // // //
 
 /**
- * @global	string	
+ * @global	string	Sub-path of the content folder to redirect to if you don't want the root folder to be it.
  */
 if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
 
 /**
- * mod_rewrite is on.
+ * mod_rewrite is on?
  * @global	Boolean
  */
 if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
@@ -59,18 +79,17 @@ if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
 if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '/');
 
 /**
- * @global	string	
+ * @global	Boolean		Is the Content folder divided into languages at the root level?
  */
 if (!defined('MULTI_LINGUAL'))	define('MULTI_LINGUAL',	false);
 /**
- * @global	string	
+ * @global	string		Which language should be the default language if the browser sniffed one isn't present? Should be an ISOxxxx code
  */
 if (!defined('DEFAULT_LANGUAGE'))	define('DEFAULT_LANGUAGE',	'en');
 
 /**
- * Character set used, used for htmlentities() function and HTML document header
- * @global	String
- * @see http://php.net/manual/en/function.htmlentities.php
+ * @global	String	Character set used, used for htmlentities() function and HTML document header
+ * @link http://php.net/manual/en/function.htmlentities.php
  * @see FS::strip()
  **/
 if (!defined('CHAR_ENCODING'))	define('CHAR_ENCODING',	'UTF-8');
@@ -100,24 +119,10 @@ if(version_compare(PHP_VERSION, '5.0.0') <= 0)
 	trigger_error('You need at least PHP 5.0 to use Web Gizmo! You have version '.PHP_VERSION, E_ERROR);
 
 // Make sure our Classes get included automatically
-set_include_path(
-	implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH))
-);
+set_include_path( implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH)) );
 spl_autoload_extensions('.class.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
 
-/**
- * HTML tag rendering functions library.
- */
-include 'includes/html.php';
-/**
- * Handy debugging functions
- */
-include 'includes/debug.php';
-/**
- * Nice data dump output.
- */
-include 'includes/krumo/class.krumo.php';
 
 /**
  * FS class
@@ -151,8 +156,9 @@ class FS
 	private $content = Array();
 	
 	/**
-	 * Path to the content directory
-	 * @var Path 
+	 * Current absolute content path
+	 * @var Path
+	 * @see FS::currentPath()
 	 */
 	private $path;
 	
@@ -166,25 +172,31 @@ class FS
 	 */
 	private $templatesRoot;
 	
-	private function __construct($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR)
+	/**
+	 * @param	String	Content path override, should be the absolute path to the content folder on the server. Default is WEB_ROOT + CONTENT_DIR
+	 * @param	String	Templates path override, should be the absolute path to the templates root folder on the server. Default is WEB_ROOT + TEMPLATES_DIR
+	 */
+	private function __construct($content_path = '', $templates_path = '')
 	{
+		$content_path 	= (empty($content_path)) 	? WEB_ROOT . CONTENT_DIR					: $content_path;
+		$content_path 	= (MULTI_LINGUAL) 			? $content_path . '/'.$this->getLanguage() 	: $content_path;
+
+		$templates_path = (empty($templates_path))	? WEB_ROOT . TEMPLATES_DIR					: $templates_path;
+		
 		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
-		$this->contentRoot = (MULTI_LINGUAL)
-			? new Path(WEB_ROOT . $content_path. '/'.$this->getLanguage(), true)
-			: new Path(WEB_ROOT . $content_path, true);
+		$this->contentRoot = new Path($content_path, true);
+
+		$this->templatesRoot = new Path($templates_path, true);
 
 		// Current Content path
-		$this->path = new Path($this->contentRoot->get() . FS::getPath()->get());
-		
+
+		$this->path = new Path($content_path . FS::getPath());
+
 		// If we're on the DEFAULT_START path then treat as the new root path	
 		if(!FS::getPath()->get() && DEFAULT_START != '/')
 		{
-			$this->path = new Path(WEB_ROOT . $content_path . DEFAULT_START, true);
+			$this->path = new Path($content_path . DEFAULT_START, true);
 		}
-		
-		// Templates path
-		
-		$this->templatesRoot = new Path(WEB_ROOT . $templates_path, true);
 	}
 
 	/**
@@ -192,8 +204,8 @@ class FS
 	 *
 	 * @return 	FS	Global instance of the FS object
 	 **/
-	public static function get($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR) 
-	{
+	public static function get($content_path = '', $templates_path = '') 
+	{		
         if (!self::$_instance)
         {
             self::$_instance = new FS($content_path, $templates_path);
@@ -249,7 +261,7 @@ class FS
 	 *
 	 * @return String
 	 **/
-	public function contentPath()
+	public function currentPath()
 	{
 		return $this->path;
 	}
@@ -343,7 +355,7 @@ class FS
 
 		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
 		{
-			if(preg_match("/^[^_]/", $dir) != 0)
+			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
 			{
 				$url = FS::getURL($dir);
 
@@ -377,9 +389,13 @@ class FS
 			$dir = Path::open($from)->from($dir->getPathname());
 		}
 		
-		return (REWRITE_URLS) 
-			? ((BASE_URL_PATH)? BASE_URL_PATH .'/' : '') . "$dir" // force objects __toString()
-			: BASE_URL_PATH . "?path=$dir";	
+		return (REWRITE_URLS) 	// If we're using Apaches mod_rewrite...
+			? ((BASE_URL_PATH)	// ... append the BASE_URL_PATH to the $dir...
+				? ((BASE_URL_PATH == '/')	// ...only if BASE_URL_PATH is not '/'
+					? BASE_URL_PATH
+					: BASE_URL_PATH.'/')
+				: '') . "$dir" // force objects __toString()
+			: BASE_URL_PATH . "?path=$dir";	// ... ugly URLs then.
 	}
 	
 	/**

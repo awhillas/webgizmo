@@ -12,19 +12,35 @@ see: GizFilter class
 
 This set of filters affects the list of files and does not look at the individual files at all.
 
-first
-last
-pick
+first.n
+: take the first n items.
+
+last.n
+: take the last n items.
+
+pick.n
+: Randomly select n items
+
+Note: If n is omitted then its assumed to be 1.
 
 #### File filters
 
 This set of filters looks at each file and does a comparison of some sort on ones of the files properties.
 
-has
+has.string
+: File name contains the given string
+
 files
+: Filter out folders.
+
 folders
-from
-to
+: Filter out files.
+
+from.YYYY-MM-DD
+: A date filter. Files date is equal to or greater than YYYY-MM-DD. This can be abbreviated to YYYY-MM or YYYY.
+
+to.YYYY-MM-DD
+: A date filter. Files date is equal to or less than YYYY-MM-DD. This can be abbreviated to YYYY-MM or YYYY.
 
 
 ### Sorters
