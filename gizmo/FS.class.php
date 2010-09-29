@@ -67,10 +67,20 @@ if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
 if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
 
 /**
- * mod_rewrite is on?
- * @global	Boolean
+ * @global	Boolean	Is Apache's mod_rewrite active? This is attempted to be 
+ * 		auto-detected and set. Define in index.php to force on or off.
+ * @link http://christian.roy.name/blog/detecting-modrewrite-using-php#comment-170
  */
-if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
+if (!defined('REWRITE_URLS'))
+{
+	// Try to detect if mod_rewrite is installed and the .htaccess is setup correctly.
+	if (isset($_SERVER['HTTP_MOD_REWRITE']) AND $_SERVER['HTTP_MOD_REWRITE'] == 'On')
+		define('REWRITE_URLS', true);
+	else
+		define('REWRITE_URLS', false);
+}
+
+
 /**
  * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
  * @see FS::getURL()
