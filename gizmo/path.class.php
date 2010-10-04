@@ -68,14 +68,11 @@ class Path
 	}
 	
 	/**
-	 * @return 	FSFile	Object if its a file, NULL otherwise.
+	 * @return 	FSObject
 	 */
-	function getFile()
+	function getObject()
 	{
-		if($this->isFile())
-			return new FSFile($this->get());
-		else
-			return NULL;
+		return FSObject::make($this);
 	}
 	
 	/**
@@ -157,6 +154,18 @@ class Path
 	}
 	
 	/**
+	 * Get a Path object for this Paths parent
+	 *
+	 * @return Path
+	 **/
+	public function parent()
+	{
+		$parts = $this->parts();
+		array_pop($parts);
+		return new Path(implode('/', $parts));
+	}
+	
+	/**
 	 * Make sure the path begins with a '/' and does not end with one.
 	 * 
 	 * @todo should we make sure '\' are converted to '/' as Windows accepts the later as-well?
@@ -211,7 +220,7 @@ class Path
 		foreach ($contents as $File)
 		{
 			// FSObject's factory method
-			$out[$File->getRealPath()] = FSObject::make($File);
+			$out[$File->getPathname()] = FSObject::make($File->getPathname());
 		}
 		return $out;
 	}

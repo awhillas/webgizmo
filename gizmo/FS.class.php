@@ -66,18 +66,20 @@ if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
  */
 if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
 
-/**
- * @global	Boolean	Is Apache's mod_rewrite active? This is attempted to be 
- * 		auto-detected and set. Define in index.php to force on or off.
- * @link http://christian.roy.name/blog/detecting-modrewrite-using-php#comment-170
- */
 if (!defined('REWRITE_URLS'))
 {
 	// Try to detect if mod_rewrite is installed and the .htaccess is setup correctly.
 	if (isset($_SERVER['HTTP_MOD_REWRITE']) AND $_SERVER['HTTP_MOD_REWRITE'] == 'On')
-		define('REWRITE_URLS', true);
+		$isModRewriteOn = true;
 	else
-		define('REWRITE_URLS', false);
+		$isModRewriteOn = false;
+
+	/**
+	 * @global	Boolean	Is Apache's mod_rewrite active? This is attempted to be 
+	 * 		auto-detected and set. Define in index.php to force on or off.
+	 * @link http://christian.roy.name/blog/detecting-modrewrite-using-php#comment-170
+	 */		
+	define('REWRITE_URLS', $isModRewriteOn);
 }
 
 
@@ -230,13 +232,12 @@ class FS
 	 * Handy in the Savant templates where an instance of FS is already instantiated
 	 * 
 	 * @see FS::parse()
-	 * @param	Array	of SplFileInfo objects
-	 * @return 	Array	Array of FileContent
+	 * @return 	Path	Array of FileContent
 	 * @todo DO something else here. Parse is deprecisted
 	 */
 	public function __invoke() 
 	{
-		return $this->path;
+		return $this->currentPath();
 	}
 
 
@@ -370,7 +371,7 @@ class FS
 	 */
 	static public function getURL($dir)
 	{
-		if(is_a($dir, 'SplFileInfo'))
+		if(is_a($dir, 'FSObject'))
 		{
 			// Figure out its URL by subtracking the web root
 			if($dir->isDir())
@@ -384,7 +385,7 @@ class FS
 		return (REWRITE_URLS) 	// If we're using Apaches mod_rewrite...
 			? ((BASE_URL_PATH)	// ... append the BASE_URL_PATH to the $dir...
 				? ((BASE_URL_PATH == '/')	// ...only if BASE_URL_PATH is not '/'
-					? BASE_URL_PATH
+					? ''
 					: BASE_URL_PATH.'/')
 				: '') . "$dir" // force objects __toString()
 			: BASE_URL_PATH . "?path=$dir";	// ... ugly URLs then.

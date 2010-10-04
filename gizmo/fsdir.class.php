@@ -24,4 +24,46 @@ class FSDir extends FSObject
 		// Get the contents of the folder using the folder name as a query string.
 		return $this->_path->query($this->getBasename())->run($query);
 	}
+	
+	/**
+	 * Gets the FSDir for current directories parent directory
+	 *
+	 * @return FSDir
+	 **/
+	public function parent()
+	{
+		return $this->_path->parent()->getObject();
+	}
+	
+	/**
+	 * Return a list of images
+	 *
+	 * @return GizQuery
+	 * @todo Perhaps get the list of extensions from the handler map file groups?
+	 **/
+	public function images()
+	{
+		return $this->getContents()->files('(png|gif|jpg)$');
+	}
+	
+	/**
+	 * List of text files
+	 *
+	 * @return GizQuery
+	 * @todo Perhaps get the list of extensions from the handler map file groups?
+	 **/
+	public function texts()
+	{
+		return $this->getContents()->files('(txt|text|markdown|textile)$');
+	}
+	
+	/**
+	 * Create a HTML anchor tag linking to this directory
+	 *
+	 * @return String	HTML anchor tag
+	 **/
+	public function htmlLink($content, $class = '', $id = '', $attributes = array())
+	{
+		return a($this->getURL(), $content, $class, $id, $attributes);
+	}
 }

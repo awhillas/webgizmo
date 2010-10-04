@@ -24,9 +24,9 @@ class FSObject extends SplFileInfo
 	
 	public function __construct($path)
 	{
-		if(!is_a($path, 'SplFileInfo'))
+		if(is_a($path, 'SplFileInfo'))
 		{
-			$path = $File->getRealPath();
+			$path = $path->getPathname();
 		}
 		$this->_path = new Path($path, true);
 		
@@ -42,31 +42,35 @@ class FSObject extends SplFileInfo
 	 **/
 	public static function make($File)
 	{
-		if(!is_a($File, 'SplFileInfo'))
+		if(!is_a($File, 'FSObject'))
 		{
-			if(is_string($File))
+			if(is_a($File, 'Path'))
+			{
+				$File = new FSObject($File->get());
+			}
+			elseif(is_string($File))
 			{
 				if(file_exists($File))
-					$File = new SplFileInfo($File);
+					$File = new FSObject($File);
 				else
 				{
-					trigger_error('File does not exist?  '.print_r($File, TRUE));
+					trigger_error('File does not exist?  '.pr($File, TRUE));
 
-					return null;					
+					return null;
 				}
 			}
 			else
 			{
-				trigger_error('Expecting file path (String) or File (SplFileInfo), passed: '.print_r($File, TRUE));
-				
+				trigger_error('Expecting file path (String) or File (FSObject)');
+				sd();
 				return null;
 			}
 		}
-		
+
 		$extention = FSObject::getExtention($File->getbaseName());
 		
 		// Handler class to use if we don't find one.
-		$fallback_handler = 'GenericFileContent';
+		$fallback_handler = 'FSFile';
 		
 		if(!$extention)
 		{
@@ -89,10 +93,18 @@ class FSObject extends SplFileInfo
 		}
 		else
 		{
-			trigger_error("Unknown extension type $extention!");
+			// trigger_error("Unknown extension type $extention!");
 
 			return new $fallback_handler($File);
 		}
+	}
+
+	/**
+	 * @return 	Path	The Path object represented by this FSObject.
+	 **/
+	public function getPath()
+	{
+		return $this->_path;
 	}
 
 	/**
@@ -149,8 +161,7 @@ class FSObject extends SplFileInfo
 	 */
 	function getFileURL()
 	{
-		// subtract the WEB_ROOT from the RealPath of the current file
-		return BASE_URL_PATH.Path::open(WEB_ROOT, true)->from($this->getRealPath());
+		return FS::getURL( $this );
 	}
 
 	

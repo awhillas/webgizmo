@@ -18,6 +18,8 @@ class GizFilter extends GizCommand
 {
 	var $filter;
 	
+	var $param;
+	
 	/**
 	 * Private as its never called directly.
 	 * @param	$filter	String
@@ -25,11 +27,8 @@ class GizFilter extends GizCommand
 	private function __construct($filter, $param = null) 
 	{ 
 		$this->filter = $filter;
-	}
-	
-	public function dispatch($File)
-	{
-		return call_user_func(array($this, $this->filter), $File);
+		
+		$this->param = $param;
 	}
 	
 	/**
@@ -62,12 +61,21 @@ class GizFilter extends GizCommand
 		}	
 	}
 	
+	public function dispatch($File)
+	{
+		return call_user_func(array($this, $this->filter), $File, $this->param);
+	}
+	
 	/**
 	 * @return 	Array	List of filter function names.
 	 */
 	public static function getList()
 	{
-		return array_merge(GizFilter::getArrayFilters(), GizFilter::getFileFilters());
+		return array_merge(
+			GizFilter::getArrayFilters(), 
+			GizFilter::getFileFilters(), 
+			array('contents')
+		);
 	}
 	
 	/**
@@ -83,7 +91,7 @@ class GizFilter extends GizCommand
 	 */	
 	public function getFileFilters()
 	{
-		return array('has', 'files', 'folders', 'from', 'to');
+		return array('has', 'files', 'folders', 'from', 'to', 'tag');
 	}
 	
 	// - - - - - - - - - - - - - - - - - - - //
@@ -136,6 +144,22 @@ class GizFilter extends GizCommand
 	{
 		// strpos returns FALSE if not found but also 0 if in 1st position
 		return !(strpos($File->getBasename(), $needle) === FALSE);
+	}
+	
+	/**
+	 * Looks for give _tag_ in the base name.
+	 * 
+	 * Tags are defined to appear at the beginning of the file name and start 
+	 * and end with an underscore '_'
+	 *
+	 * @param	$File	FSObject
+	 * @param	$needle	String	Tag name we are looking for in the name.
+	 * @return Boolean
+	 * @todo 	Find out why this is working but pulling errors sometimes...?
+	 **/
+	protected function tag($File, $needle)
+	{		
+		return @preg_match($File->getBasename(), '/_'.$needle.'_/');
 	}
 	
 	/**

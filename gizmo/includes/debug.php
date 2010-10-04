@@ -33,7 +33,7 @@ function vd($subject)
  **/
 function sd($html = true)
 {
-	if($html)
+	if(!$html)
 		pr(debug_backtrace());
 	else
 		krumo(debug_backtrace());
