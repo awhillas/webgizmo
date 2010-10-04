@@ -346,6 +346,7 @@ class FS
 	{
 		$out = array();
 
+
 		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
 		{
 			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
