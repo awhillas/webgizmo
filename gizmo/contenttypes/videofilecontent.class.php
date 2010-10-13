@@ -38,6 +38,7 @@ if(!defined('GZ_VIDEO_NOT_SUPPORTED_MESSAGE'))
  * otherwise the old <object> tag.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * 
  * @todo Needs some work to support older html formats
  * @todo Sniff the CODEC + MIME from the filename

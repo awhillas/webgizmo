@@ -37,6 +37,7 @@ if(!defined('GZ_AUDIO_NOT_SUPPORTED_MESSAGE'))
  * Will create an IMG tag in the HTML.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  **/
 class AudioFileContent extends FSFile
 {

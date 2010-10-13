@@ -14,6 +14,7 @@
  * meta data to pass on to the template for displaying the files content.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  **/
 abstract class FileContent
 {

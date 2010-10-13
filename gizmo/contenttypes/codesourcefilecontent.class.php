@@ -16,6 +16,7 @@ include_once(INCLUDES_PATH.'/geshi/gefunctions_parce.php');
  * Uses the GeSHi syntax highlighting library
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * @link  http://qbnz.com/highlighter/
  **/
 class CodeSourceFileContent extends TextFileContent

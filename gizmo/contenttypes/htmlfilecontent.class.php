@@ -9,6 +9,7 @@
  * Includes the HTML content dirctly
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * @todo Look for <body> tag and only include the markup between + apply Tidy if installed? 
  **/
 class HTMLFileContent extends TextFileContent

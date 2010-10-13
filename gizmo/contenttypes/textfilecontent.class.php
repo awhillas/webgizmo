@@ -11,6 +11,7 @@
  * Will try to handle whitespace nicely.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * @author Alexander R B Whillas
  **/
 class TextFileContent extends FSFile

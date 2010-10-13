@@ -11,6 +11,7 @@
  * Uses PHP's native PHP syntax highlighting
  * 
  * @package WebGizmo
+ * @subpackage	ContentHanders
  **/
 class PHPFileContent extends TextFileContent
 {	

@@ -11,6 +11,7 @@
  * Will create an IMG tag in the HTML.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  **/
 class ImageFileContent extends FSFile
 {

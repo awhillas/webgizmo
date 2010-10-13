@@ -16,6 +16,7 @@ include_once(INCLUDES_PATH.'/PHP Markdown/markdown.php');
  * Uses the PHP Markdown lib for smarter conversion of text to HTML
  *
  * @package	Web Gizmo
+ * @subpackage	ContentHanders
  * @link http://michelf.com/projects/php-markdown/
  **/
 class MarkdownTextFileContent extends TextFileContent

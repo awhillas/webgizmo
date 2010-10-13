@@ -18,6 +18,7 @@ include_once(INCLUDES_PATH.'/classTextile.php');
  * and online forums.
  *
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * @author Alexander R B Whillas
  * @see http://textile.thresholdstate.com/
  **/

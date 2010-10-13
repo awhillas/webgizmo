@@ -15,6 +15,7 @@ include_once(INCLUDES_PATH.'/rtfclass.php');
  * 
  * @todo MAke this work somehow. Write an RTF parser for PHP???
  * @package	Web Gizmo
+ * @subpackage	ContentHanders
  **/
 class RTFFileContent extends TextFileContent
 {	
