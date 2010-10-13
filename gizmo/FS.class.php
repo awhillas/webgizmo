@@ -338,32 +338,6 @@ class FS
 	}
 	
 	/**
-	 * @param	$depth	Integer	Depth that the menu should render. i.e. list in a list.
-	 * @return 	Array	List of html links to the top level Content Directories.
-	 * @todo Add a base path here so menus starting at a sub path are possible.
-	 */
-	public function getMenu($depth = 1)
-	{
-		$out = array();
-
-
-		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
-		{
-			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
-			{
-				$url = FS::getURL($dir);
-
-				$class = $this->pathCSS($dir);
-				$class .= ('/'.$dir == FS::getPath()) ? ' Selected' : '';
-
-				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean($dir)}</a>";				
-			}
-		}
-
-		return $out;
-	}
-	
-	/**
 	 * mod_rewrite aware i.e. checks the REWRITE_URLS global
 	 * 
 	 * @param	$dir	String|SplFileInfo
@@ -399,7 +373,31 @@ class FS
 	{
 		return $this->getPath()->get();
 	}
+	
+	/**
+	 * @param	$depth	Integer	Depth that the menu should render. i.e. list in a list.
+	 * @return 	Array	List of html links to the top level Content Directories.
+	 * @todo Add a base path here so menus starting at a sub path are possible.
+	 */
+	public function getMenu($base = '/', $depth = 1)
+	{
+		$out = array();
 
+		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
+		{
+			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
+			{
+				$url = FS::getURL($dir);
+
+				$class = $this->pathCSS($dir);
+				$class .= ($dir == FS::getPath()) ? ' Selected' : '';
+
+				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean($dir)}</a>";
+			}
+		}
+		return $out;
+	}
+	
 	/**
 	 * Get the Content tree starting at the given virtual path
 	 * 
