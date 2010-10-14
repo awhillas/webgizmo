@@ -5,6 +5,9 @@
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
+// For the Path->a() function
+require_once 'includes/html.php';
+
 /**
 * A Path
 * 
@@ -68,6 +71,7 @@ class Path
 	}
 	
 	/**
+	 * Turn a Path into a File System object (FSObject)
 	 * @return 	FSObject
 	 */
 	function getObject()
@@ -89,7 +93,8 @@ class Path
 	}
 	
 	/**
-	 * Subtract this path _from_ the given path
+	 * Subtract this path _from_ the given path.
+	 * The opposite of less().
 	 * 
 	 * @param	$haystack	String	Path to subtract from.
 	 * @return 	String|Boolean		The given path less this path. False if this path is not in the given path
@@ -99,6 +104,22 @@ class Path
 		if(strlen($haystack) and strpos($haystack, $this->get()) !== false)
 		{
 			return substr($haystack, strlen($this->get()), strlen($haystack));
+		}	
+		else
+			return false;
+	}
+	
+	/**
+	 * Subtract the given path from this path.
+	 * The opposite of from()
+	 *
+	 * @return String|Boolean		The this path less the given path. False if the given path is not in this path.
+	 **/
+	public function less($needle)
+	{
+		if(strlen($needle) and $this->isChildOf($needle))
+		{
+			return substr($this->get(), strlen($needle), strlen($this->get()));
 		}	
 		else
 			return false;
@@ -121,12 +142,18 @@ class Path
 	{
 		return file_exists($this->get()); // and $this->isDir();
 	}
-	
+
+	/**
+	 * @return boolean
+	 **/
 	function isDir()
 	{
 		return is_dir($this->get());
 	}
-	
+
+	/**
+	 * @return boolean
+	 **/
 	function isFile()
 	{
 		return is_file($this->get());
@@ -274,6 +301,72 @@ class Path
 	public function isEmpty()
 	{
 	     return (($files = @scandir($this->get())) && count($files) <= 2);
+	}
+	
+	/**
+	 * IS the current Path within the given one i.e. a child of it?
+	 * @param	String
+	 * @return boolean
+	 **/
+	public function isChildOf($path)
+	{
+		return strpos($this->get(), $path) !== false;
+	}
+	
+	/**
+	 * Gets the Virtual URL of the dir. or file
+	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
+	 * string is returned.
+	 * 
+	 * @return String
+	 **/
+	public function url()
+	{
+		$base_path = FS::get()->contentRoot()->get();
+		
+		if ($this->isChildOf($base_path))
+		{
+			if(REWRITE_URLS)
+				return BASE_URL_PATH.'/?path='.$this->less($base_path);
+			else
+				return BASE_URL_PATH.$this->less($base_path);
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Get the direct link to the file or folder in the content folder
+	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
+	 * string is returned.
+	 * 
+	 * @return String
+	 **/
+	public function realURL()
+	{
+		if ($this->isChildOf(WEB_ROOT)) 
+		{
+			return BASE_URL_PATH.$this->less(WEB_ROOT);
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+		
+	/**
+	 * Returns an HTML anchor to the virtual path.
+	 *
+	 * @return String	HTML
+	 **/
+	public function a($text, $class = '', $id = '', $attributes = array())
+	{
+		if($url = $this->url())
+			return a($url, $text, $class, $id, $attributes);
+		else
+			return "\n<!-- $url is not in the web root? Can not make a link to it :( -->\n";
 	}
 }
 

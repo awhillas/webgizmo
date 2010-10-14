@@ -49,6 +49,7 @@ if (!defined('INCLUDES_PATH'))	define('INCLUDES_PATH',	GIZMO_PATH.'/includes');
  */
 if (!defined('PLUGINS_PATH'))	define('PLUGINS_PATH',	GIZMO_PATH.'/plugins');
 /**
+ * Assumed to be within the WEB_ROOT.
  * @global	string	
  */
 if (!defined('CONTENT_DIR')) 	define('CONTENT_DIR', 	'/content');
@@ -88,7 +89,7 @@ if (!defined('REWRITE_URLS'))
  * @see FS::getURL()
  * @global	String
  */
-if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '/');
+if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '');
 
 /**
  * @global	Boolean		Is the Content folder divided into languages at the root level?
@@ -237,7 +238,7 @@ class FS
 	 */
 	public function __invoke() 
 	{
-		return $this->currentPath();
+		return $this->get();
 	}
 
 
@@ -263,7 +264,6 @@ class FS
 	 * Getter for the content root/base path
 	 *
 	 * @return String
-	 * @author Alexander Whillas
 	 **/
 	public function contentRoot()
 	{
@@ -383,7 +383,9 @@ class FS
 	{
 		$out = array();
 
-		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
+		$menu = $this->getContentTree('', $depth);
+
+		foreach (array_keys($menu) as $dir) 
 		{
 			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
 			{
@@ -392,9 +394,27 @@ class FS
 				$class = $this->pathCSS($dir);
 				$class .= ($dir == FS::getPath()) ? ' Selected' : '';
 
-				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean($dir)}</a>";
+				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean(basename($dir))}</a>";
 			}
 		}
+		return $out;
+	}
+	
+	function menu($base = '', $depth = 1)
+	{
+		$out = array();
+/*		
+		foreach (array_keys($this->getContentTree('', $depth)) as $path)
+		{
+			$Dir = Path::open($path)->getBasename();
+			$out[] = $Dir;
+		}
+*/
+		foreach(Path::open($this->contentRoot())->query('folders.has.^[^_]') as $Dir)
+		{
+			$out[$Dir->getCleanName()] = $Dir->htmlLink();
+		}
+
 		return $out;
 	}
 	
@@ -442,6 +462,7 @@ class FS
 	 **/
 	public static function getDirectoryTree($outerDir, $depth = 1, $only_dirs = true)
 	{
+		// remove .. & .
 		$dirs = array_diff( scandir( $outerDir ), Array( '.', '..' ) );
 		
 		$out = Array();
@@ -449,11 +470,11 @@ class FS
 		foreach( $dirs as $d )
 			if( is_dir($outerDir.'/'.$d) and $depth )
 			{
-				$out[ $d ] = FS::getDirectoryTree( $outerDir.'/'.$d, $depth - 1);
+				$out[ $outerDir.'/'.$d ] = FS::getDirectoryTree( $outerDir.'/'.$d, $depth - 1);
 			} 
 			elseif(!$only_dirs)
 			{
-				$out[ $d ] = $d;
+				$out[ $outerDir.'/'.$d ] = $d;
 			}
 		
 		return $out;		

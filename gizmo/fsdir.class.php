@@ -62,8 +62,10 @@ class FSDir extends FSObject
 	 *
 	 * @return String	HTML anchor tag
 	 **/
-	public function htmlLink($content, $class = '', $id = '', $attributes = array())
+	public function htmlLink($content = null, $class = '', $id = '', $attributes = array())
 	{
-		return a($this->getURL(), $content, $class, $id, $attributes);
+		$content = (is_null($content))? $this->getCleanName(): $content;
+		
+		return a($this->_path->url(), $content, $class, $id, $attributes);
 	}
 }

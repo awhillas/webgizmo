@@ -153,7 +153,8 @@ class FSObject extends SplFileInfo
 	 **/
 	function getURL()
 	{		
-		return FS::getURL(FS::getPath()->add($this->getFilename()));
+		//return FS::getURL(FS::getPath()->add($this->getFilename()));
+		return $this->_path->url();
 	}
 
 	/**
@@ -161,7 +162,8 @@ class FSObject extends SplFileInfo
 	 */
 	function getFileURL()
 	{
-		return FS::getURL( $this );
+		// return FS::getURL( $this );
+		return $this->_path->realURL();
 	}
 
 	
@@ -202,7 +204,7 @@ class FSObject extends SplFileInfo
 	 */	
 	function html($format = 'xhtml1.1') 
 	{
-		return '<a href="'. $this->getURL() .'" class="'.get_class($this).'">'. $this->getCleanName() .'</a>';
+		return '<a href="'. $this->_path->url() .'" class="'.get_class($this).'">'. $this->getCleanName() .'</a>';
 	}
 
 //	abstract public function xml($format = 'xml1.0');

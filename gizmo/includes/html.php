@@ -50,7 +50,7 @@ function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs
 
 	foreach($list_items as $item_class => $lang)
 	{
-		$li_class = (!is_numeric($item_class)) ? $item_class: '';
+		$li_class = (!is_numeric($item_class)) ? ucwords($item_class): '';
 		$content .= li($lang, $li_class)."\n";
 	}
 	

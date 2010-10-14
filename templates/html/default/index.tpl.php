@@ -5,6 +5,7 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHAR_ENCODING ?>">
+	<meta name="generator" content="Web Gizmo">
 	
 	<title><?php echo $title ?></title>
 	
@@ -13,7 +14,7 @@
 <body class="<?php echo $fs->pathCSS() ?>">
 	<h1><a href="/"><?php echo $title ?></a></h1>
 	
-	<?php echo ul($fs->getMenu(), 'Menu') ?>
+	<?php echo ul($fs->menu(), 'Menu') ?>
 	
 	<?php echo $fs->render() ?>
 	

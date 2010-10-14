@@ -27,7 +27,7 @@
 		
 		<!-- YOUR DATA GOES HERE -->
 		
-		<?php echo ul($fs->getMenu(), 'Menu') ?>	
+		<?php echo ul($fs->menu(), 'Menu') ?>	
 	
 	</div>
 	

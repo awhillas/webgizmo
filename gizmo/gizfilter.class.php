@@ -140,10 +140,12 @@ class GizFilter extends GizCommand
 	 * @param	$File	SplFileInfo
 	 * @param	$needle	String	What we're looking for in the $File(s) name.
 	 */
-	protected function has($File, $needle)
+	protected function has($File, $regex)
 	{
 		// strpos returns FALSE if not found but also 0 if in 1st position
-		return !(strpos($File->getBasename(), $needle) === FALSE);
+		//return !(strpos($File->getBasename(), $needle) === FALSE);
+		
+		return preg_match("/$regex/", $File->getFilename());
 	}
 	
 	/**
