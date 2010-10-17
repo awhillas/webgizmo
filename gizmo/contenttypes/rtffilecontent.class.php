@@ -28,7 +28,7 @@ class RTFFileContent extends TextFileContent
 		$this->_rtf = new rtf( $this->_content );
 	}
 
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		return $this->convert('html');
 	}

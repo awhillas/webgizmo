@@ -15,7 +15,7 @@
  **/
 class ImageFileContent extends FSFile
 {
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		return '<img src="'. $this->getFileURL() .'" alt="'. $this->getCleanName() .'" class="ImageFileContent" />';
 	}

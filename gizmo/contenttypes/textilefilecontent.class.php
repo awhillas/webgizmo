@@ -24,7 +24,7 @@ include_once(INCLUDES_PATH.'/classTextile.php');
  **/
 class TextileFileContent extends TextFileContent
 {	
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		$textile = new Textile();
 		

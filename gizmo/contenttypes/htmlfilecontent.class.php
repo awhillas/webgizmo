@@ -6,7 +6,7 @@
  **/
 
 /**
- * Includes the HTML content dirctly
+ * Includes the HTML content directly.
  *
  * @package WebGizmo
  * @subpackage	ContentHanders
@@ -14,7 +14,7 @@
  **/
 class HTMLFileContent extends TextFileContent
 {	
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		return $this->_content;
 	}

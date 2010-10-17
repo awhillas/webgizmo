@@ -65,7 +65,7 @@ class FSDir extends FSObject
 	public function htmlLink($content = null, $class = '', $id = '', $attributes = array())
 	{
 		$content = (is_null($content))? $this->getCleanName(): $content;
-		
+
 		return a($this->_path->url(), $content, $class, $id, $attributes);
 	}
 }

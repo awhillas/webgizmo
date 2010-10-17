@@ -5,9 +5,14 @@
 	<title><?php echo $title ?></title>
 	
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHAR_ENCODING ?>">
+	<meta name="generator" content="Web Gizmo <?php echo $gizmo_version ?>">
 	
 	<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 	<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/base/base.css" type="text/css">
+	
+	<link rel="stylesheet" href="http://yui.dev/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+	<link rel="stylesheet" href="http://yui.dev/build/base/base.css" type="text/css">	
+	
 </head>
 <body>
 <div id="doc" class="yui-t1">
@@ -18,8 +23,8 @@
 		
 		<!-- YOUR DATA GOES HERE -->
 	
-		<?php echo $fs->getContent('html') ?>
-
+		<?php // echo $fs->getContent('html') ?>
+		<?php echo $content ?>
 	</div>
 </div>
 	</div>

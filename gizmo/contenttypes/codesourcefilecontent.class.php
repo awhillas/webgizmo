@@ -23,7 +23,7 @@ class CodeSourceFileContent extends TextFileContent
 {	
 	protected $_display_filename = 'full';
 	
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		$Geshi = new GeSHi();
 		

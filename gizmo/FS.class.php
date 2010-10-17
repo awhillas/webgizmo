@@ -22,6 +22,10 @@ include 'includes/debug.php';
  */
 include 'includes/krumo/class.krumo.php';
 
+/**
+ * @global	String	Version number of this install of Web Gizmo
+ */
+if (!defined('GIZMO_VERSION'))	define('GIZMO_VERSION', '0.2beta');
 
 // // // // // // // // // // // // // // // // //
 // Path constants
@@ -116,12 +120,12 @@ if (!defined('SITE_TITLE'))		define('SITE_TITLE', 	$_SERVER['SERVER_NAME']);
  * @global	string	
  */
 if (!defined('THEME_DIR'))		define('THEME_DIR',		'/default');
-
 /**
- * The name of the default render class
- * @global	String
+ * @global	string	Overrider of the default HTML layout render'er (Layoutor)	
  */
-if (!defined('CONTENT_RENDERER'))	define('CONTENT_RENDERER', 'BasicRender');
+if (!defined('HTML_LAYOUT'))		define('HTML_LAYOUT',	'LayoutHTML');
+
+
 
 // // // // // // // // // // // // // // // // //
 // Boring stuff...
@@ -338,10 +342,58 @@ class FS
 	}
 	
 	/**
+	 * Process a HTTP request returning the requested format.
+	 *
+	 * @return String
+	 * @todo 	add some more complex look up of template file name.
+	 **/
+	public function http($format = 'html')
+	{
+		if($this->path->is())
+		{
+			// Get the Layoutor for the format
+			$Layout = GizLayoutor::make($format);
+			
+			// Get the content parts
+			$content = $Layout->render($format);
+
+			// Get the template for the format
+			if($tpl = $this->getTemplate($format))
+			{
+				// Standard Gizmo stuff...
+				$tpl->format = $format;
+				$tpl->fs = &$this;
+				$tpl->here = &$this->currentPath();
+				$tpl->title = SITE_TITLE;
+				$tpl->langauge = $this->getLanguage();
+				$tpl->gizmo_version = GIZMO_VERSION;
+
+				// Assign the rendered content to the template
+				$tpl->assign($content);
+
+				// Send HTTP headers
+
+				// output the renered content. 
+				$tpl->display('index.tpl.php');
+			}			
+			
+		}
+	}
+	
+	/**
+	 * @return String	Rendered content in the given format
+	 **/
+	public function getContent($format, $query = '')
+	{
+		return GizLayoutor::make($format)->render($this->path);
+	}
+		
+	/**
 	 * mod_rewrite aware i.e. checks the REWRITE_URLS global
 	 * 
 	 * @param	$dir	String|SplFileInfo
 	 * @return 	String	the correct URL for links given a virtual path.
+	 * @deprecated Use Path->url() instead.
 	 * @see REWRITE_URLS
 	 */
 	static public function getURL($dir)
@@ -368,6 +420,7 @@ class FS
 	
 	/**
 	 * @return 	String	Value of the CGI "path" variable i.e. the "virtual path"
+	 * @deprecated Use Path->url() instead.
 	 */
 	public function vpath()
 	{
@@ -375,44 +428,19 @@ class FS
 	}
 	
 	/**
-	 * @param	$depth	Integer	Depth that the menu should render. i.e. list in a list.
-	 * @return 	Array	List of html links to the top level Content Directories.
-	 * @todo Add a base path here so menus starting at a sub path are possible.
+	 * Builds a list of HTML links to the top level folders in the Content folder
+	 * 
+	 * @return 	Array	List of HTML anchor tags to the top level folders.
 	 */
-	public function getMenu($base = '/', $depth = 1)
+	function menu()
 	{
 		$out = array();
 
-		$menu = $this->getContentTree('', $depth);
-
-		foreach (array_keys($menu) as $dir) 
-		{
-			if(preg_match("/^[^_]/", $dir) != 0)	// doesn't begin with an underscore
-			{
-				$url = FS::getURL($dir);
-
-				$class = $this->pathCSS($dir);
-				$class .= ($dir == FS::getPath()) ? ' Selected' : '';
-
-				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean(basename($dir))}</a>";
-			}
-		}
-		return $out;
-	}
-	
-	function menu($base = '', $depth = 1)
-	{
-		$out = array();
-/*		
-		foreach (array_keys($this->getContentTree('', $depth)) as $path)
-		{
-			$Dir = Path::open($path)->getBasename();
-			$out[] = $Dir;
-		}
-*/
 		foreach(Path::open($this->contentRoot())->query('folders.has.^[^_]') as $Dir)
 		{
-			$out[$Dir->getCleanName()] = $Dir->htmlLink();
+			$class = ( $this->currentPath()->url() == $Dir->getURL() )? 'Selected': '';
+			
+			$out[$Dir->getCleanName()] = $Dir->htmlLink(null, $class);
 		}
 
 		return $out;
@@ -590,56 +618,6 @@ class FS
 		}
 		else
 			return 'Top';	// Homepage
-	}
-	
-	/**
-	 * @return String	Rendered content in the given format
-	 **/
-	public function getContent($format, $query = '')
-	{
-		return GizLayoutor::make($format)->render($this->path);
-	}
-	
-	/**
-	 * Default render the current Virtual path's folder contents.
-	 * 
-	 * This is more a connivence function and is more of an example. More complex 
-	 * filtering and rendering control can be achieved by doing this in the template
-	 * itself, and is in fact the idea behind the template design.
-	 * 
-	 * For example: one might want to filter out everything except images and use only
-	 * their paths in some Flash gallery widget one part if the template and then grab only
-	 * the .text files and use the default rendering on another part (column say).
-	 * 
-	 * @param	String	$only	Filter out everything except 'files' or 'folders' 
-	 * @return 	String	HTML
-	 * @todo 	Replace this with FS::getContent()
-	 * @deprecated Since query language came into effect. Use FS::getContent() instead.
-	 **/
-	public function render($only = 'files', $format = 'html')
-	{
-		$out = $filter = '';
-		
-		// Build filter array. See Path::getIt() for more complex examples. 
-		switch($only)
-		{
-			case 'files':
-				$filter = array('isFile' => true);
-				break;
-			
-			case 'folders':
-				$filter = array('isDir' => true);
-				break;
-		}
-		
-		$stupid = CONTENT_RENDERER;
-		$Renderer = new $stupid($this->getContent($filter));
-		
-		// Get the content and render each
-		// foreach($this->getContent($filter) as $file) 
-		// 	$out .= $file->render($format);
-		
-		return $Renderer->render($format);
 	}
 }
 

@@ -9,9 +9,10 @@
 
 	// Change these variables per website
 //	define('SITE_TITLE', 'Website name here');
-	define('THEME_DIR', '/yui');
+//		define('THEME_DIR', '/yui');
 
 	// Leave this alone...
 	require dirname(__FILE__).'/gizmo/FS.class.php';
 	
-	echo FS::get()->HttpRequest();
+//	echo FS::get()->HttpRequest();
+	echo FS::get()->http();

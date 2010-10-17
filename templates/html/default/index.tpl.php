@@ -16,7 +16,7 @@
 	
 	<?php echo ul($fs->menu(), 'Menu') ?>
 	
-	<?php echo $fs->render() ?>
+	<?php echo $content ?>
 	
 </body>
 </html>

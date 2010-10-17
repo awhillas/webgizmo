@@ -32,19 +32,17 @@ abstract class GizLayoutor
 			case 'html4':
 			case 'html5':
 			case 'xhtml':
+			case 'html':
 			default:
-				return new HTMLLayoutor();
+				if(defined('HTML_LAYOUT') and class_exists(HTML_LAYOUT))
+				{
+					$Layoutor = HTML_LAYOUT;
+					
+					return new $Layoutor();
+				}
+				else
+					return new LayoutHTML();
 		}
-		
 	}
-	
-	/**
-	 * This should be overridden and is the main point of this class.
-	 * 
-	 * @param	$Path	Path	Points to the content to render.
-	 * 
-	 * @return 	The formatted content. This is the main point of this object
-	 **/
-	abstract public function render($Path);
 	
 } // END class GizLayoutor

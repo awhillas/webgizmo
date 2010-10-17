@@ -22,6 +22,9 @@ class FSObject extends SplFileInfo
 	 **/
 	protected $_path;
 	
+	// Tag from file name.
+	protected $_name_meta;
+	
 	public function __construct($path)
 	{
 		if(is_a($path, 'SplFileInfo'))
@@ -30,7 +33,35 @@ class FSObject extends SplFileInfo
 		}
 		$this->_path = new Path($path, true);
 		
+		$this->_name_meta = $this->parseName();
+		
 		parent::__construct($this->_path->get());
+	}
+
+	/**
+	 * Parse the file name for _tags_
+	 * 
+	 * The file name format that is expected for files is:
+	 * <code>
+	 * _tag1_tag2_02_nice_name.extension
+	 * </code>
+	 * and for directories is similar with the addition of a query part
+	 * <code>
+	 * _tag1_tag2_02_nice_name.filter.sorter.extension
+	 * </code>
+	 * Any of these parts for ether can be ommited except the nice_name which 
+	 * is always expected.
+	 *
+	 * @return Array	List of tags found in the file name.
+	 **/	
+	private function parseName()
+	{
+		preg_match_all('/^(?:_+(?P<tag>[a-z]+)*_)?(?:(?P<sort>\d{2})_)?/', $this->getBasename(), $bits);
+		
+		return array(
+			'tag' 	=> $bits['tag'][0],
+			'sort' 	=> $bits['sort'][0]
+		);
 	}
 
 	/**
@@ -136,15 +167,14 @@ class FSObject extends SplFileInfo
 		return FS::clean($this->getBasename('.'.$this->getExtention($this->getBasename())));
 	}
 	
-	/**
-	 * Parse the file name for _tags_
-	 *
-	 * @return Array	List of tags found in the file name.
-	 * @todo Implement.
-	 **/
-	function getTags($filename = '')
+	function getTag()
 	{
-		return array();
+		return $this->_name_meta['tag'];
+	}
+	
+	function getSort()
+	{
+		return $this->_name_meta['sort'];
 	}
 
 	/**
@@ -174,22 +204,21 @@ class FSObject extends SplFileInfo
 	/**
 	 * Polymorphic function for rendering the file content to a particular format.
 	 * 
-	 * @param	$how	The format to render. Supports 'html' (default), 'rss' and 'text' (plain text)
-	 * @param	$format	
+	 * @param	$format	The format to render. Supports 'html' (default), 'rss' and 'text' (plain text)
 	 *
 	 * @return String	In the appropriate format
 	 * @todo Finish other rending formats i.e. RSS, plain text, RTF, PDF ... 
 	 **/
-	public function render($how = 'html', $format = 'xhtml1.1')
+	public function render($format = 'html')
 	{
-		switch($how)
+		switch($format)
 		{
 			case 'text':
 				return $this->text($format);
 			
 			case 'rss':
 				return $this->rss($format);
-				
+			
 			case 'html':
 			default:
 				return $this->html($format);
@@ -198,29 +227,22 @@ class FSObject extends SplFileInfo
 	
 	/**
 	 * HTML rendering
+	 * 
 	 * @param	$format	The HTML standard to render to. This does nothing at the 
 	 * 		moment but makes it future proof for HTML5 etc.
 	 * @return String	HTML representation of the file.
 	 */	
-	function html($format = 'xhtml1.1') 
+	function html($format = 'html') 
 	{
 		return '<a href="'. $this->_path->url() .'" class="'.get_class($this).'">'. $this->getCleanName() .'</a>';
 	}
 
-//	abstract public function xml($format = 'xml1.0');
-
 	/**
 	 * Default text rendering
 	 */
-	public function text($format = 'utf8')
+	public function text()
 	{
-		switch($format)
-		{
-			case 'utf8':
-			default:
-				// Force invoke __toString()
-				return utf8_encode($this);
-		}
+		return utf8_encode($this);
 	}
 	
 }

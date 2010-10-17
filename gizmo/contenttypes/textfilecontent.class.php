@@ -43,15 +43,15 @@ class TextFileContent extends FSFile
 	/**
 	 * @todo Should try to parse the white space and wrap in DIV
 	 */
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
-		return $this->renderHTML($format = 'xhtml1.1', "<p>$this->_content</p>");
+		return $this->renderHTML($format = 'html', "<p>$this->_content</p>");
 	}
 	
 	/**
 	 * Function to do the standard text file handling behavior so that descendants can optionally call it 
 	 */
-	protected function renderHTML($format = 'xhtml1.1', $content)
+	protected function renderHTML($format = 'html', $content)
 	{
 		$class_name = get_class($this);
 

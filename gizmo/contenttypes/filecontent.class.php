@@ -49,7 +49,7 @@ abstract class FileContent
 	 * @see FileContent::render()
 	 * @see http://www.php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
 	 */
-	public function __invoke($how = 'html', $format = 'xhtml1.1')
+	public function __invoke($how = 'html', $format = 'html')
 	{
 		return $this->render($how, $format);
 	}

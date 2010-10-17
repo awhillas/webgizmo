@@ -41,7 +41,7 @@ if(!defined('GZ_AUDIO_NOT_SUPPORTED_MESSAGE'))
  **/
 class AudioFileContent extends FSFile
 {
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		$attrs = array();
 		if(GZ_AUDIO_CONTROLS)	$attrs['controls'] = 'controls';

@@ -55,3 +55,20 @@ function what($subject)
 			echo get_class($subject);
 	}
 }
+
+/**
+ * Print all the defined variables in the current scope.
+ */
+function defvar()
+{
+	pr(get_defined_vars());
+}
+
+/**
+ * Dump all the user defined constants and their values.
+ */
+function defcon()
+{
+	$cons = get_defined_constants(true);
+	pr($cons['user']);
+}

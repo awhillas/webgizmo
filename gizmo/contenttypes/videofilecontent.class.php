@@ -46,7 +46,7 @@ if(!defined('GZ_VIDEO_NOT_SUPPORTED_MESSAGE'))
  **/
 class VideoFileContent extends FSFile
 {
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		$attrs = array();
 		if(GZ_VIDEO_CONTROLS)	$attrs['controls'] = 'controls';

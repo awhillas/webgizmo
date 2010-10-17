@@ -48,10 +48,10 @@ function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs
 {
 	$content = '';
 
-	foreach($list_items as $item_class => $lang)
+	foreach($list_items as $li_id => $lang)
 	{
-		$li_class = (!is_numeric($item_class)) ? ucwords($item_class): '';
-		$content .= li($lang, $li_class)."\n";
+		$li_id = (!is_numeric($li_id)) ? strtoupper($li_id): '';
+		$content .= li($lang, '', $li_id)."\n";
 	}
 	
 	return tag($list_type, false, $content, $class, $id, $attrs);

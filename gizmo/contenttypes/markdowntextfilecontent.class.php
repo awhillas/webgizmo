@@ -21,7 +21,7 @@ include_once(INCLUDES_PATH.'/PHP Markdown/markdown.php');
  **/
 class MarkdownTextFileContent extends TextFileContent
 {		
-	function html($format = 'xhtml1.1')
+	function html($format = 'html')
 	{
 		return $this->renderHTML($format, Markdown($this->_content));
 	}
