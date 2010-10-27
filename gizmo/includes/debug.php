@@ -9,16 +9,18 @@
 /**
  * shortcut for print_r
  *
+ * @package WebGizmo
  * @return String
  **/
 function pr($subject)
 {
-	echo "\n".print_r($subject, true)."\n";
+	echo "\n<pre>".print_r($subject, true)."</pre>\n";
 }
 
 /**
  * shortcut for var_dump()
  *
+ * @package WebGizmo
  * @return String
  **/
 function vd($subject)
@@ -29,6 +31,7 @@ function vd($subject)
 /**
  * Stack Dump
  *
+ * @package WebGizmo
  * @return String
  **/
 function sd($html = true)
@@ -42,6 +45,7 @@ function sd($html = true)
 /**
  * Print what type of subject is passed
  *
+ * @package WebGizmo
  * @return String
  **/
 function what($subject)
@@ -58,6 +62,7 @@ function what($subject)
 
 /**
  * Print all the defined variables in the current scope.
+ * @package WebGizmo
  */
 function defvar()
 {
@@ -66,6 +71,7 @@ function defvar()
 
 /**
  * Dump all the user defined constants and their values.
+ * @package WebGizmo
  */
 function defcon()
 {

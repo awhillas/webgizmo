@@ -86,7 +86,7 @@ class GizQuery implements Iterator
 							$out = (array)$out + (array)$FSObj->getPath()->query(implode($divider, $commands))->get();
 				}
 				else
-				{
+				{	
 					// Assume the next part is a paramter if its not a known filter or sorter
 					$param = null;
 					if(

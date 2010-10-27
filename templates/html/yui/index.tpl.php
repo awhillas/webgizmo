@@ -13,6 +13,8 @@
 	<link rel="stylesheet" href="http://yui.dev/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 	<link rel="stylesheet" href="http://yui.dev/build/base/base.css" type="text/css">	
 	
+	<?php echo $head ?>
+	
 </head>
 <body>
 <div id="doc" class="yui-t1">
@@ -42,6 +44,7 @@
 	</div>
 </div>
 
+<?php echo $foot ?>
 
 </body>
 </html>

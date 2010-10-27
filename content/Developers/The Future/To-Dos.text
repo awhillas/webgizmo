@@ -1,0 +1,10 @@
+- **mod_rewrite** working so the virtual path can be make transparent to the URL. (sort-a works)
+- Make setting variables with _VAR.txt files work
+- Make IDs from the filenames and use it in DIV wrapper.
+- Some example websites i.e. <http://www.sonyhof.de>, kymward.com and perhaps www.anthonythimas.tv
+- Use Regular Expressions to match extension so more complex extensions can be mapped.
+- Metadata files, which should begin with an underscore '_' so you can associate captions or links to pictures for example.
+- Make the extension => FileContent mapping easier to override.
+- Finish other rending formats i.e. RSS, plain text, RTF, PDF ... 
+- Write RTF parser... ya (that will be a fun day).
+- Handle 404's

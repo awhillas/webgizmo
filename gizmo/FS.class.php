@@ -123,7 +123,7 @@ if (!defined('THEME_DIR'))		define('THEME_DIR',		'/default');
 /**
  * @global	string	Overrider of the default HTML layout render'er (Layoutor)	
  */
-if (!defined('HTML_LAYOUT'))		define('HTML_LAYOUT',	'LayoutHTML');
+if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'LayoutHTML');
 
 
 
@@ -136,7 +136,7 @@ if(version_compare(PHP_VERSION, '5.0.0') <= 0)
 	trigger_error('You need at least PHP 5.0 to use Web Gizmo! You have version '.PHP_VERSION, E_ERROR);
 
 // Make sure our Classes get included automatically
-set_include_path( implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH)) );
+set_include_path( implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/handlers', PLUGINS_PATH)) );
 spl_autoload_extensions('.class.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
 
@@ -167,12 +167,6 @@ class FS
 	private $EXCLUDE_FILES = array('.', '..', '.DS_Store', 'Thumbs.db');
 	
 	/**
-	 * Array of Content objects
-	 * @var Array
-	 */
-	private $content = Array();
-	
-	/**
 	 * Current absolute content path
 	 * @var Path
 	 * @see FS::currentPath()
@@ -188,6 +182,13 @@ class FS
 	 * @var	Path
 	 */
 	private $templatesRoot;
+
+	/**
+	 * @var	Array	Array of content variables to be added to the Template
+	 * 		before rendering.
+	 * @see FS::add()
+	 */
+	public $content;
 	
 	/**
 	 * @param	String	Content path override, should be the absolute path to 
@@ -216,6 +217,8 @@ class FS
 		{
 			$this->path = new Path($content_path . DEFAULT_START, true);
 		}
+		
+		$this->content = array('head' => '', 'foot' => '');
 	}
 
 	/**
@@ -333,7 +336,7 @@ class FS
 				$tpl->format = $format;
 				$tpl->fs = &$this;
 				$tpl->here = &$this->path;
-				$tpl->title = SITE_TITLE;
+				$tpl->title = htmlentities(SITE_TITLE);
 				$tpl->langauge = $this->getLanguage();
 
 				$tpl->display('index.tpl.php');
@@ -364,10 +367,14 @@ class FS
 				$tpl->format = $format;
 				$tpl->fs = &$this;
 				$tpl->here = &$this->currentPath();
-				$tpl->title = SITE_TITLE;
+				$tpl->templates = $this->templatesRoot()->realURL();
+				$tpl->title = htmlentities(SITE_TITLE);
 				$tpl->langauge = $this->getLanguage();
 				$tpl->gizmo_version = GIZMO_VERSION;
 
+				// Shared global vars used by plugins and handlers.
+				$tpl->assign($this->content);
+				
 				// Assign the rendered content to the template
 				$tpl->assign($content);
 
@@ -618,6 +625,39 @@ class FS
 		}
 		else
 			return 'Top';	// Homepage
+	}
+	
+	/**
+	 * Add content to the $header variable.
+	 * Used to add HTML to the header/footer of the template.
+	 * These variables will be made available to the template as $head or $foot etc.
+	 * The value is 
+	 * 
+	 * @param	String		HTML to add to the variable.
+	 * @param	String		Name of the variable. Usually 'head' or 'foot' for standard HTML doc header or footer but can be anything.
+	 **/
+	public static function add($html, $var = 'head')
+	{
+		$fs = FS::get();
+		
+/*	This is too hard. Look for a nice way to implement uniqunes in includes...
+		
+		// Does all this seem a bit silly just to append to a string...?
+		if(array_key_exists($fs->content, $var))
+		{
+			if(!array_key_exists($fs->content[$var], md5($html)))
+			{
+				// If it does exisit then we already have it.
+				$fs->content[$var][md5($html)] = $html;
+			}
+		}
+		else
+			$fs->content[$var] = array(md5($html) => $html);
+*/
+		if(isset($fs->content[$var]))
+			$fs->content[$var] .= $html;
+		else
+			$fs->content[$var] = $html;
 	}
 }
 

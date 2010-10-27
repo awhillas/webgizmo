@@ -25,14 +25,17 @@ class LayoutHTML extends GizLayoutor
 		$out['content'] = "\n\n<!-- LayoutHTML::render() start ... -->\n\n";
 		
 		if($Dir = FSObject::make(FS::get()->currentPath()) AND $Dir->isDir())
-		{		
+		{
 			foreach($Dir->getContents() as $FSObject)
 			{
 				// Instanciate a handler for the file and render
-				$tag = $tag = $FSObject->getTag();
+				$tag = $FSObject->getTag();
 				$tag = (empty($tag))? 'content': $tag;
 				
-				$out[$tag] .= $FSObject->render($format);
+				if(isset($out[$tag]))
+					$out[$tag] .= $FSObject->render($format);
+				else
+					$out[$tag] = $FSObject->render($format);
 			}
 		}
 		else

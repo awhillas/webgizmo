@@ -115,18 +115,20 @@ class GizFilter extends GizCommand
 	{
 		$out = array();
 		
-		if(is_null($n) OR empty($n))
-			$n = 1;
-		
-		// array rand returns the KEY if there is only one item requested so... 
-		if ($n == 1) 
-			$keys = array(array_rand($subject)); 
-		else 
-			$keys = array_rand($subject, $n); 
+		if(!empty($subject))
+		{
+			if(is_null($n) OR empty($n) OR !is_numeric($n))
+				$n = 1;
 
-		foreach ($keys as $k)
-			$out[$k] = $subject[$k];                   
-		
+			// array rand returns the KEY if there is only one item requested so... 
+			if ($n == 1) 
+				$keys = array(array_rand($subject)); 
+			else 
+				$keys = array_rand($subject, $n); 
+
+			foreach ($keys as $k)
+				$out[$k] = $subject[$k];			
+		}		
 		return $out;		
 	}
 	
@@ -160,8 +162,8 @@ class GizFilter extends GizCommand
 	 * @todo 	Find out why this is working but pulling errors sometimes...?
 	 **/
 	protected function tag($File, $needle)
-	{		
-		return @preg_match($File->getBasename(), '/_'.$needle.'_/');
+	{	
+		return $File->getTag() == $needle;
 	}
 	
 	/**

@@ -21,7 +21,7 @@
  * Can be used to generate any HTML markup
  *
  * @return String	A well formed HTML tag
- * @author Alexander R B Whillas
+ * @package WebGizmo
  **/
 function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs = array())
 {
@@ -29,12 +29,32 @@ function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs 
 	
 	if(!empty($class)) $attrs['class'] = $class;
 	
-	if(!empty($id)) $attrs['id'] = strtoupper($id);	
+	if(!empty($id)) $attrs['id'] = $id;	
 	
 	foreach($attrs as $attr => $value) 
 		$out .= " $attr=\"$value\"";
 	
 	return $out . ( $single ? '/>' : '>'.$content.'</'.$tag.'>');
+}
+/**
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
+function div($content = '', $class = '', $id = '', $attrs = array())
+{
+	return tag('div', false, $content, $class, $id, $attrs);
+}
+
+/**
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
+function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array())
+{
+	$attrs['src'] = $url;
+	$attrs['alt'] = $alternate_text;
+	
+	return tag('img', true, null, $class, $id, $attrs);
 }
 
 /**
@@ -57,14 +77,19 @@ function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs
 	return tag($list_type, false, $content, $class, $id, $attrs);
 }
 
+/**
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
 function li($content, $class = '', $id = '')
 {
 	return tag('li', false, $content, $class, $id);
 }
 
 /**
- * Unordered List
- */
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
 function ul($list_items, $class = '', $id = '', $attrs = array())
 {
 	return html_list($list_items, 'ul', $class, $id, $attrs);
@@ -72,17 +97,18 @@ function ul($list_items, $class = '', $id = '', $attrs = array())
 
 /**
  * Ordered List
- */
+ * 
+ * @return String	A well formed HTML tag.
+ * @package WebGizmo
+ **/
 function ol($list_items, $class = '', $id = '', $attrs = array())
 {
 	return html_list($list_items, 'ol', $class, $id, $attrs);
 }
 
 /**
- * undocumented function
- *
- * @return String
- * @author Alexander R B Whillas
+ * @return String	A well formed Anchor HTML tag.
+ * @package WebGizmo
  **/
 function a($href, $text, $class = '', $id = '', $attrs = array())
 {
@@ -94,6 +120,10 @@ function a($href, $text, $class = '', $id = '', $attrs = array())
 // - - - - - - - - - - - - -
 // HTML 5 tags
 // - - - - - - - - - - - - -
+/**
+ * @return String	A well formed HTML 5 Video tag.
+ * @package WebGizmo
+ **/
 function video($source, $class = '', $id = '', $attrs = array(), $not_supported_message = '') {
 	
 	$attrs['src'] = $source;
@@ -104,6 +134,10 @@ function video($source, $class = '', $id = '', $attrs = array(), $not_supported_
 	return tag('video', false, '', $class, $id, $attrs);
 }
 
+/**
+ * @return String	A well formed HTML 5 Audio tag.
+ * @package WebGizmo
+ **/
 function audio($source, $class = '', $id = '', $attrs = array(), $not_supported_message = '') {
 	
 	$attrs['src'] = $source;

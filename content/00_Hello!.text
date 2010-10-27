@@ -1,11 +1,3 @@
-Web Gizmo is Content Management System (CMS) that was designed with the **"Less is More"** philosophy in mind. Here is what Web Gizmo _does NOT do_:
-
-- **No database!** Doesn't require a database. Instead it just uses the file system with some very simple naming conventions. In other words: Folders = Webpage
-- **No forms!** All "content management" is done via FTP. If you can manage your files on your computer you already know enough to use Web Gizmo. No new complex user interface to learn.
-- **No configuration!** In most cases you should be able to simple FTP Web Gizmo to your host along with your web content (files) and your done. Too Easy!
-
-We took out the trickiest parts of setting up and running a dynamic website to create **THE SIMPLEST** _website system in the world_!
-	
 ### Features ###
 
 OK so it also has some nice features too which do not add complexity (promise!).
@@ -17,12 +9,12 @@ OK so it also has some nice features too which do not add complexity (promise!).
 	
 ### Requirements ###
 
-All your host will require is: 
+All you will require from your hosting is: 
 
-1. **PHP 5.3** or higher enabled on your account and 
+1. **PHP 5.0** or higher enabled on your account and 
 2. the **FTP details** for your account 
 
-and you can have a website in 5 minutes that is easy to setup and maintain! If yo don't know about ether of these ask your hosting provider  about it.
+and you can have a _website in 5 minutes_ that is easy to setup and maintain! If you do not know about ether of these ask your hosting provider about it.
 
 ### Styling ###
 

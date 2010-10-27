@@ -10,7 +10,7 @@
  * File should be in INI format.
  */
 if (!defined('DEFAULT_HANDLER_MAP_PATH'))
-	define('DEFAULT_HANDLER_MAP_PATH', 	GIZMO_PATH.'/contenttypes/default.map.ini');
+	define('DEFAULT_HANDLER_MAP_PATH', 	GIZMO_PATH.'/handlers/default.map.ini');
 
 /**
  * Handle the mapping between file extentions and the handler classes for them

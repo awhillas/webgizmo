@@ -1,8 +1,12 @@
-I know I said "no configuration" and out of the box FS-CMS just works (or should) without any configuration. You _can_ customise FS-CMS a bit however. Here are the variables you can set to customise the behavior of Gizmo:
+I know I said "no configuration" and out of the box FS-CMS just works (or should) without any configuration. You _can_ customise FS-CMS a bit however. Here are the variables you can set to customise the behaviour of FS-CMS:
 
 ### How do I "set" a variable ###
 
-Define a PHP constant in the index.php file, which is a little bit techie (but not much). So for example making a new line just after the first line "<?php" in the index.php file you would put the following line of PHP code:
+Well there are 2 ways you can do this: 
+
+1. The easiest way is to put a text file in /content folder with the name of the variable you want to set starting with an underscore "_", and with the value on the first line of that file. So for example to set the SITE_TITLE variable you would put a file called "_SITE_TITLE.txt" in the /content folder and in that file you would have "My Site about Monkeys!" on the first line (If you were making a site about Monkeys that is).
+
+2. The other way to do it would be to define a PHP constant in the index.php file, which is a little bit more techie (but not much). So for example making a new line just after the first line "<?php" in the index.php file you would put the following line of PHP code:
 	~~~
 	define('SITE_TITLE', 'My Site about my cat Fluffy!');
 	~~~
@@ -19,6 +23,9 @@ THEME_DIR
 
 WEB_ROOT
 : The root URL of the FS-CMS. This is usually detected if you have it in the base of the domain name i.e. www.example.com but if you have it in a sub-folder like www.example.com/subfolder/fscms/ the you would set this to that.
+
+FS_CMS_PATH
+: This points to the 'fscms' folder on your server. This defaults to a sub-folder '/fscms' to the folder you have the index.php in. If you want to have many websites working off the same copy of FS-CMS then move this /fscms folder somewhere central and set this in each website to point to this central copy.
 
 CONTENT_DIR
 : This should point to the folder in which you have your content. If this is different from the default '/content' folder in the folder you have the index.php then set it to the correct path. This is handy of you want to share the content folder with another CMS or website.
