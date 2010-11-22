@@ -48,12 +48,13 @@ class AudioFileContent extends FSFile
 		if(GZ_AUDIO_AUTOPLAY)	$attrs['autoplay'] = 'autoplay';
 		if(GZ_AUDIO_LOOP) 		$attrs['loop'] = 'loop';
 		if(GZ_AUDIO_PRELOAD)	$attrs['preload'] = 'preload';
+		if($type = $this->getMIME()) $attrs['type'] = $type;
 		
 		switch($format)
 		{
 			case 'html5':
 			default:
-				return audio($this->getFileURL(), 'VideoFileContent', $this->getFilename(), $attrs);			
+				return audio($this->getFileURL(), 'VideoFileContent', $this->getID(), $attrs);			
 		}
 	}
 }

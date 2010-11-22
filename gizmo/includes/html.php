@@ -19,9 +19,18 @@
 /**
  * General purpose HTML tag function.
  * Can be used to generate any HTML markup
- *
- * @return String	A well formed HTML tag
+ * 
  * @package WebGizmo
+ * 
+ * @param	String
+ * @param	Boolean	Is it a single tag or does it have a closing tag? Note: 
+ * 		always renders as a XHTML single tag at the moment.
+ * @param	String	If it has a closing tag, then this is the content rendered between the two.
+ * @param	String	CSS class(es)
+ * @param	String	ID used for CSS and Javascript.
+ * @param	Array	Array of other attributes where the key is the attribute and the value is the value.
+ * 
+ * @return String	A well formed HTML tag
  **/
 function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs = array())
 {
@@ -34,7 +43,7 @@ function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs 
 	foreach($attrs as $attr => $value) 
 		$out .= " $attr=\"$value\"";
 	
-	return $out . ( $single ? '/>' : '>'.$content.'</'.$tag.'>');
+	return $out . ( $single ? ' />' : '>'.$content.'</'.$tag.'>');
 }
 /**
  * @return String	A well formed HTML tag
@@ -117,6 +126,18 @@ function a($href, $text, $class = '', $id = '', $attrs = array())
 	return tag('a', false, $text, $class, $id, $attrs);
 }
 
+/**
+ * @todo finish this.
+ */
+// function link($href, $type, $rel = null)
+// {
+// 	$attrs['href'] = $href;
+// 	$attrs['type'] = $type;
+// 	if(!is_null($ref)) $attrs['rel'] = $rel;
+// 	
+// 	return tag('link', true, null, null, null, $attrs);
+// }
+
 // - - - - - - - - - - - - -
 // HTML 5 tags
 // - - - - - - - - - - - - -
@@ -144,3 +165,4 @@ function audio($source, $class = '', $id = '', $attrs = array(), $not_supported_
 	
 	return tag('audio', false, '', $class, $id, $attrs);
 }
+

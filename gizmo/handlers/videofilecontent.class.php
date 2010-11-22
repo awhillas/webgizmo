@@ -58,7 +58,7 @@ class VideoFileContent extends FSFile
 		{
 			case 'html5':
 			default:
-				return video($this->getFileURL(), 'VideoFileContent', $this->getFilename(), $attrs);			
+				return video($this->getFileURL(), 'VideoFileContent', $this->getID(), $attrs);			
 		}
 	}
 	

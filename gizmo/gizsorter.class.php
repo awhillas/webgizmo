@@ -11,7 +11,7 @@
  * @see GizCommand, GizFilter, GizQuery::run()
  * @package WebGizmo
  * @todo Sort by Date
- * @todo Sort by Reverse
+ * @todo This whole class should be rewritten to use the Visitor pattern @link http://en.wikipedia.org/wiki/Visitor_pattern
  **/
 class GizSorter extends GizCommand
 {
@@ -23,7 +23,7 @@ class GizSorter extends GizCommand
 			case 'shuffle':
 			case 'random':
 			case 'rand':
-				return $this->shuffle($subject);
+				return GizSorter::shuffle($subject);
 
 			case 'reverse':
 			case 'rev':
@@ -61,20 +61,25 @@ class GizSorter extends GizCommand
 	}
 
 	/**
-	 * undocumented function
+	 * Shuffle the array keeping keys intact.
 	 *
-	 * @return void
-	 * @author Alexander Whillas
+	 * @return Array
 	 **/
 	function shuffle($list) 
 	{ 
-		$keys = array_keys($list);
+		if (!is_array($list) OR count($list) < 2) 
+			return $list; 
+
+		$keys = array_keys($list); 
 		
 		shuffle($keys); 
-		// $list gets sorted in the same way that $keys does
-		array_multisort($keys, $list);
 		
-		return $list; 
+		$random = array(); 
+		
+		foreach ($keys as $key) 
+			$random[$key] = $list[$key]; 
+
+		return $random;
 	} 
 	
 	/**

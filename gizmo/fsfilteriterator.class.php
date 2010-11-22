@@ -46,10 +46,14 @@ class FSFilterIterator extends FilterIterator
 		if(!is_array($list))
 		{
 			$ignore_filename = FS::get()->contentRoot().'/'.GZ_IGNORE_FILENAME;
-		
-			$list = file($ignore_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		
-			$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
+			if(file_exists($ignore_filename))
+			{
+				$list = file($ignore_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+					
+				$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
+			}
+			else
+				$list = array();
 		}
 		
 		return $list;

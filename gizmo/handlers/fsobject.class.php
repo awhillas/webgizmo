@@ -14,7 +14,7 @@ require_once 'includes/html.php';
  *
  * @package WebGizmo
  **/
-class FSObject extends SplFileInfo
+abstract class FSObject extends SplFileInfo
 {
 	/**
 	 * Path to the file 
@@ -120,12 +120,9 @@ class FSObject extends SplFileInfo
 	/**
 	 * Get the content of the file or directory
 	 * 
-	 * @return Mixed
+	 * @return NULL
 	 **/
-	public function getContents()
-	{
-		return null;
-	}
+	abstract public function getContents();
 	
 	public static function getextension($filename)
 	{
@@ -140,6 +137,7 @@ class FSObject extends SplFileInfo
 	}
 	/**
 	 * @return String	Filename without beginning number proceeded by an underscore nor the extension.
+	 * @todo Get the name without the tag or extension(s).
 	 **/
 	public function getCleanName()
 	{	
@@ -159,7 +157,9 @@ class FSObject extends SplFileInfo
 	// Unique ID useful for CSS
 	function getID()
 	{
-		return '';
+		$id = trim(preg_replace('/[^a-zA-Z0-9]/', ' ', $this->getBasename()));
+		
+		return strtoupper(str_replace(' ', '_', $id));
 	}
 
 	/**

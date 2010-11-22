@@ -18,15 +18,15 @@
 </head>
 <body>
 <div id="doc" class="yui-t1">
-   <div id="hd" role="banner"><h1><a href="<?php echo BASE_URL_PATH ?>"><?php echo $title ?></a></h1></div>
+   <div id="hd" role="banner"><h1><a href="/<?php echo BASE_URL_PATH ?>"><?php echo $title ?></a></h1></div>
    <div id="bd" role="main">
 	<div id="yui-main">
 	<div class="yui-b"><div class="yui-g">
 		
 		<!-- YOUR DATA GOES HERE -->
 	
-		<?php // echo $fs->getContent('html') ?>
 		<?php echo $content ?>
+
 	</div>
 </div>
 	</div>

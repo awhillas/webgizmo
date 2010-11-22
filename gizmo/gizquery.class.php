@@ -22,10 +22,16 @@ class GizQuery implements Iterator
 	 */
 	public $_file_list = array();
 	
-	function __construct($file_list) 
+	/**
+	 * @param	Array	List of FSObjects
+	 * @param	Boolean	Should the list be sorted by keys. This is mainly for GizQuery::run() as it might do special sorting.
+	 */
+	function __construct($file_list, $sort = true) 
 	{
-		// Standardise ordering. Key should be the full path
-		ksort($file_list);
+		// Standardise ordering. Key should be the full path. Should be do this 
+		// somewhere else? I the factory method perhaps?
+		if($sort)
+			ksort($file_list);
 		
 		$this->_file_list = $file_list;
 	}
@@ -52,7 +58,8 @@ class GizQuery implements Iterator
 	 * 
 	 * @return 	GizQuery
 	 * 
-	 * @todo Clean this up to loop over array('GizSorter', 'GizFilter') and potentially make plugable filters/sorters.
+	 * @todo Clean this up to loop over array('GizSorter', 'GizFilter') and 
+	 * 		potentially make plugable filters/sorters. Use the Visitor pattern.
 	 */
 	public function run($query, $divider = '.')
 	{
@@ -110,8 +117,8 @@ class GizQuery implements Iterator
 					}
 				}
 			}
-			
-		return new GizQuery($out);		
+
+		return new GizQuery($out, false);		
 	}
 	
 	/**
@@ -216,11 +223,7 @@ class GizQuery implements Iterator
 			if($folder->getContents()->tally() > 0)
 				$out[] = $folder;
 		}
-		// foreach ($this->filter(array('isDir' => true)) as $item) 
-		// {
-		// 	if($result = Path::open($item->getPathname())->query(array('name' => $regex)) and $result->tally())
-		// 		$out[] = $result;
-		// }
+
 		return GizQuery::merge($out);
 	}
 	

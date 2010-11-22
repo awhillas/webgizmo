@@ -120,11 +120,16 @@ if (!defined('SITE_TITLE'))		define('SITE_TITLE', 	$_SERVER['SERVER_NAME']);
  * @global	string	
  */
 if (!defined('THEME_DIR'))		define('THEME_DIR',		'/default');
-/**
- * @global	string	Overrider of the default HTML layout render'er (Layoutor)	
- */
-if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'LayoutHTML');
 
+/**
+ * @global	string		Overrider of the default HTML layout render'er (Layoutor)	
+ */
+if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'FormatHTML');
+
+/**
+ * @global	integer		Default HTML version
+ */
+if (!defined('HTML_DEFAULT_VERSION'))	define('HTML_DEFAULT_VERSION',	4);
 
 
 // // // // // // // // // // // // // // // // //
@@ -189,6 +194,13 @@ class FS
 	 * @see FS::add()
 	 */
 	public $content;
+	
+	/**
+	 * List of file references. 
+	 * 
+	 * @var	Array	The Key is the path and the value is the MIME type.
+	 */
+	private $fileReferences = array();
 	
 	/**
 	 * @param	String	Content path override, should be the absolute path to 
@@ -286,115 +298,31 @@ class FS
 	{
 		return $this->templatesRoot;
 	}
-
-	/**
-	 * Instantiate the Template Engine and find all the appropriate templates to give it.
-	 * 
-	 * @see http://phpsavant.com/
-	 * @see http://devzone.zend.com/article/9075
-	 */
-	private function getTemplate($format = 'html')
-	{
-		$Path = $this->templatePath($format);
-		
-		if($Path->is())
-		{
-			// Using Savant3 template system.
-			require INCLUDES_PATH.'/Savant3/Savant3.php';
-
-			// set options
-			$options = array(
-				'template_path' => $Path,
-				'exceptions'    => true,
-				'extract'       => true
-			);
-
-			// initialize template engine
-			return new Savant3($options);
-		}
-		else
-		{
-			trigger_error('Template path could not be found: '.$Path, E_USER_ERROR);
-			return false;
-		}
-	}
-
-	/**
-	 * Handle HTTP request
-	 * 
-	 * @return 	String	Content in the form of the requested $format
-	 * 
-	 * @todo Send some HTTP headers here with the right MIME type and cacheing info...?
-	 * @todo Lookup the correct template to use instead of hard coding 'index.tpl.php'
-	 */
-	public function HttpRequest($format = 'html')
-	{
-		if($this->path->is())
-		{
-			if($tpl = $this->getTemplate($format))
-			{
-				$tpl->format = $format;
-				$tpl->fs = &$this;
-				$tpl->here = &$this->path;
-				$tpl->title = htmlentities(SITE_TITLE);
-				$tpl->langauge = $this->getLanguage();
-
-				$tpl->display('index.tpl.php');
-			}
-		}
-	}
 	
 	/**
 	 * Process a HTTP request returning the requested format.
 	 *
 	 * @return String
-	 * @todo 	add some more complex look up of template file name.
+	 * @todo Send MIME in the header. Need a standard format/extension to MIME lookup.
 	 **/
-	public function http($format = 'html')
+	public function http($format = 'html', $version = HTML_DEFAULT_VERSION)
 	{
 		if($this->path->is())
 		{
 			// Get the Layoutor for the format
-			$Layout = GizLayoutor::make($format);
-			
-			// Get the content parts
-			$content = $Layout->render($format);
-
-			// Get the template for the format
-			if($tpl = $this->getTemplate($format))
+			if($Layout = GizFormat::make($format, $version))
 			{
-				// Standard Gizmo stuff...
-				$tpl->format = $format;
-				$tpl->fs = &$this;
-				$tpl->here = &$this->currentPath();
-				$tpl->templates = $this->templatesRoot()->realURL();
-				$tpl->title = htmlentities(SITE_TITLE);
-				$tpl->langauge = $this->getLanguage();
-				$tpl->gizmo_version = GIZMO_VERSION;
-
-				// Shared global vars used by plugins and handlers.
-				$tpl->assign($this->content);
-				
-				// Assign the rendered content to the template
-				$tpl->assign($content);
-
 				// Send HTTP headers
+				// ???
 
 				// output the renered content. 
-				$tpl->display('index.tpl.php');
-			}			
-			
+				echo $Layout->render();
+			}
+			else
+				trigger_error('Could not find render for given format: '.$format);
 		}
 	}
 	
-	/**
-	 * @return String	Rendered content in the given format
-	 **/
-	public function getContent($format, $query = '')
-	{
-		return GizLayoutor::make($format)->render($this->path);
-	}
-		
 	/**
 	 * mod_rewrite aware i.e. checks the REWRITE_URLS global
 	 * 
@@ -591,9 +519,14 @@ class FS
 	}
 	
 	/**
-	 * Make CSS classes specific to the current path for use in the HTML <body> tag for example
+	 * Make CSS class names specific to the current path for use in the HTML 
+	 * <body> tag for example:
+	 * <code>
+	 * /content/some/path/to/current/content => SomePathToCurrentContent
+	 * </code>
 	 * 
 	 * @return 	String
+	 * @todo MOve this to a HTML Format render
 	 */
 	public function pathCSS($path = null)
 	{		
@@ -628,36 +561,81 @@ class FS
 	}
 	
 	/**
-	 * Add content to the $header variable.
+	 * Add content to the $var variable.
 	 * Used to add HTML to the header/footer of the template.
 	 * These variables will be made available to the template as $head or $foot etc.
 	 * The value is 
 	 * 
-	 * @param	String		HTML to add to the variable.
-	 * @param	String		Name of the variable. Usually 'head' or 'foot' for standard HTML doc header or footer but can be anything.
+	 * @param	String	HTML to add to the variable.
+	 * @param	String	Name of the variable. Usually 'head' or 'foot' for 
+	 * 					standard HTML doc header or footer but can be anything.
+	 * @param	Boolean	Add to the beginning of the content?
 	 **/
-	public static function add($html, $var = 'head')
+	public static function add($html, $var = 'head', $prepend = false)
 	{
 		$fs = FS::get();
-		
-/*	This is too hard. Look for a nice way to implement uniqunes in includes...
-		
-		// Does all this seem a bit silly just to append to a string...?
-		if(array_key_exists($fs->content, $var))
-		{
-			if(!array_key_exists($fs->content[$var], md5($html)))
-			{
-				// If it does exisit then we already have it.
-				$fs->content[$var][md5($html)] = $html;
-			}
-		}
-		else
-			$fs->content[$var] = array(md5($html) => $html);
-*/
+
 		if(isset($fs->content[$var]))
-			$fs->content[$var] .= $html;
+			if($prepend)
+			{
+				$fs->content[$var] = $html."\n".$fs->content[$var];
+			}
+			else
+			{
+				$fs->content[$var] .= $html;
+			}
 		else
 			$fs->content[$var] = $html;
+	}
+	
+	/**
+	 * Add a reference to an external file.
+	 * 
+	 * This is typically a CSS or JavaScript file. The type of reference (i.e. 
+	 * for HTML it will be ether a <link /> or <script></script> tag) will be 
+	 * determined from the file extension is the second argument is 'auto' (its
+	 * default value), otherwise this can be forced by passing a MIME type for 
+	 * the file.
+	 *
+	 * @return boolean	TRUE if all went well, false if extension was not recognised.
+	 **/
+	public function addRef($path, $mime = 'auto')
+	{
+		$out = TRUE;
+		
+		if($mime = 'auto')
+		{
+			switch(FSObject::getextension($path))
+			{
+				case 'js':
+					$mime = 'text/javascript';
+					break;
+				
+				case 'css':
+					$mime = 'text/css';
+					break;
+				
+				default:
+					$mime = 'text/plain';
+					$out = FALSE;
+			}
+		}
+		
+		$this->fileReferences[$path] = $mime;
+		
+		return $out;
+	}
+	
+	/**
+	 * Getter for the list of external file refernces
+	 * 
+	 * @see FS::fileReferences
+	 *
+	 * @return void
+	 **/
+	public function fileRefs()
+	{
+		return $this->fileReferences;
 	}
 }
 

@@ -25,5 +25,27 @@ class FSFile extends FSObject
 	{
 		return file_get_contents($this->_path->get(), FILE_TEXT);
 	}
-	
+
+	/**
+	 * Try to figure out the MIME type of the file.
+	 *
+	 * @return void
+	 **/
+	function getMIME() 
+	{
+		// For PHP 5.3 or greater
+		if(class_exists('finfo'))
+		{
+			$finfo = @new finfo(FILEINFO_MIME); 
+			$type = @$finfo->file($this->getPath()); 
+			if (is_string($type) && !empty($type))
+			   return $type;
+		}
+		
+		// For old PHP before 5.3 use depreciated mime_content_type()
+		if(function_exists('mime_content_type'))		
+			return mime_content_type($this->getPath()->get());
+			
+		return false;
+	}	
 } // END class 

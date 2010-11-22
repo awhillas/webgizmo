@@ -13,7 +13,7 @@ require_once 'includes/html.php';
  * - none: Do not render anything.
  * - link: Render an inline link in the order it is found in the current folders render order.
  */
-if(!defined('FOLDER_DISPLAY')) define('FOLDER_DISPLAY', 'link');
+if(!defined('FOLDER_DISPLAY')) define('FOLDER_DISPLAY', 'none');
 
 /**
  * File System Directory class
@@ -29,10 +29,10 @@ class FSDir extends FSObject
 	 * 
 	 * @return 	GizQuery	List of FSObjects in an Array.
 	 **/
-	public function getContents($query = '')
+	public function getContents()
 	{		
-		// Get the contents of the folder using the folder name as a query string.
-		return $this->_path->query($this->getBasename())->run($query);
+		// Get the contents of the folder using the folder name as a query string.		
+		return $this->_path->query($this->getBasename());
 	}
 	
 	/**

@@ -893,7 +893,6 @@ class Savant3 {
 	* @return bool True on success, false on failure.
 	* 
 	*/
-	
 	public function assign()
 	{
 		// get the arguments; there may be 1 or 2.

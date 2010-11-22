@@ -7,8 +7,13 @@
  */
 class SimpleSlide extends FSDir
 {
+	/**
+	 * @todo use clean name when its cleaned up :)
+	 */
 	function html($format = 'html')
 	{
+		static $count = 1;
+		
 		// Add to the header...
 		FS::get()->add('<script type="text/javascript">$(document).ready( function(){ simpleSlide(); });</script>');
 		
@@ -22,7 +27,8 @@ class SimpleSlide extends FSDir
 		</script>'
 		);
 		
-		$name = $this->getCleanName();
+		// $name = $this->getCleanName(); // clean name ain't so clean yet
+		$name = 'simpleslide'.$count;
 		
 		$out = '
 		<div class="simpleSlide-window" rel="'.$name.'">
@@ -36,6 +42,8 @@ class SimpleSlide extends FSDir
 		    </div>
 		</div>
 		';
+		
+		$count++;
 		
 		return $out;
 	}
