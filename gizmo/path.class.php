@@ -326,7 +326,7 @@ class Path
 		
 		if ($this->isChildOf($base_path))
 		{
-			if(REWRITE_URLS)
+			if(!REWRITE_URLS)
 				return BASE_URL_PATH.'/?path='.$this->less($base_path);
 			else
 				return BASE_URL_PATH.$this->less($base_path);
