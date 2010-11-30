@@ -15,7 +15,7 @@
  **/
 class PHPFileContent extends TextFileContent
 {	
-	protected $_display_filename = 'full';
+	protected $_display_filename = 'clean';
 	
 	function html($format = 'html')
 	{

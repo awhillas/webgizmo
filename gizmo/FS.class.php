@@ -253,7 +253,6 @@ class FS
 	 * 
 	 * @see FS::parse()
 	 * @return 	Path	Array of FileContent
-	 * @todo DO something else here. Parse is deprecisted
 	 */
 	public function __invoke() 
 	{
@@ -627,7 +626,7 @@ class FS
 	}
 	
 	/**
-	 * Getter for the list of external file refernces
+	 * Getter for the list of external file references
 	 * 
 	 * @see FS::fileReferences
 	 *

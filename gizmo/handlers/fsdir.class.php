@@ -11,7 +11,9 @@ require_once 'includes/html.php';
 /**
  * Controls how folders are rendered by default. This can be one of 3 things:
  * - none: Do not render anything.
- * - link: Render an inline link in the order it is found in the current folders render order.
+ * - link: Render an inline link in the order it is found in the current folders render order.3
+ * - teaser: 	Looks for a _teaser_ subfolder in the current folder and 
+ * 		renders the contents of that with a link to itself.
  */
 if(!defined('FOLDER_DISPLAY')) define('FOLDER_DISPLAY', 'none');
 
@@ -53,7 +55,8 @@ class FSDir extends FSObject
 	 **/
 	public function images()
 	{
-		return $this->getContents()->files('(png|gif|jpg)$');
+		// (?i) makes the patter to the right case insensitive.
+		return $this->getContents()->files('(?i)(png|gif|jpg|jpeg)$');
 	}
 	
 	/**
@@ -64,13 +67,25 @@ class FSDir extends FSObject
 	 **/
 	public function texts()
 	{
-		return $this->getContents()->files('(txt|text|markdown|textile)$');
+		// (?i) makes the patter to the right case insensitive.
+		return $this->getContents()->files('(?i)(txt|text|markdown|textile)$');
 	}
 	
 	/**
 	 * HTML rendering for a directory
+	 * 
+	 * Display can be affected by the global FOLDER_DISPLAY which can be one of:
+	 * 		'none'		- Does not display folder links.
+	 * 		'teaser' 	- Looks for the presence of a sub folder in each folder 
+	 * 					called "_teaser" and renders the contents of that as a link.
+	 * 		'link'		- Default behavior. Renders each folder as a link using its
+	 * 					"clean name" as the text.
+	 * 
+	 * @param	$format		Has no effect at this time. Should influence 
+	 * 						rendering as ether HTML or XHTML in the future
 	 *
 	 * @return String
+	 * @todo perhaps FOLDER_DISPLAY should be passed in here as a param. instead :-/
 	 **/
 	public function html($format = 'html')
 	{
@@ -79,9 +94,23 @@ class FSDir extends FSObject
 			case 'none':
 				return '';
 			
+			case 'teaser':
+				// Looks for a "_teaser" subfolder in the current folder and 
+				// renders the contents of that with a link to itself.
+				if($TeaserDir = $this->getContents()->folders('^_teaser')->first())
+				{
+					$out = '';
+					
+					foreach($TeaserDir->getContents() as $FSObject)
+						$out .= $FSObject->render();
+					
+					return div($this->htmlLink($out), 'Teaser');
+				}
+				break;
+				
 			case 'link':
 			default:
-				return parent::html($format);
+				return $this->htmlLink();
 		}
 	}
 	

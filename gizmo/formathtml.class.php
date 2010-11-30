@@ -55,9 +55,10 @@ class FormatHTML extends GizFormat
 			
 			$tpl->fs = &$fs;
 			$tpl->here = &$fs->currentPath();
+			$tpl->home = BASE_URL_PATH.DEFAULT_START;
 			$tpl->templates = $fs->templatePath($this->format)->realURL();
 			$tpl->title = htmlentities(SITE_TITLE);
-			$tpl->langauge = $fs->getLanguage();
+			$tpl->language = $fs->getLanguage();
 			$tpl->gizmo_version = GIZMO_VERSION;
 	
 			// Assign the rendered content to the template
@@ -141,10 +142,10 @@ class FormatHTML extends GizFormat
 		{
 			foreach($Dir->getContents() as $FSObject)
 			{
-				// Instanciate a handler for the file and render
+				// Instantiate a handler for the file and render
 				$tag = $FSObject->getTag();
 				$tag = (empty($tag))? 'content': $tag;
-				
+			
 				if(isset($out[$tag]))
 					$out[$tag] .= $FSObject->render();
 				else
@@ -171,20 +172,20 @@ class FormatHTML extends GizFormat
 		
 		foreach(FS::get()->fileRefs() as $file => $mime)
 		{
-
 			$rel = null;
 			
 			switch($mime)
 			{
-				case 'text/javascript':
-					$out .= '<script src="'.$file.'" type="'.$mime.'"></script>'."\n";
-					break;
+				// case 'text/javascript':
+				// 	//$out .= '<script src="'.$file.'" type="'.$mime.'"></script>'."\n";
+				// 	$out .= rel($file, $mime);
+				// 	break;
 					
 				case 'text/css':
 					$rel = 'stylesheet';
 					
 				default:
-					$out .= link($file, $mime, $rel)."\n";
+					$out .= "\t".rel($file, $mime, $rel)."\n";
 			}
 		}
 			

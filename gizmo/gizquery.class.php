@@ -26,7 +26,7 @@ class GizQuery implements Iterator
 	 * @param	Array	List of FSObjects
 	 * @param	Boolean	Should the list be sorted by keys. This is mainly for GizQuery::run() as it might do special sorting.
 	 */
-	function __construct($file_list, $sort = true) 
+	function __construct($file_list = array(), $sort = true) 
 	{
 		// Standardise ordering. Key should be the full path. Should be do this 
 		// somewhere else? I the factory method perhaps?
@@ -168,6 +168,15 @@ class GizQuery implements Iterator
 	{
 		return end(array_reverse($this->get()));
 	}
+	
+	/**
+	 * Get the first item in the Query list
+	 * @return 	FSObject
+	 */
+	function last()
+	{
+		return end($this->get());
+	}	
 		
 	/**
 	 * Filter files/folders by name using Regular Expression

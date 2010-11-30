@@ -1,0 +1,21 @@
+## Template lookup order
+
+Gizmo looks for the following content path
+
+	\something
+		\product
+			\car
+
+Gizmo looks for the following templates in this order:
+
+1. somthing_product_car.tpl.php
+2. product_car.tpl.php
+3. car.tpl.php
+4. car_default.tpl.php
+5. product_default.tpl.php
+6. something_default.tpl.php
+7. index.tpl.php
+
+Here index.tpl.php is the global default and is used when none of the other template names (above it in the list) are found and _should always be present_.
+
+Templates ending with `_default.tpl.php` are inherited by all sub-folders.

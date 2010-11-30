@@ -10,15 +10,12 @@
 	<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 	<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/base/base.css" type="text/css">
 	
-	<link rel="stylesheet" href="http://yui.dev/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
-	<link rel="stylesheet" href="http://yui.dev/build/base/base.css" type="text/css">	
-	
 	<?php echo $head ?>
 	
 </head>
 <body>
 <div id="doc" class="yui-t1">
-   <div id="hd" role="banner"><h1><a href="/<?php echo BASE_URL_PATH ?>"><?php echo $title ?></a></h1></div>
+   <div id="hd" role="banner"><h1><a href="<?php echo $home ?>"><?php echo $title ?></a></h1></div>
    <div id="bd" role="main">
 	<div id="yui-main">
 	<div class="yui-b"><div class="yui-g">
@@ -40,11 +37,10 @@
 	
 	</div>
 	<div id="ft" role="contentinfo">
+		<?php echo $foot ?>
 		<p>Powered by <a href="http://gizmo.tsd.net.au">WebGizmo</a></p>
 	</div>
 </div>
-
-<?php echo $foot ?>
 
 </body>
 </html>

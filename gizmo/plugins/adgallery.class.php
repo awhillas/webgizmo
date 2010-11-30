@@ -10,9 +10,10 @@
  * 
  * @link http://coffeescripter.com/code/ad-gallery/
  * @package WebGizmo
+ * @subpackage	ContentHanders
  * @author Alexander R B Whillas
  */
-class CycleLite extends FSDir
+class ADGallery extends FSDir
 {
 	
 	function html()
@@ -25,38 +26,43 @@ class CycleLite extends FSDir
 		
 		$fs->add('
 			<script type="text/javascript">
-				
+			$(document).ready(function() {
+				$(\'.ad-gallery\').adGallery();
+			});
 			</script>
 		');
 		
 		$out = '';
-/*
-<div class="ad-gallery">
-  <div class="ad-image-wrapper">
-  </div>
-  <div class="ad-controls">
-  </div>
-  <div class="ad-nav">
-    <div class="ad-thumbs">
-      <ul class="ad-thumb-list">
-        <li>
-          <a href="images/1.jpg">
-            <img src="images/thumbs/t1.jpg" title="Title for 1.jpg">
-          </a>
-        </li>
-        <li>
-          <a href="images/2.jpg">
-            <img src="images/thumbs/t2.jpg" longdesc="http://www.example.com" alt="Description of the image 2.jpg">
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
-*/
-		foreach($this->getContents() as $File) 
-			$out .= $File->html()."\n";
+
+		$out .= div('', 'ad-image-wrapper');
+		$out .= div('', 'ad-controls');
 		
-		return div("\n".$out, 'CycleLite', $this->getID());
+		$out .= '
+			<div class="ad-nav">
+				<div class="ad-thumbs">
+		';
+		
+		$imgs = array();
+
+		// Assume the first folder in this folder is full of thumbnails.
+		// Thumbnails are assumed to have the exact same name as the 
+		// larger version in this folder.
+		if($thumbs = $this->getPath()->folders()->first())
+		{
+			foreach($thumbs->images() as $Image) 
+				$imgs[] = a($this->getFileURL().'/'.$Image->getFilename(), $Image->html());
+		} 
+		else
+		{
+			p('No thumbnail folder detected in:'.$this->getPath());
+		}
+
+		$out .= ul($imgs, 'ad-thumb-list');
+		
+		$out .= '
+				</div>
+			</div>
+		';		
+		return div($out, 'ad-gallery', $this->getID());
 	}
 }

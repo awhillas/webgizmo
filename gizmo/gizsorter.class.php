@@ -47,6 +47,8 @@ class GizSorter extends GizCommand
 		}
 		
 		usort($subject, array('GizSorter', $sort));
+		
+		return $subject;
 	}
 	
 	/**
@@ -111,7 +113,7 @@ class GizSorter extends GizCommand
 	 **/
 	public function size($a, $b)
 	{
-		return $this->intcmp((int)$a->getSize(), (int)$b->getSize());
+		return GizSorter::intcmp((int)$a->getSize(), (int)$b->getSize());
 	}
 	
 	/**
@@ -122,7 +124,7 @@ class GizSorter extends GizCommand
 	 **/
 	public function ctime($a, $b)
 	{
-		return $this->intcmp($a->getMTime(), $b->getMTime());
+		return GizSorter::intcmp($a->getMTime(), $b->getMTime());
 	}
 
 	/**
@@ -133,7 +135,7 @@ class GizSorter extends GizCommand
 	 **/
 	public function mtime($a, $b)
 	{
-		return $this->intcmp($a->getMTime(), $b->getMTime());
+		return GizSorter::intcmp($a->getMTime(), $b->getMTime());
 	}	
 	
 	/**

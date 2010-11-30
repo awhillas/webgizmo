@@ -31,6 +31,7 @@
  * @param	Array	Array of other attributes where the key is the attribute and the value is the value.
  * 
  * @return String	A well formed HTML tag
+ * @todo Might consider changing all the HTML functions to first letter with a capital to avoid name collisions with PHP.
  **/
 function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs = array())
 {
@@ -52,6 +53,15 @@ function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs 
 function div($content = '', $class = '', $id = '', $attrs = array())
 {
 	return tag('div', false, $content, $class, $id, $attrs);
+}
+
+/**
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
+function p($content = '', $class = '', $id = '', $attrs = array())
+{
+	return tag('p', false, $content, $class, $id, $attrs);
 }
 
 /**
@@ -127,16 +137,31 @@ function a($href, $text, $class = '', $id = '', $attrs = array())
 }
 
 /**
- * @todo finish this.
+ * Document relationship (A HTML Link)
+ * 
+ * Since link() is already defined by PHP have to use a different name.
+ * 
+ * "Although LINK has no content, it conveys relationship information that may 
+ * be rendered by user agents in a variety of ways (e.g., a tool-bar with a 
+ * drop-down menu of links)." HTML 4.01 spec.
+ * @link http://www.w3.org/TR/html401/struct/links.html#edef-LINK
  */
-// function link($href, $type, $rel = null)
-// {
-// 	$attrs['href'] = $href;
-// 	$attrs['type'] = $type;
-// 	if(!is_null($ref)) $attrs['rel'] = $rel;
-// 	
-// 	return tag('link', true, null, null, null, $attrs);
-// }
+function rel($href, $type, $rel = null)
+{
+	$attrs['type'] = $type;
+	if(!is_null($rel)) $attrs['rel'] = $rel;
+
+	if($type == 'text/javascript')
+	{
+		$attrs['src'] = $href;
+		return tag('script', false, null, null, null, $attrs);
+	}
+	else
+	{
+		$attrs['href'] = $href;
+		return tag('link', true, null, null, null, $attrs);
+	}
+}
 
 // - - - - - - - - - - - - -
 // HTML 5 tags
@@ -152,7 +177,7 @@ function video($source, $class = '', $id = '', $attrs = array(), $not_supported_
 	$attrs['width'] = 320;
 	$attrs['height'] = 240;
 	
-	return tag('video', false, '', $class, $id, $attrs);
+	return "\t".tag('video', false, '', $class, $id, $attrs)."\n";
 }
 
 /**

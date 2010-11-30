@@ -93,12 +93,12 @@ abstract class FSObject extends SplFileInfo
 		$fallback_handler = ($Path->isDir())? 'FSDir': 'FSFile';
 		
 		// Get the extention to use in the handelr lookup map...
-		if(!$extension = FSObject::getextension(basename($Path->get())))
+		if(!$extension = strtolower(FSObject::getextension(basename($Path->get()))))
 			$extension = ($Path->isDir())? 'dir': 'file';
 
 		// Lookup content map for file hander			
 		if($handler_class = HandlerMap::get()->lookup($extension))
-		{
+		{			
 			return new $handler_class($Path);
 		}
 		else

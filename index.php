@@ -10,10 +10,9 @@
 	// Change these variables per website
 	define('SITE_TITLE', 'Web Gizmo');
 	define('THEME_DIR', '/giz');
-	define('FOLDER_DISPLAY', 'none');	// Don't print links to sub-folders inline.
+	define('FOLDER_DISPLAY', 'list');	// Don't print links to sub-folders inline.
 
 	// Leave this alone...
 	require dirname(__FILE__).'/gizmo/FS.class.php';
 	
-//	echo FS::get()->HttpRequest();
 	echo FS::get()->http();
