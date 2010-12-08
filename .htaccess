@@ -2,20 +2,20 @@
 
 <IfModule mod_rewrite.c>
 
-	# Gizmo uses this to auto-detect mod_rewrite.
-	# The mod_env module nees to be enabled for this to work.
-    SetEnv HTTP_MOD_REWRITE On
+		# Gizmo uses this to auto-detect mod_rewrite.
+		# The mod_env module needs to be enabled for this to work.
+	SetEnv HTTP_MOD_REWRITE On
 
-    RewriteEngine on
+	RewriteEngine on
 	
-	# If Gizmo is not in the root path of the domain then add the extra path here,
-	# As well as defining BASE_URL_PATH in the index.php file.
+		# If Gizmo is not in the root path of the domain then add the extra path here,
+		# As well as defining BASE_URL_PATH in the index.php file.
 	RewriteBase /
     
 	RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-d
     
-	# Gizmo
+		# Gizmo
 	RewriteRule ^(.*)$ index.php?path=$1 [L,QSA]
 
 </IfModule>

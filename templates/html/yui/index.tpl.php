@@ -13,34 +13,40 @@
 	<?php echo $head ?>
 	
 </head>
-<body>
-<div id="doc" class="yui-t1">
-   <div id="hd" role="banner"><h1><a href="<?php echo $home ?>"><?php echo $title ?></a></h1></div>
-   <div id="bd" role="main">
-	<div id="yui-main">
-	<div class="yui-b"><div class="yui-g">
-		
-		<!-- YOUR DATA GOES HERE -->
+<body class="<?php echo $fs->pathCSS() ?>">
 	
-		<?php echo $content ?>
+	<div id="doc" class="yui-t1">
+	
+		<div id="hd" role="banner">
+			<h1><a href="<?php echo $home ?>"><?php echo $title ?></a></h1>
+		</div>
 
-	</div>
-</div>
-	</div>
-	<div class="yui-b">
-		
-		<!-- YOUR DATA GOES HERE -->
-		
-		<?php echo ul($fs->menu(), 'Menu') ?>	
+		<div id="bd" role="main">
+			<div id="yui-main">
+				<div class="yui-b"><div class="yui-g">
+
+					<!-- YOUR DATA GOES HERE -->
+
+					<?php echo $content ?>
+
+				</div></div>
+			</div>
+
+			<div class="yui-b">
+
+				<!-- YOUR DATA GOES HERE -->
+
+				<?php echo ul($fs->menu(), 'Menu') ?>	
+
+			</div>
+		</div>
 	
+		<div id="ft" role="contentinfo">
+			<?php echo $foot ?>
+			<p>Powered by <a href="http://gizmo.tsd.net.au">WebGizmo</a></p>
+		</div>
+		
 	</div>
-	
-	</div>
-	<div id="ft" role="contentinfo">
-		<?php echo $foot ?>
-		<p>Powered by <a href="http://gizmo.tsd.net.au">WebGizmo</a></p>
-	</div>
-</div>
 
 </body>
 </html>
