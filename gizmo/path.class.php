@@ -23,7 +23,7 @@ class Path
 	{
 		if(is_a($path, 'SplFileInfo'))
 			$path = $path->getPathname();
-		
+
 		if(!$checkPath OR file_exists($path = realpath($path)))	// tricky ;)
 		{
 			$this->set($path);
@@ -310,7 +310,7 @@ class Path
 	 **/
 	public function isChildOf($path)
 	{
-		return strpos($this->get(), $path) !== false;
+		return strpos($this->get(), "$path") !== false;
 	}
 	
 	/**
@@ -327,9 +327,9 @@ class Path
 		if ($this->isChildOf($base_path))
 		{
 			if(!REWRITE_URLS)
-				return BASE_URL_PATH.'/?path='.$this->less($base_path);
+				return BASE_URL_PATH.'/?path='.FS::realToVirtual($this->less($base_path));
 			else
-				return BASE_URL_PATH.$this->less($base_path);
+				return BASE_URL_PATH.'/'.FS::realToVirtual($this->less($base_path));
 		} 
 		else 
 		{
@@ -355,7 +355,7 @@ class Path
 			return false;
 		}
 	}
-		
+			
 	/**
 	 * Returns an HTML anchor to the virtual path.
 	 *

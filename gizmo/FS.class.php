@@ -220,14 +220,35 @@ class FS
 
 		$this->templatesRoot = new Path($templates_path, true);
 
-		// Current Content path
+		// Current real Content path
 
-		$this->path = new Path($content_path . FS::getPath());
+		$VPath = FS::getPath();
 
-		// If we're on the DEFAULT_START path then treat as the new root path	
+		if(file_exists($content_path . $VPath))
+		{
+			$this->path = new Path($content_path . $VPath);
+		}
+		else
+		{
+			// Assume its a Virtual path so try to convert it
+			if($real = $this->virtualToReal($VPath, $content_path))
+			{
+				$this->path = new Path($content_path . $real);
+			}
+			else
+			{
+				// if nothing matches then 404 :( 
+				header("HTTP/1.0 404 Not Found");
+				die("Could not find path $VPath");
+			}	
+		}
+
+		// If we're on the DEFAULT_START path then treat it as the new root path	
 		if(!FS::getPath()->get() && DEFAULT_START != '/')
 		{
-			$this->path = new Path($content_path . DEFAULT_START, true);
+			$real_default_start = FS::virtualToReal(DEFAULT_START, $content_path);
+			
+			$this->path = new Path($content_path . $real_default_start, true);
 		}
 		
 		$this->content = array('head' => '', 'foot' => '');
@@ -351,6 +372,20 @@ class FS
 				: '') . "$dir" // force objects __toString()
 			: BASE_URL_PATH . "?path=$dir";	// ... ugly URLs then.
 	}
+
+	/**
+	 * Get the CGI virtual 'path' variable value
+	 *
+	 * @return String	The current virtual path (relative to the base URL)
+	 * @todo make this a gett'r for a Singleton
+	 * @todo rename to reflect that its a virtual URL _not_ a system path
+	 */
+	public static function getPath()
+	{		
+		return (isset($_GET['path'])) 
+			? new Path($_GET['path'])
+			: new Path('/');
+	}
 	
 	/**
 	 * @return 	String	Value of the CGI "path" variable i.e. the "virtual path"
@@ -360,6 +395,86 @@ class FS
 	{
 		return $this->getPath()->get();
 	}
+
+	/**
+	 * Convert an Virtual path to a Real path
+	 *
+	 * @param	Path
+	 * @param	String	Base path to prefix to the given Virtual path when 
+	 * 					looking for sub folders
+	 *
+	 * @return Mixed	The real path on success, FALSE if it could no be found
+	 * @todo Clean this up. Make recursive.
+	 **/
+	public function virtualToReal($Virtual, $base_path)
+	{
+		if(!is_a($Virtual, 'Path'))
+			$Virtual = new Path($Virtual);
+		
+		// Virtual so have to look for it...
+		$current = '';
+		foreach($Virtual->parts() as $part)
+		{
+			if(!empty($part))
+				if(file_exists($base_path . '/'. $part))
+				{
+					$current .= '/'.$part;
+				}
+				else
+				{
+					// Get a list of all the folders in the $current path
+					
+					$found = false;						
+					
+					// Compare their clean names to the given part
+					foreach(scandir($base_path . $current) as $file)
+					{
+						$FSObject = FSObject::make($base_path . $current .'/'. $file);
+						
+						if($FSObject->getCleanName() == $part)
+						{
+							// if we have a match then add the real name to the $current path.
+							$current .= '/'.$FSObject->getFilename();
+							$found = true;
+							break;
+						}
+					}
+				
+					// if nothing matches. 
+					if(!$found)
+					{
+						return false;
+					}
+				}
+		}
+		return $current;
+	}
+	
+	/**
+	 * Condense a Real path to a human friendly Virtual path i.e. all parts 
+	 * consisting of their "clean names".
+	 * 
+	 * Doesn't check the path exists, just processes the paths parts.
+	 * 
+	 * @param	String
+	 *
+	 * @return String	Virtual path from the Real path.
+	 **/
+	public function realToVirtual($real)
+	{
+		$out = array();
+		
+		foreach(explode('/', $real) as $part)
+		{
+			if(!empty($part))
+			{
+				// FS::clean(basename($part, FSObject::getExtension($part)));
+				$out[] = FSObject::getCleanName($part);
+			}
+		}
+		return implode('/', $out);
+	}
+
 	
 	/**
 	 * Builds a list of HTML links to the top level folders in the Content folder
@@ -504,20 +619,6 @@ class FS
 	}
 	
 	/**
-	 * Get the CGI virtual 'path' variable value
-	 *
-	 * @return String	The current virtual path (relative to the base URL)
-	 * @todo make this a gett'r for a Singleton
-	 * @todo rename to reflect that its a virtual URL _not_ a system path
-	 */
-	public static function getPath()
-	{		
-		return (isset($_GET['path'])) 
-			? new Path($_GET['path'])
-			: new Path('/');
-	}
-	
-	/**
 	 * Make CSS class names specific to the current path for use in the HTML 
 	 * <body> tag for example:
 	 * <code>
@@ -604,7 +705,7 @@ class FS
 		
 		if($mime = 'auto')
 		{
-			switch(FSObject::getextension($path))
+			switch(FSObject::getExtension($path))
 			{
 				case 'js':
 					$mime = 'text/javascript';

@@ -1,6 +1,0 @@
-# Development
-
-## Coding conventions
-
-  - Factory methods are called 'make()' generally.
-  - Singleton constructors are 'private' and the method for getting the instance is usually 'get()'.

@@ -126,6 +126,45 @@ class FormatHTML extends GizFormat
 	 **/
 	private function getTemplate()
 	{
+		$fs = FS::get();
+		
+		// Where the templates live
+		$TemplatesPath = $fs->templatePath();
+		
+		// Get the current path as a Virtual path
+		$all_parts = explode('/', FS::realToVirtual($fs->currentPath()->less($fs->contentRoot())));
+//		array_shift($all_parts); // Remove the empty at the begining
+
+		if(count($all_parts))
+		{
+			// Look for specific templates
+			$parts = $all_parts;
+			while(count($parts) and $parts[0] != '')
+			{
+				$candidate = implode('_', $parts).'.tpl.php';
+
+				if(file_exists($TemplatesPath . '/' . $candidate))
+				{
+					return $candidate;
+				}
+				else
+				{
+					array_shift($parts);
+				}
+			}
+			
+			// Look for inherited/general templates
+			$parts = $all_parts;
+			array_pop($parts);	// Should not affect the current folder, only children
+			foreach(array_reverse($parts) as $folder)
+			{
+				$candidate = $folder.'_default.tpl.php';
+
+				if(file_exists($TemplatesPath.'/'.$candidate))
+					return $candidate;
+			}
+		}
+		
 		return 'index.tpl.php';
 	}
 	
@@ -153,7 +192,7 @@ class FormatHTML extends GizFormat
 			}
 		}
 		else
-			trgger_error('Can not render path: '.$Path);
+			trigger_error('Can not render path: '.$Dir);
 		
 		$out['content'] .= "\n\n<!-- ... FormatHTML::render() end. -->\n\n";
 		

@@ -1,18 +1,16 @@
 ## Short term goals
 
 - Global "CONTENT_WIDTH" variable to help with defaults.
+- Google Analytics plugin, so defining a 'GOOGLE_ANALYTICS_ID' in index.php will insert the right code in the header.
 - Extension/Handler map overriding.
 - Automatic font detection. Look for a 'fonts' folder in the template directory and include all .css files there automatically.
 - Parameter reading from file/folder name.
 - Add _last updated_ to the page meta + HTTP headers.
-- Handle 404's
 - Write RTF parser... ya (that will be a fun day).
 
 ## Ideas and future directions
 
-- Templates inheritance + overriding. More complex template lookup system based on filename/path.
 - Dropbox integration. Manage your site from your desktop.
-- Nice names for URLs i.e. without the leading "01_" or the extension.
 - Use Hierarchy in INI file reading to group extensions into names groups
 	- Use named groups as a filter in the query language.
 - Multi-lingual support. Ether at 
