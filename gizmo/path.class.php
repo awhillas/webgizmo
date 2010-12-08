@@ -1,10 +1,19 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+// For the Path->a() function
+require_once 'includes/html.php';
+
+/**
 * A Path
 * 
-* Encapsulate common path calculations.
-*
-* @author Alexander R B Whillas
+* Encapsulate common path calculations. 
+* Note: that a Path doesn't have to be real, just fit into the 
+* @package WebGizmo
 */
 class Path
 {
@@ -14,22 +23,27 @@ class Path
 	{
 		if(is_a($path, 'SplFileInfo'))
 			$path = $path->getPathname();
-		
+
 		if(!$checkPath OR file_exists($path = realpath($path)))	// tricky ;)
 		{
 			$this->set($path);
 		}
 		else
 		{
-			$trace = debug_backtrace();
-			trigger_error(
-				'Path does not exist: "' . $path .
-				'" in ' . $trace[0]['file'] .
-				' on line ' . $trace[0]['line'],
-				E_USER_NOTICE);
+			trigger_error('Path does not exist: "'.$path.'"', E_USER_NOTICE);
+			krumo(debug_backtrace());
 			return null;
 		}
 	}
+
+	/**
+	 * Factory function for the Path object 
+	 */
+	public static function open($path, $checkPath = false)
+	{
+		return new Path($path, $checkPath);
+	}
+	
 	
 	public function __toString()
 	{
@@ -41,21 +55,14 @@ class Path
 	 * PHP5.3 only :(
 	 * @see Path::query()
 	 */
-	public function __invoke($filter = null, $order = null, $iterator_type = 'dir')
+	public function __invoke($query, $recursively = FALSE, $divider = '.')
 	{
-		return $this->query($filter, $order, $iterator_type);
+		return $this->query($query, $recursively, $divider);
 	}
 	
 	/**
-	 * Factory function for the Path object 
-	 */
-	public static function open($path, $checkPath = false)
-	{
-		return new Path($path, $checkPath);
-	}
-	
-	/**
-	 * getter function
+	 * Get'er function for the path string
+	 * 
 	 * @return String	The path string
 	 **/
 	function get()
@@ -64,22 +71,20 @@ class Path
 	}
 	
 	/**
-	 * @return 	SplFileInfo Object if its a file, NULL otherwise.
+	 * Turn a Path into a File System object (FSObject)
+	 * @return 	FSObject
 	 */
-	function getFile()
+	function getObject()
 	{
-		if($this->isFile())
-			return new SplFileInfo($this->get());
-		else
-			return NULL;
+		return FSObject::make($this);
 	}
 	
 	/**
-	 * @return Array	The parts of the path string in an Array.
+	 * @return 	Array	The parts of the path string in an Array.
 	 */
-	function parts()
+	function parts($split_on = '/')
 	{
-		return explode('/', $this->get());
+		return explode($split_on, $this->get());
 	}
 	
 	function set($path)
@@ -88,7 +93,9 @@ class Path
 	}
 	
 	/**
-	 * Subtract this path _from_ the given path
+	 * Subtract this path _from_ the given path.
+	 * The opposite of less().
+	 * 
 	 * @param	$haystack	String	Path to subtract from.
 	 * @return 	String|Boolean		The given path less this path. False if this path is not in the given path
 	 **/
@@ -97,6 +104,22 @@ class Path
 		if(strlen($haystack) and strpos($haystack, $this->get()) !== false)
 		{
 			return substr($haystack, strlen($this->get()), strlen($haystack));
+		}	
+		else
+			return false;
+	}
+	
+	/**
+	 * Subtract the given path from this path.
+	 * The opposite of from()
+	 *
+	 * @return String|Boolean		The this path less the given path. False if the given path is not in this path.
+	 **/
+	public function less($needle)
+	{
+		if(strlen($needle) and $this->isChildOf($needle))
+		{
+			return substr($this->get(), strlen($needle), strlen($this->get()));
 		}	
 		else
 			return false;
@@ -119,27 +142,32 @@ class Path
 	{
 		return file_exists($this->get()); // and $this->isDir();
 	}
-	
+
+	/**
+	 * @return boolean
+	 **/
 	function isDir()
 	{
 		return is_dir($this->get());
 	}
-	
+
+	/**
+	 * @return boolean
+	 **/
 	function isFile()
 	{
 		return is_file($this->get());
 	}
-	
 	
 	/**
 	 * Append the given string to the path. 
 	 * If this Path is to a file then the string is appended between the path and the filename.
 	 * 
 	 * @param	$path	String	String to append to the path
-	 * @return Path object
+	 * @return 	Path	Path with the given string parsed and appended to it.
 	 * @todo Accept a Path object as well as a String
 	 */
-	function append($path)
+	function add($path)
 	{
 		if($this->isFile())
 		{
@@ -150,6 +178,18 @@ class Path
 		}
 		else	
 			return new Path($this->get() . Path::clean($path));
+	}
+	
+	/**
+	 * Get a Path object for this Paths parent
+	 *
+	 * @return Path
+	 **/
+	public function parent()
+	{
+		$parts = $this->parts();
+		array_pop($parts);
+		return new Path(implode('/', $parts));
 	}
 	
 	/**
@@ -169,44 +209,63 @@ class Path
 	}
 	
 	/**
-	 * List files on the given Path.
+	 * Process a query string.
 	 * 
-	 * @param	$filter		Array	List of filters to apply to the listing where the 
-	 * 		keys can be the name of any method of a SplFileInfo object and the values
-	 * 		do the filtering. i.e. array('isFile' => true, 'getSize' => '200') would 
-	 * 		get only files of size 200 bytes. TODO: Make this more complex
-	 * @param	$order		Array	List of file properties to order the output by.
-	 * @param	$iterator_type	String	Ether 'dir' for just this directory or 'recursive'
-	 * 		for all sub directories of this Path. Defaults to 'dir'.
+	 * @param	$query	String	The query string which is a list of filters 
+	 * 							and sorters each optionally followed by a 
+	 * 							parameter and all joined together with the $divider
+	 * 
 	 * @return 	Object	GizQuery object for further filtering
-	 * @todo Sort output before we return it here. Implement QuickSort? 
-	 **/
-	function query($filter = null, $order = null, $iterator_type = 'dir')
+	 * 
+	 * @todo Sort output before we return it here. user usort()
+	 */
+	public function query($query, $recursively = FALSE, $divider = '.')
+	{
+		$gq = new GizQuery($this->retrieve($recursively));
+
+		return $gq->run($query, $divider);
+	}
+	
+	/**
+	 * @param	$recursively	Boolean		Get the list of FS objects recursively?  
+	 * 
+	 * @return 	Array	List of File System Objects (FSObjects) for the current path.
+	 */
+	public function retrieve($recursively = FALSE)
 	{
 		$out = array();
 		
-		foreach ($this->getIt($filter, $iterator_type) as $File)
+		if($recursively)
 		{
-			// Since cloning $File doesn't work
-			$out[$File->getRealPath()] = new SplFileInfo($File->getRealPath());
+			$contents = new FilteredRecursiveDirectoryIterator($this->get());
 		}
-		return new GizQuery($out);
+		else
+		{
+			$contents = new FilteredDirectoryIterator($this->get());
+		}
+		
+		foreach ($contents as $File)
+		{
+			// FSObject's factory method
+			$out[$File->getPathname()] = FSObject::make($File->getPathname());
+		}
+		return $out;
 	}
 	
 	/**
-	 * @return 	Array	List of folders in the path.
+	 * @return 	GizQuery	List of folders in the path.
 	 */
 	function folders($regex = '')
 	{
-		return $this->query(array('isDir' => true))->name($regex);
+		return $this->query('folders')->name($regex);
 	}
 	
 	/**
-	 * @return 	Array	List of files in the path.
+	 * @return 	GizQuery	List of files in the path.
 	 */
 	function files($regex = '')
 	{
-		return $this->query(array('isFile' => true))->name($regex);
+		return $this->query('files')->name($regex);
 	}
 	
 	/**
@@ -218,17 +277,20 @@ class Path
 	 * 		recursive directory iterator.
 	 *
 	 * @return FilteredDirectoryIterator
+	 * 
+	 * @todo Should simplify this as filtering is now done after the Iterator returns its result.
+	 * @deprecated
 	 **/
 	function getIt($filters = null, $iterator_type = 'dir')
 	{
 		switch($iterator_type)
 		{
 			case 'recursive':
-				return new FilteredRecursiveDirectoryIterator($this->get(), $filters);
+				return new FilteredRecursiveDirectoryIterator($this->get());
 			
 			case 'dir':
 			default:
-				return new FilteredDirectoryIterator($this->get(), $filters);
+				return new FilteredDirectoryIterator($this->get());
 		}
 	}
 	
@@ -239,42 +301,72 @@ class Path
 	public function isEmpty()
 	{
 	     return (($files = @scandir($this->get())) && count($files) <= 2);
-	}	
+	}
 	
 	/**
-	 * Quicksort for multi-dimentional array
-	 * @param	$seq		Array	Array to sort
-	 * @param	$sort_by	String	Array key used to sort on
-	 * @param	$order		String	Ether asc = ascending, des = descending
-	 * @see http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Quicksort#PHP
-	 * @todo test this works and then use it in list()
-	 */
-	// static function quicksort($seq, $sort_by, $order = 'asc') 
-	// {
-	// 	if(!count($seq)) return $seq;
-	// 
-	// 	$k = $seq[0];
-	// 	$x = $y = array();
-	// 
-	// 	$length = count($seq);
-	// 
-	// 	for($i = 1; $i < $length; $i++) 
-	// 	{ 
-	// 		if(Path::$order($seq[$i]->$sort_by(), $k->$sort_by())) 
-	// 		{
-	// 			$x[] = $seq[$i];
-	// 		} 
-	// 		else 
-	// 		{
-	// 			$y[] = $seq[$i];
-	// 		}
-	// 	}
-	// 	return array_merge(Path::quicksort($x, $sort_by, $order), array($k), Path::quicksort($y, $sort_by, $order));
-	// }
-	// // Comparison used in quicksort
-	// static function asc($a, $b) { return $a <= $b; }
-	// // Comparison used in quicksort
-	// static function des($a, $b) { return $a >= $b; }
+	 * IS the current Path within the given one i.e. a child of it?
+	 * @param	String
+	 * @return boolean
+	 **/
+	public function isChildOf($path)
+	{
+		return strpos($this->get(), "$path") !== false;
+	}
 	
+	/**
+	 * Gets the Virtual URL of the dir. or file
+	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
+	 * string is returned.
+	 * 
+	 * @return String
+	 **/
+	public function url()
+	{
+		$base_path = FS::get()->contentRoot()->get();
+		
+		if ($this->isChildOf($base_path))
+		{
+			if(!REWRITE_URLS)
+				return BASE_URL_PATH.'/?path='.FS::realToVirtual($this->less($base_path));
+			else
+				return BASE_URL_PATH.'/'.FS::realToVirtual($this->less($base_path));
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Get the direct link to the file or folder in the content folder
+	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
+	 * string is returned.
+	 * 
+	 * @return String
+	 **/
+	public function realURL()
+	{
+		if ($this->isChildOf(WEB_ROOT)) 
+		{
+			return BASE_URL_PATH.$this->less(WEB_ROOT);
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+			
+	/**
+	 * Returns an HTML anchor to the virtual path.
+	 *
+	 * @return String	HTML
+	 **/
+	public function a($text, $class = '', $id = '', $attributes = array())
+	{
+		if($url = $this->url())
+			return a($url, $text, $class, $id, $attributes);
+		else
+			return "\n<!-- $url is not in the web root? Can not make a link to it :( -->\n";
+	}
 }
 

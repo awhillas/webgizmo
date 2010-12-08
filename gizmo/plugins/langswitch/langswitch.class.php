@@ -1,10 +1,20 @@
 <?php
 /**
-* Lang - Language Switch - Languages Witch
-* 
-* Can render a list of language links for UI language switching in HTML
-*/
-class LangSwitch
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
+ * Lang - Language Switch - Languages Witch
+ * 
+ * Can render a list of language links for UI language switching in HTML
+ * 
+ * @package	WebGizmo
+ * @subpackage	GizPlugins
+ * @todo Make language switching work and document 
+ */
+class LangSwitch extends GizPlugin
 {
 	private $_lang_list;
 	

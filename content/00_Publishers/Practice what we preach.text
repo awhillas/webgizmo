@@ -1,0 +1,70 @@
+# Content Organisation
+
+## Overview
+
+Gizmo uses the file system to store its content rather than a database, unlike most modern Content Management Systems (CMS). Perhaps this is why Gizmo is not really a CMS but more of a... gizmo!
+
+### The basics are basic
+
+The main idea behind Gizmo is that all the content for your site is in folders and these can be nested into a hierarchy, just like you organise your files on your computer. Gizmo then considers **each folder to be one webpage**. To add something to a webpage you just drop your text, images, video or whatever into that folder and hey-presto its added to the page. Simple! the Gizmo formula is then:
+
+	1 Folder = 1 Webpage
+	
+It sure ain't rocket science ;)
+
+### Ordering page content
+
+So if you have that down then next thing will be that you want somethings to come before others on the webpage. Thats also easy. Since Gizmo works within the files/folder computer metaphor (the "file system" we say in computer geek talk) **Gizmo orders content alphabetically**, the same why your computer does. 
+
+So to _change the order_ of content you _change the file name_. Gizmo has a little built in trick that makes this easy. Just add two digits followed by an underscore '_'. This works for files and folders. 
+
+The contents of a personal home page might look like:
+
+	00_picture of me.jpg
+	10_cv.text
+	20_picture of my cat.png
+	
+### Formatting text
+
+Gizmo supports plain text with files that have an extension (end with) ".txt". This is inserted into the page without and processing.
+
+Gizmo also supports [Markdown](http://michelf.com/projects/php-markdown/concepts/) and [Textile](http://textile.thresholdstate.com/) which allow you to apply some formatting to text such as bold and emphasis, headings, links and make lists etc. To get Gizmo to process text files as Markdown end the file name with ether ".text" or ".markdown" or, for Textile try ".textile".
+
+See [Extension mapping]() for details on how to change Gizmos default extension mappings.
+
+### How the **menu** works
+
+By default Gizmo templates take the top level folders in your content folder and create menu links from them. It uses the _clean name_ for them which is the without the leading sorting number (i.e. "01_") nor anything after the first dot (i.e. ".").
+
+## Advanced features
+
+Gizmo is very simple to use but does have some tricky features.
+
+### Placing content in different parts of a page layout
+
+Gizmo uses the idea of tagging in file names. These are picked up when it puts together the page content and funneled to the right place on the page if your Page Template is setup to use that tag.
+
+	_tag1_something random.png
+	
+Here "tag1" becomes the tag and if your template has
+
+	<?php echo $tag1 ?>
+	
+in it somewhere then all content in the currently viewed folder will be put into this place.
+
+### Skipping or Ignoring files
+
+#### Hiding stuff from the page
+
+If you start a file or folder name with an underscore '_' then by defualt Gizmo will skip this item when putting together the page 
+
+#### Globally ignoring certain files
+
+If there are files in the content directory that you would like Gizmo to ignore then you can place a special file, named '_ignore' in the root of the content folder. In this file you can put a list of file name patterns, each one on a new line, of the files you want Gizmo to ignore. Typically you wold use this to ignore hidden files that your operating system (OS X, Linux or Windows) might put in your content folder automatically.
+
+Common patterns might be:
+	
+	.DS_Store
+	Thumbs.db
+	
+Developers note: these patterns can be Regular Expressions without the delimiting start and end markers.

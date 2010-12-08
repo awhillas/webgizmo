@@ -1,0 +1,17 @@
+## Website Owners
+
+WebGizmo (or Gizmo to its friends) is THE SIMPLEST website system in the world for managing your own website. 
+
+A bold claim but here why we think that:
+
+**Super Easy**
+: To update your website just drop the new files in the right folder and the page is changed. 
+
+**1 Folder = 1 Webpage**
+: A simple equation that is easy to understand. If you know how to organise your files into folders then you already know how to manage your Gizmo website.
+
+**Simple text markup**
+: Gizmo supports [Markdown] and Textile, very simple and easy to learn markup that lets you make text bold, italic, create links and make lists.
+
+**Multi Lingual**
+: You can organise your sites content into as many languages as you need. Its as simple as creating another folder.

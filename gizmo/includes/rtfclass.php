@@ -49,7 +49,7 @@
 			Implemented alignment (left, center, right) with HTML <DIV .. tags
 			Also implemented translation for < and > character when outputting html or xml
 		Mon Oct 25 14:15:03 CET 2004	smanciles
-			Implemented parsing of special characteres for spanish and catalan (ú�...)
+			Implemented parsing of special characteres for spanish and catalan (ÃºÃ...)
 		Remarks:
 		========
 		This class and all work done here is dedicated to Tatjana.
@@ -147,7 +147,7 @@
 			(Note under certain circumstances the stream has to be stripslash'ed before handling over)
 			Initialises some class-global variables
 		*/
-		function rtf( $data) {
+		function __construct( $data) {
 			$this->len = strlen( $data);
 			$this->rtf = $data;
 
@@ -199,11 +199,13 @@
 					}
 					break;
 				case "fcharset":
-					// this is for preparing flushQueue; it then moves the Queue to $this->fonttable .. instead to formatted output
+					// this is for preparing flushQueue; it then moves the Queue 
+					// to $this->fonttable .. instead to formatted output
 					$this->flags["fonttbl_want_fcharset"] = $parameter;
 					break;
 				case "fs":
-					// sets the current fontsize; is used by stylesheets (which are therefore generated on the fly
+					// sets the current fontsize; is used by stylesheets (which 
+					// are therefore generated on the fly
 					$this->flags["fontsize"] = $parameter;
 					break;
 				// handle alignment
@@ -371,7 +373,7 @@
 		function checkHtmlSpanContent( $command) {
 			reset( $this->fontmodifier_table);
 			while( list( $rtf, $html) = each( $this->fontmodifier_table)) {
-				if( $this->flags[$rtf] == true) {
+				if( isset($this->flags[$rtf]) AND $this->flags[$rtf] == true) {
 					if( $command == "start")
 						$this->out .= "<".$html.">";
 					else
@@ -384,8 +386,9 @@
 		*/
 		function flushQueue() {
 			if( strlen( $this->queue)) {
+
 				// processing logic
-				if( ereg( "^[0-9]+$", $this->flags["fonttbl_want_fcharset"])) {
+				if( isset($this->flags["fonttbl_want_fcharset"]) AND ereg( "^[0-9]+$", $this->flags["fonttbl_want_fcharset"])) {//ARBW
 					$this->fonttable[$this->flags["fonttbl_want_fcharset"]]["charset"] = $this->queue;
 					$this->flags["fonttbl_want_fcharset"] = "";
 					$this->queue = "";
@@ -401,8 +404,9 @@
 						$this->out.= "<plain>".$this->queue."</plain>";
 
 					if( $this->wantHTML) {
+					
 						// only output html if a valid (for now, just numeric;) fonttable is given
-						if( ereg( "^[0-9]+$", $this->flags["fonttbl_current_read"])) {
+						if( isset($this->flags["fonttbl_current_read"]) AND ereg( "^[0-9]+$", $this->flags["fonttbl_current_read"])) {// ARBW	
 							
 							if( $this->flags["beginparagraph"] == true) {
 								$this->flags["beginparagraph"] = false;

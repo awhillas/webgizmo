@@ -1,11 +1,18 @@
 <?php
 /**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+/**
  * Basic Render
  * 
  * Basic rendered. Example of a render class. Inherit and override ...
  *
  * @package WebGizmo
  * @author Alexander R B Whillas
+ * @todo Delete this class and replace to call to it in FS with GizLayoutor::make()
  **/
 class BasicRender
 {

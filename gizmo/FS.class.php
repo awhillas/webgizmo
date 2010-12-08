@@ -1,56 +1,136 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
+
+// // // // // // // // // // // // // // // // //
+// Basic includes
+// // // // // // // // // // // // // // // // //
+
+/**
+ * HTML tag rendering functions library.
+ */
+include 'includes/html.php';
+/**
+ * Handy debugging functions
+ */
+include 'includes/debug.php';
+/**
+ * Nice data dump output.
+ */
+include 'includes/krumo/class.krumo.php';
+
+/**
+ * @global	String	Version number of this install of Web Gizmo
+ */
+if (!defined('GIZMO_VERSION'))	define('GIZMO_VERSION', '0.2beta');
+
 // // // // // // // // // // // // // // // // //
 // Path constants
 // // // // // // // // // // // // // // // // //
 
 // Can be overriden in the index.php file so can be shared by multipule websites.
-// @todo perhap wrap these up in a Class?
+// Nameing conventions for the various PATH/DIRs, names ending in:
+// 		_PATH = Server absolute paths
+// 		_DIR = Name of single directory (not a full path)
 
+/**
+ * @global	string	Server side absolute path to the "web root", where the index.php file is and the request is being served from.
+ */
 if (!defined('WEB_ROOT')) 		define('WEB_ROOT', 		dirname($_SERVER['SCRIPT_FILENAME'])); 
+/**
+ * @global	string	Server path to the instillation of Gizmo i.e. where this file is.
+ */
 if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
+/**
+ * @global	string	
+ */
 if (!defined('INCLUDES_PATH'))	define('INCLUDES_PATH',	GIZMO_PATH.'/includes');
+/**
+ * @global	string	
+ */
 if (!defined('PLUGINS_PATH'))	define('PLUGINS_PATH',	GIZMO_PATH.'/plugins');
+/**
+ * Assumed to be within the WEB_ROOT.
+ * @global	string	
+ */
 if (!defined('CONTENT_DIR')) 	define('CONTENT_DIR', 	'/content');
+/**
+ * @global	string	
+ */
 if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
 
 // // // // // // // // // // // // // // // // //
 // Behaviour Settings
 // // // // // // // // // // // // // // // // //
 
+/**
+ * @global	string	Sub-path of the content folder to redirect to if you don't want the root folder to be it.
+ */
 if (!defined('DEFAULT_START'))	define('DEFAULT_START',	'/');
 
-/**
- * mod_rewrite is on.
- * @var	Boolean
- */
-if (!defined('REWRITE_URLS'))	define('REWRITE_URLS', true);
-/**
- * If gizmo is not in the root then add this to base URL (i.e. beginning of all link URLs)
- * @see FS::getURL
- * @var	String
- */
-if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '/');
+if (!defined('REWRITE_URLS'))
+{
+	// Try to detect if mod_rewrite is installed and the .htaccess is setup correctly.
+	if (isset($_SERVER['HTTP_MOD_REWRITE']) AND $_SERVER['HTTP_MOD_REWRITE'] == 'On')
+		$isModRewriteOn = true;
+	else
+		$isModRewriteOn = false;
 
+	/**
+	 * @global	Boolean	Is Apache's mod_rewrite active? This is attempted to be 
+	 * 		auto-detected and set. Define in index.php to force on or off.
+	 * @link http://christian.roy.name/blog/detecting-modrewrite-using-php#comment-170
+	 */		
+	define('REWRITE_URLS', $isModRewriteOn);
+}
+
+
+/**
+ * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
+ * @see FS::getURL()
+ * @global	String
+ */
+if (!defined('BASE_URL_PATH'))	define('BASE_URL_PATH', '');
+
+/**
+ * @global	Boolean		Is the Content folder divided into languages at the root level?
+ */
 if (!defined('MULTI_LINGUAL'))	define('MULTI_LINGUAL',	false);
+/**
+ * @global	string		Which language should be the default language if the browser sniffed one isn't present? Should be an ISOxxxx code
+ */
 if (!defined('DEFAULT_LANGUAGE'))	define('DEFAULT_LANGUAGE',	'en');
 
 /**
- * Character set used, used for htmlentities() function and HTML document header
- * @var	String
- * @see http://php.net/manual/en/function.htmlentities.php
- * @see FS::strip
+ * @global	String	Character set used, used for htmlentities() function and HTML document header
+ * @link http://php.net/manual/en/function.htmlentities.php
+ * @see FS::strip()
  **/
 if (!defined('CHAR_ENCODING'))	define('CHAR_ENCODING',	'UTF-8');
 
 /////// Content Variables...
+/**
+ * @global	string	
+ */
 if (!defined('SITE_TITLE'))		define('SITE_TITLE', 	$_SERVER['SERVER_NAME']);
+/**
+ * @global	string	
+ */
 if (!defined('THEME_DIR'))		define('THEME_DIR',		'/default');
 
 /**
- * The name of the default render class
- * @var	String
+ * @global	string		Overrider of the default HTML layout render'er (Layoutor)	
  */
-if (!defined('CONTENT_RENDERER'))	define('CONTENT_RENDERER', 'BasicRender');
+if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'FormatHTML');
+
+/**
+ * @global	integer		Default HTML version
+ */
+if (!defined('HTML_DEFAULT_VERSION'))	define('HTML_DEFAULT_VERSION',	4);
+
 
 // // // // // // // // // // // // // // // // //
 // Boring stuff...
@@ -61,14 +141,9 @@ if(version_compare(PHP_VERSION, '5.0.0') <= 0)
 	trigger_error('You need at least PHP 5.0 to use Web Gizmo! You have version '.PHP_VERSION, E_ERROR);
 
 // Make sure our Classes get included automatically
+set_include_path( implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/handlers', PLUGINS_PATH)) );
 spl_autoload_extensions('.class.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
-set_include_path(
-	get_include_path()
-	. implode(PATH_SEPARATOR, array(GIZMO_PATH, GIZMO_PATH.'/contenttypes', PLUGINS_PATH))
-);
-
-include 'includes/html.php';
 
 
 /**
@@ -78,6 +153,7 @@ include 'includes/html.php';
  * It was called FS as Gizmo was original called FS-CMS.
  * Is a Singleton, with the static get() method. 
  *
+ * @package	WebGizmo
  * @todo Put some more Exception throwing + handling in
  */
 class FS
@@ -96,63 +172,95 @@ class FS
 	private $EXCLUDE_FILES = array('.', '..', '.DS_Store', 'Thumbs.db');
 	
 	/**
-	 * List of Path objects.
-	 * Used to store variables by __get & __set
-	 * @var Array
+	 * Current absolute content path
+	 * @var Path
+	 * @see FS::currentPath()
 	 */
-	private $_paths = array();
-		
-	/**
-	 * Array of Content objects
-	 * @var Array
-	 */
-	private $content = Array();
+	private $path;
 	
 	/**
-	 * Path to the content directory
-	 * @var Path object 
+	 * @var Path
 	 */
-	public $path;
+	private $contentRoot;
 	
 	/**
-	 * @var String
-	 * @todo Should be a Path object
+	 * @var	Path
 	 */
-	public $contentRoot;
-	
-	/**
-	 * @var	Object	Path object
-	 */
-	public $templatesRoot;
-	
-	function __construct($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR)
-	{
-		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
-		$this->contentRoot = (MULTI_LINGUAL)
-			? new Path(WEB_ROOT . $content_path. '/'.$this->getLanguage(), true)
-			: new Path(WEB_ROOT . $content_path, true);
+	private $templatesRoot;
 
-		// Current Content path
-		$this->path = new Path($this->contentRoot->get() . FS::getPath()->get());
+	/**
+	 * @var	Array	Array of content variables to be added to the Template
+	 * 		before rendering.
+	 * @see FS::add()
+	 */
+	public $content;
+	
+	/**
+	 * List of file references. 
+	 * 
+	 * @var	Array	The Key is the path and the value is the MIME type.
+	 */
+	private $fileReferences = array();
+	
+	/**
+	 * @param	String	Content path override, should be the absolute path to 
+	 * 		the content folder on the server. Default is WEB_ROOT + CONTENT_DIR
+	 * @param	String	Templates path override, should be the absolute path to 
+	 * 		the templates root folder on the server. Default is WEB_ROOT + TEMPLATES_DIR
+	 */
+	private function __construct($content_path = '', $templates_path = '')
+	{
+		$content_path 	= (empty($content_path)) 	? WEB_ROOT . CONTENT_DIR					: $content_path;
+		$content_path 	= (MULTI_LINGUAL) 			? $content_path . '/'.$this->getLanguage() 	: $content_path;
+
+		$templates_path = (empty($templates_path))	? WEB_ROOT . TEMPLATES_DIR					: $templates_path;
 		
-		// If we're on the DEFAULT_START path then treat as the new root path	
+		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
+		$this->contentRoot = new Path($content_path, true);
+
+		$this->templatesRoot = new Path($templates_path, true);
+
+		// Current real Content path
+
+		$VPath = FS::getPath();
+
+		if(file_exists($content_path . $VPath))
+		{
+			$this->path = new Path($content_path . $VPath);
+		}
+		else
+		{
+			// Assume its a Virtual path so try to convert it
+			if($real = $this->virtualToReal($VPath, $content_path))
+			{
+				$this->path = new Path($content_path . $real);
+			}
+			else
+			{
+				// if nothing matches then 404 :( 
+				header("HTTP/1.0 404 Not Found");
+				die("Could not find path $VPath");
+			}	
+		}
+
+		// If we're on the DEFAULT_START path then treat it as the new root path	
 		if(!FS::getPath()->get() && DEFAULT_START != '/')
 		{
-			$this->path = new Path(WEB_ROOT . $content_path . DEFAULT_START, true);
+			$real_default_start = FS::virtualToReal(DEFAULT_START, $content_path);
+			
+			$this->path = new Path($content_path . $real_default_start, true);
 		}
 		
-		// Templates path
-		
-		$this->templatesRoot = new Path(WEB_ROOT . $templates_path, true);
+		$this->content = array('head' => '', 'foot' => '');
 	}
 
 	/**
-	 * Singleton constructor function.
+	 * Singleton constructor/factory method.
 	 *
-	 * @return 	Object	FS object.
+	 * @return 	FS	Global instance of the FS object
 	 **/
-	public static function get($content_path = CONTENT_DIR, $templates_path = TEMPLATES_DIR) 
-	{
+	public static function get($content_path = '', $templates_path = '') 
+	{		
         if (!self::$_instance)
         {
             self::$_instance = new FS($content_path, $templates_path);
@@ -160,59 +268,18 @@ class FS
         return self::$_instance;
 	}
 	
-	public function __set($name, $path) 
-	{
-		if(!isset($this->_paths[$name]))
-			$this->_paths[$name] = new Path($path);
-	}
-	
-	public function __get($name)
-	{
-		if(isset($this->_paths[$name]))
-			return $this->_paths[$name];
-
-		// TODO: make this throw and exception instead?
-		$trace = debug_backtrace();
-		trigger_error(
-			'Undefined property via __get(): ' . $name .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
-			E_USER_NOTICE);
-		return null;
-	}
-	
 	/**
-	 * So when this object is used as a function the 'parse' method is invoked
+	 * So when this object is used as a function it returns the current content Path.
 	 * Handy in the Savant templates where an instance of FS is already instantiated
 	 * 
 	 * @see FS::parse()
+	 * @return 	Path	Array of FileContent
 	 */
-	public function __invoke($files_list) 
+	public function __invoke() 
 	{
-		return $this->parse($files_list);
+		return $this->get();
 	}
-	
-	/**
-	 * Build array of FileContent objects from an Array of FileInfo objects.
-	 * 
-	 * @param	Array	of SplFileInfo objects
-	 * @return 	Array	Array of FileContent
-	 */
-	public function parse($files_list)
-	{
-		$out = array();
 
-		foreach ($files_list as $File)	
-		{	
-			$filename = $File->getFilename();
-			
-			if (!in_array($filename, $this->EXCLUDE_FILES) and preg_match('/^[^_]/', $filename))
-			{
-				$out[$filename] = FileContent::Factory($File);
-			}
-		}		
-		return $out;
-	}
 
 	/**
 	 * @return Path object
@@ -221,82 +288,59 @@ class FS
 	{
 		return new Path($this->templatesRoot->get() .'/'. $format . THEME_DIR);
 	}
-
+	
 	/**
-	 * Instantiate the Template Engine and find all the appropriate templates to give it.
-	 * 
-	 * @see http://phpsavant.com/
-	 * @see http://devzone.zend.com/article/9075
-	 */
-	private function getTemplate($format = 'html')
+	 * Getter for the content path
+	 *
+	 * @return String
+	 **/
+	public function currentPath()
 	{
-		$Path = $this->templatePath($format);
-		
-		if($Path->is())
-		{
-			// Using Savant3 template system.
-			require INCLUDES_PATH.'/Savant3/Savant3.php';
-
-			// set options
-			$options = array(
-				'template_path' => $Path,
-				'exceptions'    => true,
-				'extract'       => true
-			);
-
-			// initialize template engine
-			return new Savant3($options);
-		}
-		else
-		{
-			trigger_error('Template path could not be found: '.$Path, E_USER_ERROR);
-			return false;
-		}
-	}
-
-	/**
-	 * Handle HTTP request
-	 * @todo Send some HTTP headers here with the right mimetype and cacheing info...?
-	 */
-	public function HttpRequest($format = 'html')
-	{
-		if($this->path->is())
-		{
-			if($tpl = $this->getTemplate($format))
-			{
-				$tpl->fs = &$this;
-				$tpl->here = &$this->path;
-				$tpl->title = SITE_TITLE;
-				$tpl->langauge = $this->getLanguage();
-
-				$tpl->display('index.tpl.php');
-			}
-		}
+		return $this->path;
 	}
 	
 	/**
-	 * @param	$depth	Integer	Depth that the menu should render. i.e. list in a list.
-	 * @return 	Array	List of html links to the top level Content Directories.
-	 * @todo Add a base path here so menus starting at a sub path are possible.
-	 */
-	public function getMenu($depth = 1)
+	 * Getter for the content root/base path
+	 *
+	 * @return String
+	 **/
+	public function contentRoot()
 	{
-		$out = array();
-
-		foreach (array_keys($this->getContentTree('', $depth)) as $dir) 
+		return $this->contentRoot;
+	}
+	
+	/**
+	 * Getter for the root path to the content directory
+	 *
+	 * @return String
+	 **/
+	public function templatesRoot()
+	{
+		return $this->templatesRoot;
+	}
+	
+	/**
+	 * Process a HTTP request returning the requested format.
+	 *
+	 * @return String
+	 * @todo Send MIME in the header. Need a standard format/extension to MIME lookup.
+	 **/
+	public function http($format = 'html', $version = HTML_DEFAULT_VERSION)
+	{
+		if($this->path->is())
 		{
-			if(preg_match("/^[^_]/", $dir) != 0)
+			// Get the Layoutor for the format
+			if($Layout = GizFormat::make($format, $version))
 			{
-				$url = FS::getURL($dir);
+				// Send HTTP headers
+				// ???
 
-				$class = $this->pathCSS($dir);
-				$class .= ('/'.$dir == FS::getPath()) ? ' Selected' : '';
-
-				$out[] = "<a href=\"$url\" class=\"$class\">{$this->clean($dir)}</a>";				
+				// output the renered content. 
+				echo $Layout->render();
 			}
+			else
+				trigger_error('Could not find render for given format: '.$format);
 		}
-
-		return $out;
 	}
 	
 	/**
@@ -304,11 +348,12 @@ class FS
 	 * 
 	 * @param	$dir	String|SplFileInfo
 	 * @return 	String	the correct URL for links given a virtual path.
+	 * @deprecated Use Path->url() instead.
 	 * @see REWRITE_URLS
 	 */
 	static public function getURL($dir)
 	{
-		if(is_a($dir, 'SplFileInfo'))
+		if(is_a($dir, 'FSObject'))
 		{
 			// Figure out its URL by subtracking the web root
 			if($dir->isDir())
@@ -319,19 +364,137 @@ class FS
 			$dir = Path::open($from)->from($dir->getPathname());
 		}
 		
-		return (REWRITE_URLS) 
-			? ((BASE_URL_PATH)? BASE_URL_PATH .'/' : '') . "$dir" // force objects __toString()
-			: BASE_URL_PATH . "?path=$dir";	
+		return (REWRITE_URLS) 	// If we're using Apaches mod_rewrite...
+			? ((BASE_URL_PATH)	// ... append the BASE_URL_PATH to the $dir...
+				? ((BASE_URL_PATH == '/')	// ...only if BASE_URL_PATH is not '/'
+					? ''
+					: BASE_URL_PATH.'/')
+				: '') . "$dir" // force objects __toString()
+			: BASE_URL_PATH . "?path=$dir";	// ... ugly URLs then.
+	}
+
+	/**
+	 * Get the CGI virtual 'path' variable value
+	 *
+	 * @return String	The current virtual path (relative to the base URL)
+	 * @todo make this a gett'r for a Singleton
+	 * @todo rename to reflect that its a virtual URL _not_ a system path
+	 */
+	public static function getPath()
+	{		
+		return (isset($_GET['path'])) 
+			? new Path($_GET['path'])
+			: new Path('/');
 	}
 	
 	/**
 	 * @return 	String	Value of the CGI "path" variable i.e. the "virtual path"
+	 * @deprecated Use Path->url() instead.
 	 */
 	public function vpath()
 	{
 		return $this->getPath()->get();
 	}
 
+	/**
+	 * Convert an Virtual path to a Real path
+	 *
+	 * @param	Path
+	 * @param	String	Base path to prefix to the given Virtual path when 
+	 * 					looking for sub folders
+	 *
+	 * @return Mixed	The real path on success, FALSE if it could no be found
+	 * @todo Clean this up. Make recursive.
+	 **/
+	public function virtualToReal($Virtual, $base_path)
+	{
+		if(!is_a($Virtual, 'Path'))
+			$Virtual = new Path($Virtual);
+		
+		// Virtual so have to look for it...
+		$current = '';
+		foreach($Virtual->parts() as $part)
+		{
+			if(!empty($part))
+				if(file_exists($base_path . '/'. $part))
+				{
+					$current .= '/'.$part;
+				}
+				else
+				{
+					// Get a list of all the folders in the $current path
+					
+					$found = false;						
+					
+					// Compare their clean names to the given part
+					foreach(scandir($base_path . $current) as $file)
+					{
+						$FSObject = FSObject::make($base_path . $current .'/'. $file);
+						
+						if($FSObject->getCleanName() == $part)
+						{
+							// if we have a match then add the real name to the $current path.
+							$current .= '/'.$FSObject->getFilename();
+							$found = true;
+							break;
+						}
+					}
+				
+					// if nothing matches. 
+					if(!$found)
+					{
+						return false;
+					}
+				}
+		}
+		return $current;
+	}
+	
+	/**
+	 * Condense a Real path to a human friendly Virtual path i.e. all parts 
+	 * consisting of their "clean names".
+	 * 
+	 * Doesn't check the path exists, just processes the paths parts.
+	 * 
+	 * @param	String
+	 *
+	 * @return String	Virtual path from the Real path.
+	 **/
+	public function realToVirtual($real)
+	{
+		$out = array();
+		
+		foreach(explode('/', $real) as $part)
+		{
+			if(!empty($part))
+			{
+				// FS::clean(basename($part, FSObject::getExtension($part)));
+				$out[] = FSObject::getCleanName($part);
+			}
+		}
+		return implode('/', $out);
+	}
+
+	
+	/**
+	 * Builds a list of HTML links to the top level folders in the Content folder
+	 * 
+	 * @return 	Array	List of HTML anchor tags to the top level folders.
+	 */
+	function menu()
+	{
+		$out = array();
+
+		foreach(Path::open($this->contentRoot())->query('folders.has.^[^_]') as $Dir)
+		{
+			$class = ( $this->currentPath()->url() == $Dir->getURL() )? 'Selected': '';
+			
+			$out[$Dir->getCleanName()] = $Dir->htmlLink(null, $class);
+		}
+
+		return $out;
+	}
+	
 	/**
 	 * Get the Content tree starting at the given virtual path
 	 * 
@@ -352,6 +515,9 @@ class FS
 	/**
 	 * Strip leading numbers + underscore from the given string
 	 * + escape HTML special characters
+	 * 
+	 * @return 	String
+	 * 
 	 * @todo make this work (with reg. expr.'s?)
 	 */
 	public static function clean($value = '')
@@ -373,6 +539,7 @@ class FS
 	 **/
 	public static function getDirectoryTree($outerDir, $depth = 1, $only_dirs = true)
 	{
+		// remove .. & .
 		$dirs = array_diff( scandir( $outerDir ), Array( '.', '..' ) );
 		
 		$out = Array();
@@ -380,21 +547,33 @@ class FS
 		foreach( $dirs as $d )
 			if( is_dir($outerDir.'/'.$d) and $depth )
 			{
-				$out[ $d ] = FS::getDirectoryTree( $outerDir.'/'.$d, $depth - 1);
+				$out[ $outerDir.'/'.$d ] = FS::getDirectoryTree( $outerDir.'/'.$d, $depth - 1);
 			} 
 			elseif(!$only_dirs)
 			{
-				$out[ $d ] = $d;
+				$out[ $outerDir.'/'.$d ] = $d;
 			}
 		
 		return $out;		
+	}
+
+	/**
+	 * Get a list of language codes the content is available in.
+	 * Look at the top level of the Content folder and assume 
+	 * the first level is a list of language codes.
+	 *
+	 * @return Array
+	 **/
+	function getContentLanaguages()
+	{
+		return array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR));
 	}
 	
 	/**
 	 * Determine the Language of the content
 	 *
 	 * @return String	ISO639 Two-letter primary language code
-	 * @see http://www.w3.org/TR/REC-html40/struct/dirlang.html
+	 * @link http://www.w3.org/TR/REC-html40/struct/dirlang.html
 	 **/
 	function getLanguage()
 	{
@@ -440,31 +619,14 @@ class FS
 	}
 	
 	/**
-	 * Get a list of language code the content is available in.
-	 * Look at the top level of the Content folder and assume 
-	 * the first level is a list of language codes.
-	 *
-	 * @return void
-	 **/
-	function getContentLanaguages()
-	{
-		return array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR));
-	}
-	
-	/**
-	 * Get the CGI virtual 'path' variable value
-	 *
-	 * @return String	The current virtual path (relative to the base URL)
-	 * @todo make this a gett'r for a Singleton
-	 * @todo rename to reflect that its a virtual URL _not_ a system path
-	 */
-	public static function getPath()
-	{		
-		return (isset($_GET['path'])) ? new Path($_GET['path']): new Path('/');
-	}
-	
-	/**
-	 * Make CSS classes specific to the current path for use in the HTML <body> tag for example
+	 * Make CSS class names specific to the current path for use in the HTML 
+	 * <body> tag for example:
+	 * <code>
+	 * /content/some/path/to/current/content => SomePathToCurrentContent
+	 * </code>
+	 * 
+	 * @return 	String
+	 * @todo MOve this to a HTML Format render
 	 */
 	public function pathCSS($path = null)
 	{		
@@ -499,75 +661,81 @@ class FS
 	}
 	
 	/**
-	 * @return Array	of FileContent objects the the current virtual path.
+	 * Add content to the $var variable.
+	 * Used to add HTML to the header/footer of the template.
+	 * These variables will be made available to the template as $head or $foot etc.
+	 * The value is 
+	 * 
+	 * @param	String	HTML to add to the variable.
+	 * @param	String	Name of the variable. Usually 'head' or 'foot' for 
+	 * 					standard HTML doc header or footer but can be anything.
+	 * @param	Boolean	Add to the beginning of the content?
 	 **/
-	public function getContent($filter = null, $sort = 'ascending')
+	public static function add($html, $var = 'head', $prepend = false)
 	{
-		// Use the Path object to get a filtered list of files (files only here).
-		// NB: Local vaiable $here = $this->path in the template
-		$list = $this->path->getIt($filter);	// query is just a wrapper for getIt() anyway
+		$fs = FS::get();
 
-		// Parse the list of files, wraping each in one of the FileContent objects based on its extention. 
-		// NB: Local variable $fs = $this in the template.
-		$content  = $this->parse($list);
-		
-		switch($sort)
-		{
-			case 'random':
-			case 'rand':
-				shuffle($content);
-			
-			case 'dec':
-			case 'decending': 
-				ksort($content);
-				$content = array_reverse();
-			
-			case 'asc':
-			case 'ascending':
-			default:
-				ksort($content);
-		}
-		return $content;
+		if(isset($fs->content[$var]))
+			if($prepend)
+			{
+				$fs->content[$var] = $html."\n".$fs->content[$var];
+			}
+			else
+			{
+				$fs->content[$var] .= $html;
+			}
+		else
+			$fs->content[$var] = $html;
 	}
 	
 	/**
-	 * Default render the current Virtual path's folder contents.
+	 * Add a reference to an external file.
 	 * 
-	 * This is more a connivence function and is more of an example. More complex 
-	 * filtering and rendering control can be achieved by doing this in the template
-	 * itself, and is in fact the idea behind the template design.
-	 * 
-	 * For example: one might want to filter out everything except images and use only
-	 * their paths in some Flash gallery widget one part if the template and then grab only
-	 * the .text files and use the default rendering on another part (column say).
-	 * 
-	 * @param	String	$only	Filter out everything except 'files' or 'folders' 
-	 * @return 	String	HTML
+	 * This is typically a CSS or JavaScript file. The type of reference (i.e. 
+	 * for HTML it will be ether a <link /> or <script></script> tag) will be 
+	 * determined from the file extension is the second argument is 'auto' (its
+	 * default value), otherwise this can be forced by passing a MIME type for 
+	 * the file.
+	 *
+	 * @return boolean	TRUE if all went well, false if extension was not recognised.
 	 **/
-	public function render($only = 'files', $format = 'html')
+	public function addRef($path, $mime = 'auto')
 	{
-		$out = $filter = '';
+		$out = TRUE;
 		
-		// Build filter array. See Path::getIt() for more complex examples. 
-		switch($only)
+		if($mime = 'auto')
 		{
-			case 'files':
-				$filter = array('isFile' => true);
-				break;
-			
-			case 'folders':
-				$filter = array('isDir' => true);
-				break;
+			switch(FSObject::getExtension($path))
+			{
+				case 'js':
+					$mime = 'text/javascript';
+					break;
+				
+				case 'css':
+					$mime = 'text/css';
+					break;
+				
+				default:
+					$mime = 'text/plain';
+					$out = FALSE;
+			}
 		}
 		
-		$stupid = CONTENT_RENDERER;
-		$Renderer = new $stupid($this->getContent($filter));
+		$this->fileReferences[$path] = $mime;
 		
-		// Get the content and render each
-		// foreach($this->getContent($filter) as $file) 
-		// 	$out .= $file->render($format);
-		
-		return $Renderer->render($format);
+		return $out;
+	}
+	
+	/**
+	 * Getter for the list of external file references
+	 * 
+	 * @see FS::fileReferences
+	 *
+	 * @return void
+	 **/
+	public function fileRefs()
+	{
+		return $this->fileReferences;
 	}
 }
 

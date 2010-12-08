@@ -1,77 +1,61 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
 
+/**
+ * @global	String	Name of the file in the content directory with a list of filename patterns to ignore.
+ */
+if(!defined('GZ_IGNORE_FILENAME')) define('GZ_IGNORE_FILENAME', '_ignore');
+
+/**
+ * Iterator class which filters files based on the Ignore list file.
+ * 
+ * If the CONTENT_DIR has a file called '_ignore' it will be opened and 
+ * each line can be a regular expression of filenames to ignore when parsing 
+ * the CONTENT_DIR folder. This is so stuff like .DS_Store files can be ignored.
+ *
+ * @package WebGizmo
+ **/
 class FSFilterIterator extends FilterIterator
 {
-	private $_filters = array();
-	
-	// TODO: replace this with some Reflection?
-	private $_valid_filters = array(
-		'isDot', 'isDir', 'isFile', 'isReadable', 'isWritable', 'isLink',	// Booleans
-		'getSize', 'getMTime', 'getCTime', 'getATime', 'getBasename', 'getFilename'	// for string comparison
-	);
-
-	public function __construct($iterator, $filters = array())
-	{
-		parent::__construct($iterator);
-		
-		$this->_filters = $filters;
-		
-		$this->isDot = false;		
-	}
-	
 	/**
 	 * Implement abstract function from FilterIterator
 	 *
-	 * @return boolean
+	 * @return boolean TRUE and the file passes, FALSE and its filtered out.
 	 **/
     public function accept()
     {	
 		$current = $this->current();
 
-		// Looking for only one negative to make it all false.
-		foreach($this->_filters as $filter => $value)
-			if($filter == 'name' and !$this->name($value, $current))
+		foreach($this->getIgnoreList() as $pattern)
+			if(strpos($pattern, $current->getFilename()) !== false)
+			{
 				return false;
-			elseif(method_exists($current, $filter) and $current->$filter() != $value)
-				return false;
+			}
 		
         return true;
     }
 
-	protected function name($pattern, $subject)
+	protected function getIgnoreList()
 	{
+		static $list;
 		
-// if($test = preg_match("/$pattern/", $subject))
-// 	echo $pattern."\n";
-// else
-// 	var_dump($test);
-	
-		if (!empty($pattern))
-			return preg_match("/$pattern/", $subject) != 0;
-		else
-			return true;
-	}
-
-	/**
-	 * Apply the $filter to the $file
-	 */
-	function filter($filter, $value, $file)
-	{
-		if(method_exists($this, $filter))
+		if(!is_array($list))
 		{
-			return $this->$filter($value, $file);
+			$ignore_filename = FS::get()->contentRoot().'/'.GZ_IGNORE_FILENAME;
+			if(file_exists($ignore_filename))
+			{
+				$list = file($ignore_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+					
+				$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
+			}
+			else
+				$list = array();
 		}
-		else
-			return $file->$filter() != $value;
-	}
-	
-	function __set($filter, $value)
-	{
-		// if it doesn't begin with 'is' or 'get' then append it.
-		if(strpos($filter, 'is') !== 0 and strpos($filter, 'get') !== 'get')
-			$filter = 'get'.$filter;
 		
-		if(in_array($filter, $this->_valid_filters))
-			$this->_filters[$filter] = $value;
+		return $list;
 	}
 }

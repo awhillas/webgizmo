@@ -1,5 +1,20 @@
 <?php
+/**
+ * @package WebGizmo
+ * @author Alexander R B Whillas
+ * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ **/
 
+/**
+ * Encapsulate a list of FSObjets which are a result of a query (command chain).
+ * 
+ * Typically the List of FSObjects would come from a Path but as successive 
+ * filters and sorters can be applied to it this list might end up bearing 
+ * no relation to the original directory content pointed to by the original 
+ * Path object. 
+ *
+ * @package WebGizmo
+ **/
 class GizQuery implements Iterator
 {
 	/**
@@ -7,14 +22,23 @@ class GizQuery implements Iterator
 	 */
 	public $_file_list = array();
 	
-	function __construct($file_list) 
+	/**
+	 * @param	Array	List of FSObjects
+	 * @param	Boolean	Should the list be sorted by keys. This is mainly for GizQuery::run() as it might do special sorting.
+	 */
+	function __construct($file_list = array(), $sort = true) 
 	{
-		// Standardise ordering. Key should be the full path
-		ksort($file_list);
+		// Standardise ordering. Key should be the full path. Should be do this 
+		// somewhere else? I the factory method perhaps?
+		if($sort)
+			ksort($file_list);
 		
 		$this->_file_list = $file_list;
 	}
 
+	/**
+	 * @return 	String
+	 */
 	public function __toString()
 	{
 		if($this->tally())
@@ -29,12 +53,91 @@ class GizQuery implements Iterator
 			return '[empty]';
 	}
 	
-	function tally()
+	/**
+	 * Parse a query string and return a new GizQuery object.
+	 * 
+	 * @return 	GizQuery
+	 * 
+	 * @todo Clean this up to loop over array('GizSorter', 'GizFilter') and 
+	 * 		potentially make plugable filters/sorters. Use the Visitor pattern.
+	 */
+	public function run($query, $divider = '.')
+	{
+		$out = $this->_file_list;
+		
+		if(is_string($query))
+		{
+			// If the query is empty do nothing
+			if(empty($query))
+				return $this;
+			
+			$commands = explode($divider, $query);
+		}
+		else
+		{
+			trigger_error('Query must be a String');
+			
+			return new GizQuery(array());
+		}
+
+		if(count($out))
+			while ($cmd = array_shift($commands)) 
+			{
+				if($cmd == 'contents')
+				{
+					$out = array();
+					
+					foreach($this->_file_list as $FSObj)
+						if(is_a($FSObj, 'FSDir'))
+							// Using + instead of array_merge() so we keep the keys.
+							$out = (array)$out + (array)$FSObj->getPath()->query(implode($divider, $commands))->get();
+				}
+				else
+				{	
+					// Assume the next part is a paramter if its not a known filter or sorter
+					$param = null;
+					if(
+						isset($commands[0]) 
+						AND ( 
+							!in_array($commands[0], GizFilter::getList()) 
+							AND !in_array($commands[0], GizSorter::getList()) 
+						)
+					) {
+						$param = array_shift($commands);
+					}
+
+					if(in_array($cmd, GizFilter::getList()))
+					{
+						$out = GizFilter::go($cmd, $out, $param);
+					}
+
+					if(in_array($cmd, GizSorter::getList()))
+					{
+						$out = GizSorter::go($cmd, $out, $param);
+					}
+				}
+			}
+
+		return new GizQuery($out, false);		
+	}
+	
+	/**
+	 * Count the number of files
+	 * @return 	Integer
+	 */
+	function tally()	// can't call this simply 'count()'
 	{
 		return count($this->_file_list);
 	}
-	
-	function items($index = null)	// can't call this simple 'list()'
+
+	/**
+	 * Get a specific element from the FSOject list or returns the whole list 
+	 * if an $index is not passed.
+	 * 
+	 * @param	$index	String	RealPath to a specific file in the list.
+	 * @return 	FSObject
+	 */
+	function get($index = null)	// can't call this simply 'list()'
 	{
 		if(is_null($index))
 			return $this->_file_list;
@@ -49,24 +152,36 @@ class GizQuery implements Iterator
 	
 	/**
 	 * Get random item in the Query list
-	 * @return 	SplFileInfo object chosen at random
+	 * @return 	FSObject	Object chosen at random
 	 */
 	function rand()
 	{
-		return $this->items(array_rand($this->items()));
+		// note: array_rand() returns a key.
+		return $this->get(array_rand($this->get()));
 	}
 	
 	/**
 	 * Get the first item in the Query list
-	 * @return 	SplFileInfo object
+	 * @return 	FSObject
 	 */
 	function first()
 	{
-		return end(array_reverse($this->items()));
+		return end(array_reverse($this->get()));
 	}
+	
+	/**
+	 * Get the first item in the Query list
+	 * @return 	FSObject
+	 */
+	function last()
+	{
+		return end($this->get());
+	}	
 		
 	/**
 	 * Filter files/folders by name using Regular Expression
+	 * @param	String	Regular Expression to filter the name of the FSObjects by
+	 * @return 	GizQuery
 	 */
 	function name($regex = '')
 	{		
@@ -82,38 +197,48 @@ class GizQuery implements Iterator
 		}
 		else
 			return $this;
-		
-	}
-	/**
-	 * Filter GizQuery list for Folders
-	 */
-	function folders($regex = '')
-	{
-		return $this->filter(array('isDir' => true, 'isDot' => false))->name($regex);
-	}
-	
-	function files($regex = '')
-	{
-		return $this->filter(array('isFile' => true))->name($regex);
 	}
 
 	/**
-	 * Return GizQuery of all the sub-folders of the folders
+	 * Filter GizQuery list for Folders
+	 * @param	String	Regular Expression to filter the name of the FSObjects by
+	 * @return 	GizQuery
+	 */
+	function folders($regex = '')
+	{
+		return $this->run('folders')->name($regex);
+	}
+
+	/**
+	 * @param	String	Regular Expression to filter the name of the FSObjects by
+	 * @return 	GizQuery
+	 */
+	function files($regex = '')
+	{
+		return $this->run('files')->name($regex);
+	}
+
+	/**
+	 * Return GizQuery of all the content in the sub-folders of the folders in the current list.
+	 * @param	String	Regular Expression to filter the name of the FSObjects by
+	 * @return 	GizQuery
 	 */
 	function contents($regex = '')
 	{
 		$out = array();
-		
-		foreach ($this->filter(array('isDir' => true)) as $item) 
+
+		foreach($this->run('folders') as $folder)
 		{
-			if($result = Path::open($item->getPathname())->query(array('name' => $regex)) and $result->tally())
-				$out[] = $result;
+			if($folder->getContents()->tally() > 0)
+				$out[] = $folder;
 		}
+
 		return GizQuery::merge($out);
 	}
 	
 	/**
 	 * @param	$gizes	Array	List of GizQuerys to merge
+	 * @return 	GizQuery
 	 */
 	static function merge($gizes)
 	{
@@ -121,14 +246,14 @@ class GizQuery implements Iterator
 		
 		foreach($gizes as $gq)
 			if(is_a($gq, 'GizQuery'))
-				$out = array_merge($out, $gq->items());
+				$out = array_merge($out, $gq->get());
 		
 		return new GizQuery($out);
 	}
 	
 	/**
 	 * @param	$filter_list	array('filter' => 'value')
-	 * @return 	GizQuery object
+	 * @return 	GizQuery 
 	 */
 	function filter($filter_list)
 	{
@@ -141,27 +266,12 @@ class GizQuery implements Iterator
 		
 		return new GizQuery($out);
 	}
-	
-	function test($filter, $value, $file)
-	{
-		if(method_exists($file, $filter))
-			return $file->$filter() == $value;
-		elseif(method_exists($this, $filter))
-			return $this->$filter($file, $value);
-	}
-	
-	// File/folder filters - - - - - - - - - - - - - - - - - //
-	
-	private function isDot($file, $value)
-	{
-		return in_array($file->getFilename(), array('.', '..'));
-	}
-			
+		
 	// Iterator interface stuff - - - - - - - - - - - - - - - - - //
 	
 	function rewind() {
 		return reset($this->_file_list);
-	}
+	}	
 	function current() {
 		return current($this->_file_list);
 	}
