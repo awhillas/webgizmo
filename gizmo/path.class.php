@@ -326,15 +326,34 @@ class Path
 		
 		if ($this->isChildOf($base_path))
 		{
+			// URL encode just the bits between the '/'
+			$parts = array();
+			foreach(explode('/', FS::realToVirtual($this->less($base_path))) as $part)
+				$parts[] = urlencode($part);
+			$path = implode('/', $parts);
+			
+			// MAker the URL based on the mod_rewrite setup.
 			if(!REWRITE_URLS)
-				return BASE_URL_PATH.'/?path='.FS::realToVirtual($this->less($base_path));
+				return BASE_URL_PATH.'/?path='.$path;
 			else
-				return BASE_URL_PATH.'/'.FS::realToVirtual($this->less($base_path));
+				return BASE_URL_PATH.'/'.$path;
 		} 
 		else 
 		{
 			return false;
 		}
+	}
+
+	function mb_rawurlencode($url)
+	{
+		$encoded = '';
+		
+		$length = mb_strlen($url);
+		
+		for($i=0;$i<$length;$i++)
+			$encoded.='%'.wordwrap(bin2hex(mb_substr($url,$i,1)),2,'%',true);
+		
+		return $encoded;
 	}
 	
 	/**
