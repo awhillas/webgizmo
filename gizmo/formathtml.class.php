@@ -57,7 +57,7 @@ class FormatHTML extends GizFormat
 			$tpl->here = &$fs->currentPath();
 			$tpl->home = BASE_URL_PATH.DEFAULT_START;
 			$tpl->templates = $fs->templatePath($this->format)->realURL();
-			$tpl->title = htmlentities(SITE_TITLE);
+			$tpl->title = SITE_TITLE;
 			$tpl->language = $fs->getLanguage();
 			$tpl->gizmo_version = GIZMO_VERSION;
 	
