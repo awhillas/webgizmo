@@ -163,6 +163,56 @@ function rel($href, $type, $rel = null)
 	}
 }
 
+/**
+ * Generic inclusion: the OBJECT element
+ * 
+ * @param	String	$data	reference to object's data		
+ * @param	Array	$params	List of Name => Value pairs for Object initialization parameters.
+ * @param	String	$alt	alternate object renderings.
+ * @param	String	$class 	This attribute assigns a class name or set of class 
+ * 		names to an element. Any number of elements may be assigned the same 
+ * 		class name or names. Multiple class names must be separated by white 
+ * 		space characters.
+ * @param	String	$id		This attribute assigns a name to an element. This 
+ * 		name must be unique in a document.
+ * @param	Array	$attrs	Array of other attributes where the key is the 
+ * 		attribute and the value is the value.
+ * 
+ * @return 	String	HTML Object tag.
+ * @package WebGizmo
+ **/
+function object($data, $params = array(), $alt = '', $class = '', $id = '', $attrs = array()) {
+	
+	$attrs['data'] = $data;
+	
+	$obj_init = '';
+	foreach($params as $name => $value)
+	{
+		$obj_init .= param($name, $value);
+	}
+	
+	return tag('object', false, $obj_init.$alt, $class, $id, $attrs);
+}
+
+/**
+ * Object initialization: the PARAM element
+ * 
+ * @param	String	$name	Property name.
+ * @param	String	$value	Property value.
+ * @param	String	$id		Document-wide unique id.
+ * @param	Array	$attrs	Array of other attributes where the key is the 
+ * 		attribute and the value is the value.
+ * 
+ * @return 	String	HTML PARAM tag.
+ */
+function param($name, $value, $id = '', $attrs = array())
+{
+	$attrs['name'] = $name;
+	$attrs['value'] = $value;
+	
+	return tag('param', true, '', '', $id, $attrs);
+}
+
 // - - - - - - - - - - - - -
 // HTML 5 tags
 // - - - - - - - - - - - - -
