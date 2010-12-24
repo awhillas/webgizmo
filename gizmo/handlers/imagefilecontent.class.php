@@ -15,6 +15,10 @@
  **/
 class ImageFileContent extends FSFile
 {
+	public $width;
+	
+	public $height;
+	
 	function html($format = 'html')
 	{
 		$attrs = array();
@@ -22,8 +26,8 @@ class ImageFileContent extends FSFile
 		if (extension_loaded('gd') && function_exists('getimagesize'))
 		{
 			$meta = getimagesize($this->getPath()->get(), $info);
-			$attrs['width'] = $meta[0];
-			$attrs['height'] = $meta[1]; 
+			$attrs['width'] = $this->width = $meta[0];
+			$attrs['height'] = $this->height = $meta[1]; 
 		}
 
 		return img($this->getFileURL(), $this->getCleanName(), 'ImageFileContent', $this->getID(), $attrs);
