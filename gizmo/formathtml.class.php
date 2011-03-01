@@ -16,6 +16,20 @@ if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'FormatHTML');
 if (!defined('HTML_DEFAULT_VERSION'))	define('HTML_DEFAULT_VERSION',	4);
 
 /**
+ * @global	String		URL to the latest version of JQuery. 
+ * 						Useful for plugins but not sure where I should put this :-/ 
+ */
+if (!defined('JQUERY_URL'))			define('JQUERY_URL',	'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
+if (!defined('JQUERY_URL'))			define('JQUERY_URL',	'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
+
+/**
+ * @global	String		URL to the latest version of the Dojo Toolkit. 
+ */
+if (!defined('DOJOTOOLKIT_URL'))	define('DOJOTOOLKIT_URL',	'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js');
+
+
+
+/**
  * Basic HTML render'er 
  * 
  * Not too specific to any particular version of HTML.
@@ -135,6 +149,15 @@ class FormatHTML extends GizFormat
 		$all_parts = explode('/', FS::realToVirtual($fs->currentPath()->less($fs->contentRoot())));
 //		array_shift($all_parts); // Remove the empty at the begining
 
+		// Special front.tpl.php (1st page intro)
+		// TODO: Check if DEFAULT_START is defined 
+		if(
+			count($all_parts) == 1 AND empty($all_parts[0]) 		// we're at '/'
+			AND file_exists($TemplatesPath . '/' . 'front.tpl.php')	// and the front.tpl.php is present
+		)
+			return 'front.tpl.php';
+
+
 		if(count($all_parts))
 		{
 			// Look for specific templates
@@ -164,7 +187,7 @@ class FormatHTML extends GizFormat
 					return $candidate;
 			}
 		}
-		
+				
 		return 'index.tpl.php';
 	}
 	

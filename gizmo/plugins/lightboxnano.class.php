@@ -9,8 +9,9 @@
  * The LightboxNano is a very lightweight lightbox which only displays a larger image
  * 
  * @link http://www.dojotoolkit.org/reference-guide/dojox/image/LightboxNano.html
+ * 
  * @package WebGizmo
- * @subpackage	ContentHanders
+ * @subpackage	GizPlugins
  * @author Alexander R B Whillas
  */
 class LightboxNano extends FSDir
@@ -20,7 +21,8 @@ class LightboxNano extends FSDir
 	{
 		$fs = FS::get();
 		
-		$fs->addRef('http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js');
+		//$fs->addRef('http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js');
+		$fs->addRef(DOJOTOOLKIT_URL);
 				
 		$fs->add('
 			<script type="text/javascript">

@@ -68,6 +68,19 @@ function p($content = '', $class = '', $id = '', $attrs = array())
  * @return String	A well formed HTML tag
  * @package WebGizmo
  **/
+function h($content = '', $level = 1, $class = '', $id = '', $attrs = array())
+{
+	if(!is_numeric($level) OR $level > 6 OR $level < 0)
+		$level = 1;
+	
+	return tag('h'.$level, false, $content, $class, $id, $attrs);
+}
+
+
+/**
+ * @return String	A well formed HTML tag
+ * @package WebGizmo
+ **/
 function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array())
 {
 	$attrs['src'] = $url;

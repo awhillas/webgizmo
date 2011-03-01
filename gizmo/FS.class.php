@@ -44,14 +44,11 @@ if (!defined('WEB_ROOT')) 		define('WEB_ROOT', 		dirname($_SERVER['SCRIPT_FILENA
  * @global	string	Server path to the instillation of Gizmo i.e. where this file is.
  */
 if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
+
 /**
  * @global	string	
  */
 if (!defined('INCLUDES_PATH'))	define('INCLUDES_PATH',	GIZMO_PATH.'/includes');
-/**
- * @global	string	
- */
-if (!defined('PLUGINS_PATH'))	define('PLUGINS_PATH',	GIZMO_PATH.'/plugins');
 /**
  * Assumed to be within the WEB_ROOT.
  * @global	string	
@@ -61,6 +58,15 @@ if (!defined('CONTENT_DIR')) 	define('CONTENT_DIR', 	'/content');
  * @global	string	
  */
 if (!defined('TEMPLATES_DIR'))	define('TEMPLATES_DIR',	'/templates');
+/**
+ * @global	string	
+ */
+if (!defined('PLUGINS_DIR'))	define('PLUGINS_DIR',	'/plugins');
+
+/**
+ * @global	string	
+ */
+if (!defined('PLUGINS_PATH'))	define('PLUGINS_PATH',	GIZMO_PATH.PLUGINS_DIR);
 
 // // // // // // // // // // // // // // // // //
 // Behaviour Settings
@@ -189,6 +195,11 @@ class FS
 	private $templatesRoot;
 
 	/**
+	 * @var	Path
+	 */
+	private $pluginsRoot;
+	
+	/**
 	 * @var	Array	Array of content variables to be added to the Template
 	 * 		before rendering.
 	 * @see FS::add()
@@ -208,17 +219,20 @@ class FS
 	 * @param	String	Templates path override, should be the absolute path to 
 	 * 		the templates root folder on the server. Default is WEB_ROOT + TEMPLATES_DIR
 	 */
-	private function __construct($content_path = '', $templates_path = '')
+	private function __construct($content_path = '', $templates_path = '', $plugins_path = '')
 	{
 		$content_path 	= (empty($content_path)) 	? WEB_ROOT . CONTENT_DIR					: $content_path;
 		$content_path 	= (MULTI_LINGUAL) 			? $content_path . '/'.$this->getLanguage() 	: $content_path;
 
 		$templates_path = (empty($templates_path))	? WEB_ROOT . TEMPLATES_DIR					: $templates_path;
+		$plugins_path = (empty($plugins_path))		? PLUGINS_PATH								: $plugins_path;
 		
 		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
 		$this->contentRoot = new Path($content_path, true);
 
 		$this->templatesRoot = new Path($templates_path, true);
+
+		$this->pluginsRoot = new Path($plugins_path	, true);
 
 		// Current real Content path
 
@@ -259,11 +273,11 @@ class FS
 	 *
 	 * @return 	FS	Global instance of the FS object
 	 **/
-	public static function get($content_path = '', $templates_path = '') 
+	public static function get($content_path = '', $templates_path = '', $plugins_path = '') 
 	{		
         if (!self::$_instance)
         {
-            self::$_instance = new FS($content_path, $templates_path);
+            self::$_instance = new FS($content_path, $templates_path, $plugins_path);
         }
         return self::$_instance;
 	}
@@ -318,6 +332,16 @@ class FS
 	{
 		return $this->templatesRoot;
 	}
+	
+	/**
+	 * Getter for the root path to the content directory
+	 *
+	 * @return String
+	 **/
+	public function pluginsRoot()
+	{
+		return $this->pluginsRoot;
+	}	
 	
 	/**
 	 * Process a HTTP request returning the requested format.

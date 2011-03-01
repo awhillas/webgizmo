@@ -23,10 +23,10 @@ class GenericFileContent extends FSFile
 	function html($format = 'html')
 	{
 		$attrs = array(
-			'type' 		=> (!empty($this->_type))? $this->_type: $this->getMIME(),
-			'width'		=> (!empty($this->_width))? '100%': '',
-			'height'	=> (!empty($this->_height))? '100%': ''
+			'type' => (!empty($this->_type))? $this->_type: $this->getMIME()
 		);
+		if(!empty($this->_width))	$attr['width'] 	= $this->_width;
+		if(!empty($this->_height))	$attr['height']	= $this->_height;
 
 		return object(
 			$this->getFileURL(), 	// data

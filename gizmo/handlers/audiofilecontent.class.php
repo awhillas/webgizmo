@@ -48,7 +48,7 @@ class AudioFileContent extends FSFile
 		if(GZ_AUDIO_AUTOPLAY)	$attrs['autoplay'] = 'autoplay';
 		if(GZ_AUDIO_LOOP) 		$attrs['loop'] = 'loop';
 		if(GZ_AUDIO_PRELOAD)	$attrs['preload'] = 'preload';
-		if($type = $this->getMIME()) $attrs['type'] = $type;
+		if($type = $this->getMIME(true)) $attrs['type'] = $type;
 		
 		switch($format)
 		{

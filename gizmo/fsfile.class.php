@@ -28,18 +28,27 @@ class FSFile extends FSObject
 
 	/**
 	 * Try to figure out the MIME type of the file.
+	 * 
+	 * @param	Boolean	$andEncoding	With the optional Charset encoding.
 	 *
 	 * @return void
 	 **/
-	function getMIME() 
+	function getMIME($andEncoding = false) 
 	{
 		// For PHP 5.3 or greater
 		if(class_exists('finfo'))
 		{
-			$finfo = @new finfo(FILEINFO_MIME); 
-			$type = @$finfo->file($this->getPath()); 
+			$finfo = @new finfo(FILEINFO_MIME);
+			$type = @$finfo->file($this->getPath());
 			if (is_string($type) && !empty($type))
-			   return $type;
+			{
+				if($andEncoding)
+					return $type;
+				else
+				{
+					return array_shift(explode(';', $type));
+				}
+			}
 		}
 		
 		// For old PHP before 5.3 use depreciated mime_content_type()

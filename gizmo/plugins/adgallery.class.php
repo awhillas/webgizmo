@@ -9,8 +9,9 @@
  * A highly customizable gallery/showcase plugin for jQuery.
  * 
  * @link http://coffeescripter.com/code/ad-gallery/
+ * 
  * @package WebGizmo
- * @subpackage	ContentHanders
+ * @subpackage	GizPlugins
  * @author Alexander R B Whillas
  */
 class ADGallery extends FSDir
@@ -20,7 +21,8 @@ class ADGallery extends FSDir
 	{
 		$fs = FS::get();
 		
-		$fs->addRef('http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
+		//$fs->addRef('http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
+		$fs->addRef(JQUERY_URL);
 		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.js');
 		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.css');
 		
