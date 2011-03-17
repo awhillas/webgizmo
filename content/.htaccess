@@ -1,0 +1,6 @@
+AddType text/plain .pl .cgi .php
+Options -ExecCGI
+AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+<FilesMatch "\.(php|pl|py|jsp|asp|htm|shtml|sh|cgi)$">
+ForceType text/plain
+</FilesMatch>
