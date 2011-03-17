@@ -19,26 +19,27 @@ class ADGallery extends FSDir
 	
 	function html()
 	{
+		$id = $this->getID();
+		
 		$fs = FS::get();
 		
-		//$fs->addRef('http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
-		$fs->addRef(JQUERY_URL);
+		$fs->addRef(JQUERY_URL);	// Include the CLI version of JQuery.
 		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.js');
 		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.css');
 		
 		$fs->add('
 			<script type="text/javascript">
-			$(document).ready(function() {
-				$(\'.ad-gallery\').adGallery();
-			});
+				$(document).ready(function() { $("#'.$id.'.ad-gallery").adGallery(); });
 			</script>
 		');
+		$fs->add('
+			<style>
+				.ad-gallery .ad-nav { overflow: hidden; }
+			</style>
+		');
 		
-		$out = '';
-
-		$out .= div('', 'ad-image-wrapper');
+		$out = div('', 'ad-image-wrapper');
 		$out .= div('', 'ad-controls');
-		
 		$out .= '
 			<div class="ad-nav">
 				<div class="ad-thumbs">
@@ -65,6 +66,6 @@ class ADGallery extends FSDir
 				</div>
 			</div>
 		';		
-		return div($out, 'ad-gallery', $this->getID());
+		return div($out, 'ad-gallery', $id);
 	}
 }

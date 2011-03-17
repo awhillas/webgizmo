@@ -503,13 +503,16 @@ class FS
 	/**
 	 * Builds a list of HTML links to the top level folders in the Content folder
 	 * 
+	 * @param	Integer	Number of nested levels deep the menu should show.
+	 * @param	Boolean	Output nested lists of links for all the menu items. False means just the current path.
+	 * 
 	 * @return 	Array	List of HTML anchor tags to the top level folders.
 	 */
-	function menu()
+	function menu($depth = 1, $showAll = false)
 	{
 		$out = array();
 
-		foreach(Path::open($this->contentRoot())->query('folders.has.^[^_]') as $Dir)
+		foreach($this->contentRoot()->query('folders.has.^[^_]') as $Dir)
 		{
 			$class = ( $this->currentPath()->url() == $Dir->getURL() )? 'Selected': '';
 			
@@ -528,7 +531,7 @@ class FS
 	 **/
 	public function getContentTree($virtual_root = '', $depth = 1, $only_dirs = true)
 	{
-		return FS::getDirectoryTree($this->contentRoot.$virtual_root, $depth, $only_dirs);
+		return FS::getDirectoryTree($this->contentRoot().$virtual_root, $depth, $only_dirs);
 	}
 	
 	
@@ -556,6 +559,7 @@ class FS
 	 * 'bare bones' recursive method to extract directories and files
 	 * 
 	 * @param	String	Directory to start scanning from
+	 * @param	Integer	How many levels deep should we go?
 	 * @param	Boolean	Only return Directories, ignore files?
 	 * @return 	Array	
 	 * @author	Dustin
