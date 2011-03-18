@@ -11,9 +11,9 @@
  * @package WebGizmo
  * @author Alexander Whillas
  **/
-abstract class GizCommand
+class GizCommand
 {
-	abstract public static function go($filter, $subject, $param);
+//	abstract public static function go($filter, $subject, $param);
 	
 	public static function getList()
 	{

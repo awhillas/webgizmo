@@ -31,7 +31,6 @@ class Path
 		else
 		{
 			trigger_error('Path does not exist: "'.$path.'"', E_USER_NOTICE);
-			krumo(debug_backtrace());
 			return null;
 		}
 	}

@@ -36,33 +36,62 @@ abstract class FSObject extends SplFileInfo
 				
 		parent::__construct($this->_path->get());
 		
-		$this->_name_meta = $this->parse();
+		$this->_name_meta = $this->parse($this->getBasename());
 	}
 
 	/**
-	 * Parse the file name for _tags_
+	 * Parse the file name for tags, sort number, name and extension.
 	 * 
 	 * The file name format that is expected for files is:
 	 * <code>
-	 * _tag_02_Nice_name.extension
+	 * _tag_02_name.extension
 	 * </code>
 	 * and for directories is similar with the addition of a query part
 	 * <code>
-	 * _tag_02_Nice_name.filter.sorter.extension
+	 * _tag_02_name.filter.sorter.extension
 	 * </code>
-	 * Any of these parts for ether can be omitted except the nice_name which 
+	 * Any of these parts for ether can be omitted except the 'name' which 
 	 * is always expected.
 	 *
-	 * @return Array	List of tags found in the file name.
+	 * @return Array	List of tags found in the file name. Keys are: 'tag', 'sort, 'name' and 'extension'.
 	 **/	
-	private function parse()
+	private static function parse($filename)
 	{
-		preg_match_all('/^(?:_+(?P<tag>[a-z0-9]+)*_)?(?:(?P<sort>\d{2})_)?/', $this->getBasename(), $bits);
+		preg_match_all('/(?:_(?P<tag>[A-Za-z]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>\w+)(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
+		
+		if(isset($bits[0]))
+		{
+			$bits = $bits[0];
 
-		return array(
-			'tag' 	=> $bits['tag'][0],
-			'sort' 	=> $bits['sort'][0]
-		);
+			return array(
+				'tag' 		=> $bits['tag'],
+				'sort' 		=> $bits['sort'],
+				'name'		=> $bits['name']
+	//			'extension'	=> $bits['ext']
+			);
+		}
+	}
+
+	/**
+	 * Getter for the 'name' part of the file.
+	 * 
+	 * @see FSObejct::parse()
+	 * 
+	 * @return string	Just the "nice name" of the file less, tags, sort number and extension.
+	 **/
+	public function getName()
+	{
+		return $this->_name_meta['name'];
+	}
+	
+	function getTag()
+	{
+		return $this->_name_meta['tag'];
+	}
+	
+	function getSort()
+	{
+		return $this->_name_meta['sort'];
 	}
 
 	/**
@@ -135,30 +164,41 @@ abstract class FSObject extends SplFileInfo
 		else
 			return false;
 	}
+	
 	/**
 	 * @return String	Filename without beginning number proceeded by an underscore nor the extension.
-	 * @todo Get the name without the tag.
 	 **/
-	public function getCleanName($base = '')
-	{	
-		if(empty($base))
-			$base = $this->getBasename();
-		
-		// Remove extension(s) if exist
-		if(strpos($base, '.') !== false)
-			$base = substr($base, 0, strpos($base, '.'));
+	public function getCleanName()
+	{
+		return FSObject::clean($this->getName());
+	}
 
-		return FS::clean($base);
+	/**
+	 * Clean a filename for Display purposes.
+	 *
+	 * @return String
+	 **/
+	public static function cleanName($filename)
+	{
+		$parts = FSObject::parse($filename);
+		
+		return FSObject::clean($parts['name']);
 	}
 	
-	function getTag()
+	/**
+	 * Strip leading numbers + underscore from the given string
+	 * + escape HTML special characters
+	 * 
+	 * @return 	String
+	 * 
+	 * @todo make this work (with reg. expr.'s?)
+	 */
+	public static function clean($value = '')
 	{
-		return $this->_name_meta['tag'];
-	}
-	
-	function getSort()
-	{
-		return $this->_name_meta['sort'];
+		// Replace underscores with spaces
+		$value = preg_replace('/_/', ' ', $value);
+		
+		return htmlentities($value, ENT_NOQUOTES, CHAR_ENCODING);
 	}
 	
 	// Unique ID useful for CSS

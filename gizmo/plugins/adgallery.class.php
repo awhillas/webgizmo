@@ -17,7 +17,7 @@
 class ADGallery extends FSDir
 {
 	
-	function html()
+	function html($format = 'html')
 	{
 		$id = $this->getID();
 		

@@ -17,7 +17,7 @@
 class LightboxNano extends FSDir
 {
 	
-	function html()
+	function html($format = 'html')
 	{
 		$fs = FS::get();
 		

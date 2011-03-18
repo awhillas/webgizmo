@@ -31,13 +31,13 @@ class HandlerMap
 	 */
 	private function __construct($overrides_ini_path = array())
 	{
-		$this->_map = parse_ini_file(DEFAULT_HANDLER_MAP_PATH, true);
+		self::$_map = parse_ini_file(DEFAULT_HANDLER_MAP_PATH, true);
 		
 		if($overrides_ini_path and file_exists($overrides_ini_path))
 		{
 			$overrides = parse_ini_file($overrides_ini_path);
 
-			$this->_map = array_merge($this->_map, $overrides);
+			self::$_map = array_merge($this->_map, $overrides);
 		}
 	}
 	
@@ -67,9 +67,9 @@ class HandlerMap
 	 **/
 	public function lookup($key)
 	{		
-		if(array_key_exists($key, $this->_map))
+		if(array_key_exists($key, self::$_map))
 		{
-			return $this->_map[$key];
+			return self::$_map[$key];
 		}
 		else
 			return false;

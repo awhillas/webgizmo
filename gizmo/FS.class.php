@@ -22,6 +22,24 @@ include 'includes/debug.php';
  */
 include 'includes/krumo/class.krumo.php';
 
+// Set the error reporting to use krumo!
+//error_reporting(0);
+set_error_handler('errorHandler', E_ERROR | E_USER_ERROR);
+function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
+{
+//	echo 'Into '.__FUNCTION__.'() at line '.__LINE__.
+//	pr( $errno, true).
+	pr( $errstr).
+	pr( $errfile . "(Line: $errline)");
+//	pr( $errcontext, true);
+	
+	$stack = debug_backtrace();
+	pr($stack);
+	// array_shift($stack);
+	// krumo($stack);
+}
+
+
 /**
  * @global	String	Version number of this install of Web Gizmo
  */
@@ -453,11 +471,10 @@ class FS
 					// Compare their clean names to the given part
 					foreach(scandir($base_path . $current) as $file)
 					{
-						$FSObject = FSObject::make($base_path . $current .'/'. $file);
-						
-						if($FSObject->getCleanName() == $part)
+						if(!in_array($file, array('.', '..')) AND FSObject::cleanName($file) == $part)
 						{
 							// if we have a match then add the real name to the $current path.
+							$FSObject = FSObject::make($base_path . $current .'/'. $file);
 							$current .= '/'.$FSObject->getFilename();
 							$found = true;
 							break;
@@ -484,7 +501,7 @@ class FS
 	 *
 	 * @return String	Virtual path from the Real path.
 	 **/
-	public function realToVirtual($real)
+	public static function realToVirtual($real)
 	{
 		$out = array();
 		
@@ -492,8 +509,8 @@ class FS
 		{
 			if(!empty($part))
 			{
-				// FS::clean(basename($part, FSObject::getExtension($part)));
-				$out[] = FSObject::getCleanName($part);
+				// FS::rbasename($part, FSObject::getExtension($part)));
+				$out[] = FSObject::cleanName($part);
 			}
 		}
 		return implode('/', $out);
@@ -538,22 +555,6 @@ class FS
 	// / / / / / / / / / / / / / / / / / / / / / / / / /
 	// Static funcitons
 	// / / / / / / / / / / / / / / / / / / / / / / / / /
-
-	/**
-	 * Strip leading numbers + underscore from the given string
-	 * + escape HTML special characters
-	 * 
-	 * @return 	String
-	 * 
-	 * @todo make this work (with reg. expr.'s?)
-	 */
-	public static function clean($value = '')
-	{
-		// Strip 00_ from the beginning of a file name
-		$value = preg_replace('/^[0-9]{2}[_]{1}/', '', $value);
-		
-		return htmlentities($value, ENT_NOQUOTES, CHAR_ENCODING);
-	}
 	
 	/**
 	 * 'bare bones' recursive method to extract directories and files
@@ -671,7 +672,7 @@ class FS
 					$out[] = str_replace(
 						' ', '', 
 						ucwords(
-							preg_replace('/[^0-9A-Za-z]/', ' ', $this->clean($folder))
+							preg_replace('/[^0-9A-Za-z]/', ' ', FSObject::clean($folder))
 						)
 					);
 			}

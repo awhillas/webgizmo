@@ -16,7 +16,7 @@
  */
 class Twitter extends FSDir
 {
-	function html()
+	function html($format = 'html')
 	{
 		$out = '';
 		

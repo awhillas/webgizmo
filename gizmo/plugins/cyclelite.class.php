@@ -18,7 +18,7 @@
 class CycleLite extends GizDirPlugin
 {
 	
-	function html()
+	function html($format = 'html')
 	{
 		$fs = FS::get();
 		

@@ -89,7 +89,7 @@ class GizFilter extends GizCommand
 	/**
 	 * @return 	Array	List of filter function names that filter File (FSObject) objects.
 	 */	
-	public function getFileFilters()
+	public static function getFileFilters()
 	{
 		return array('has', 'files', 'folders', 'from', 'to', 'tag');
 	}

@@ -165,8 +165,9 @@ class GizQuery implements Iterator
 	 * @return 	FSObject
 	 */
 	function first()
-	{
-		return end(array_reverse($this->get()));
+	{	
+		$r = array_reverse($this->get());
+		return end($r);
 	}
 	
 	/**
