@@ -24,7 +24,7 @@ include 'includes/krumo/class.krumo.php';
 
 // Set the error reporting to use krumo!
 //error_reporting(0);
-set_error_handler('errorHandler', E_ERROR | E_USER_ERROR);
+set_error_handler('errorHandler', E_ERROR | E_CORE_ERROR | E_USER_ERROR);
 function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
 {
 //	echo 'Into '.__FUNCTION__.'() at line '.__LINE__.
@@ -525,7 +525,7 @@ class FS
 	 * 
 	 * @return 	Array	List of HTML anchor tags to the top level folders.
 	 */
-	function menu($depth = 1, $showAll = false)
+	function _old_menu()
 	{
 		$out = array();
 
@@ -537,6 +537,57 @@ class FS
 		}
 
 		return $out;
+	}
+	
+	/**
+	 * Return a multi-layered HTML list of HTML lists.
+	 * 
+	 * @param	Integer	From the $root, the depth that should be shown.
+	 * @param	Boolean	Should the current path (leaf) be expanded and shown?
+	 * @param	Path	The root the menu should start from.
+	 *
+	 * @return String
+	 **/
+	public function menu($depth = 1, $showLeaf = false, Path $root = null)
+	{
+		$out = array();
+		
+		if($root == null)
+			$root = $this->contentRoot();
+		
+		if($showLeaf)
+			$tree = FS::getMenu($root, $depth, $this->currentPath());
+		else
+			$tree = FS::getMenu($root, $depth);
+		
+		return $tree;
+	}
+
+	/**
+	 * Recursively build a HTML list of links representing the folder hierarchy.
+	 * 
+	 * @param	Path	Path to get the list of folders from.
+	 * @param	integer	Depth to decent into. building sub-lists
+	 * @param	Path	The leaf branch which will be show all the way despite the given $depth
+	 * @param	String	Regular expression to filter folder names with. Defaults to filtering out folders starting with an underscore '_'
+	 * 
+	 * @return 	String	Nested HTML Lists of links (anchors).
+	 */
+	public function getMenu(Path $path, $depth = 0, Path $leaf = null, $regEx = '^[^_]')
+	{
+		$out = array();
+		
+		if($depth > 0 OR (!is_null($leaf) AND $leaf->isChildOf($path)))
+			foreach($path->folders($regEx) as $Dir)
+			{
+				$class = ( $this->currentPath()->isChildOf($Dir->getPath()) )? 'Selected': '';
+				$out[] = li(
+					$Dir->htmlLink(null, $class)
+					. FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx)
+				);
+			}
+		
+		return (count($out) > 0)? ul($out): '';
 	}
 	
 	/**

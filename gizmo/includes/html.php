@@ -94,7 +94,6 @@ function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array()
  *
  * @return String	HTML List
  * @author Alexander R B Whillas
- * @todo make the LI's with the tag() function
  **/
 function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs = array())
 {

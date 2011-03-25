@@ -18,7 +18,7 @@
 class GizQuery implements Iterator
 {
 	/**
-	 * An array of SplFileInfo objects indexed with the full file path
+	 * An array of FSObjects objects indexed with the full file path
 	 */
 	public $_file_list = array();
 	

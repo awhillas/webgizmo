@@ -28,7 +28,7 @@ class Twitter extends FSDir
 		
 		$fs->add('
 		<script type="text/javascript" charset="utf-8">
-			getTwitters("'.$id.'", { id: "'.$this->getCleanName().'", count: 1 });
+			getTwitters("'.$id.'", { id: "'.$this->getName().'", count: 1 });
 		</script>		
 		');
 
