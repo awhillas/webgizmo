@@ -57,7 +57,7 @@ abstract class FSObject extends SplFileInfo
 	 **/	
 	private static function parse($filename)
 	{
-		preg_match_all('/(?:_(?P<tag>[A-Za-z]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>\w+)(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
+		preg_match_all('/(?:_(?P<tag>[\w\d]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>[\w\s\d]+)?(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
 		
 		if(isset($bits[0]))
 		{
