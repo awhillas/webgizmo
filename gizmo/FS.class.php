@@ -17,27 +17,11 @@ include 'includes/html.php';
  * Handy debugging functions
  */
 include 'includes/debug.php';
-/**
- * Nice data dump output.
- */
-include 'includes/krumo/class.krumo.php';
 
-// Set the error reporting to use krumo!
-//error_reporting(0);
-set_error_handler('errorHandler', E_ERROR | E_CORE_ERROR | E_USER_ERROR);
-function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
-{
-//	echo 'Into '.__FUNCTION__.'() at line '.__LINE__.
-//	pr( $errno, true).
-	pr( $errstr).
-	pr( $errfile . "(Line: $errline)");
-//	pr( $errcontext, true);
-	
-	$stack = debug_backtrace();
-	pr($stack);
-	// array_shift($stack);
-	// krumo($stack);
-}
+/**
+ * Error handling setup
+ */
+include 'includes/error_handling.php';
 
 
 /**
@@ -423,7 +407,7 @@ class FS
 	 * @todo rename to reflect that its a virtual URL _not_ a system path
 	 */
 	public static function getPath()
-	{		
+	{
 		return (isset($_GET['path'])) 
 			? new Path($_GET['path'])
 			: new Path('/');
@@ -581,13 +565,10 @@ class FS
 			foreach($path->folders($regEx) as $Dir)
 			{
 				$class = ( $this->currentPath()->isChildOf($Dir->getPath()) )? 'Selected': '';
-				$out[] = li(
-					$Dir->htmlLink(null, $class)
-					. FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx)
-				);
+				$out[] = $Dir->htmlLink(null, $class) . FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx);
 			}
 		
-		return (count($out) > 0)? ul($out): '';
+		return (count($out) > 0)? ul($out, 'Menu'): '';
 	}
 	
 	/**
