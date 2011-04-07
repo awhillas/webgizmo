@@ -9,30 +9,53 @@
 require_once 'includes/html.php';
 
 /**
+ * Should all Path (objects) use the realpath() PHP function to check all paths.
+ * This means that if you have Symbolic links they will be converted to real paths
+ * which might mess you up if you have a central copy of Gizmo for many sites. In
+ * that case define this as FALSE in the index.php file.
+ * @var	Boolean
+ */
+if(!defined('REALPATH_CKECKING')) define('REALPATH_CKECKING', true);
+
+/**
 * A Path
 * 
 * Encapsulate common path calculations. 
-* Note: that a Path doesn't have to be real, just fit into the 
+* Note: that a Path doesn't have to be real.
 * @package WebGizmo
 */
 class Path
 {
-	private $_path;
-		
+	private $_path = '';
+	
+	/**
+	 * @param	String	Path to represent
+	 * @param	Boolean	Get the realpath() and then check if it exists. If it doesn't then a E_USER_ERROR is triggered.
+	 */
 	function __construct($path, $checkPath = false)
 	{
-		if(is_a($path, 'SplFileInfo'))
+		if($path instanceof SplFileInfo)
 			$path = $path->getPathname();
 
-		if(!$checkPath OR file_exists($path = realpath($path)))	// tricky ;)
+		if($path instanceof Path)
+			$path = $path->get();
+
+		if(is_string($path))
 		{
-			$this->set($path);
+			if(REALPATH_CKECKING AND $checkPath)
+				$path = realpath($path);
+
+			if(!$checkPath OR file_exists($path))	// tricky ;)
+			{
+				$this->set($path);
+			}
+			else
+			{
+				trigger_error('Path does not exist: "'.$path.'"', E_USER_ERROR);
+			}
 		}
 		else
-		{
-			trigger_error('Path does not exist: "'.$path.'"', E_USER_NOTICE);
-			return null;
-		}
+			trigger_error('Path needs a String or another Path object. Given: '.print_r($path, true), E_USER_ERROR);
 	}
 
 	/**
@@ -46,7 +69,7 @@ class Path
 	
 	public function __toString()
 	{
-		return $this->_path;
+		return $this->get();
 	}
 	
 	/**
@@ -357,16 +380,17 @@ class Path
 	
 	/**
 	 * Get the direct link to the file or folder in the content folder
-	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
-	 * string is returned.
+	 * Assumes this is a real path within the WEB_ROOT. 
 	 * 
 	 * @return String
 	 **/
 	public function realURL()
-	{
-		if ($this->isChildOf(WEB_ROOT)) 
+	{	
+		$web_root = (REALPATH_CKECKING)? realpath(WEB_ROOT): WEB_ROOT;
+		
+		if ($this->isChildOf($web_root)) 
 		{
-			return BASE_URL_PATH.$this->less(WEB_ROOT);
+			return BASE_URL_PATH.$this->less($web_root);
 		} 
 		else 
 		{

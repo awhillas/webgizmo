@@ -23,7 +23,11 @@ class FSFile extends FSObject
 	 **/
 	public function getContents()
 	{
-		return file_get_contents($this->_path->get(), FILE_TEXT);
+		if(is_readable($this->_path->get()))
+			return file_get_contents($this->_path->get(), FILE_TEXT);
+		else
+			trigger_error('Can not read file: '.$this->_path->get(), E_USER_WARNING);
+			return false;
 	}
 
 	/**

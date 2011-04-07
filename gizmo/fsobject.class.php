@@ -28,10 +28,10 @@ abstract class FSObject extends SplFileInfo
 	
 	public function __construct($path)
 	{
-		if(is_a($path, 'SplFileInfo'))
-		{
-			$path = $path->getPathname();
-		}
+		// if($path instanceof SplFileInfo)
+		// {
+		// 	$path = $path->getPathname();
+		// }
 		$this->_path = new Path($path, true);
 				
 		parent::__construct($this->_path->get());
@@ -57,16 +57,16 @@ abstract class FSObject extends SplFileInfo
 	 **/	
 	private static function parse($filename)
 	{
-		preg_match_all('/(?:_(?P<tag>[\w\d]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>[\w\s\d]+)?(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
+		preg_match_all('/(?:_(?P<tag>[\w\d]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>[^\.]+)?(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
 		
 		if(isset($bits[0]))
 		{
 			$bits = $bits[0];
 
 			return array(
-				'tag' 		=> $bits['tag'],
-				'sort' 		=> $bits['sort'],
-				'name'		=> $bits['name']
+				'tag' 		=> (isset($bits['tag']))? $bits['tag']: '',
+				'sort' 		=> (isset($bits['sort']))? $bits['sort']: '',
+				'name'		=> (isset($bits['name']))? $bits['name']: '',
 	//			'extension'	=> $bits['ext']
 			);
 		}
@@ -109,7 +109,7 @@ abstract class FSObject extends SplFileInfo
 		{
 			$Path = new Path($path, true);
 		}
-		elseif(is_a($path, 'Path'))
+		elseif($path instanceof Path)
 		{
 			$Path = $path;
 		}
@@ -223,8 +223,7 @@ abstract class FSObject extends SplFileInfo
 	 * Direct link to the file in the _content_ Dir.
 	 */
 	function getFileURL()
-	{
-		// return FS::getURL( $this );
+	{		
 		return $this->_path->realURL();
 	}
 
