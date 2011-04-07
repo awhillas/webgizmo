@@ -140,6 +140,7 @@
     .ad-gallery .ad-nav .ad-thumbs {
       overflow: hidden;
       width: 100%;
+width: auto;
     }
       .ad-gallery .ad-thumbs .ad-thumb-list {
         float: left;
