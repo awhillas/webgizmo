@@ -36,7 +36,7 @@
 
 				<!-- YOUR DATA GOES HERE -->
 
-				<?php echo ul($fs->menu(), 'Menu') ?>	
+				<?php echo $fs->menu() ?>	
 
 			</div>
 		</div>

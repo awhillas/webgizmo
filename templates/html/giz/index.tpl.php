@@ -49,7 +49,7 @@
 		
 		<!-- Menu's are easy. $fs is the global "File System" object which makes the folder links.  -->
 		<!-- ul() is part of the simple HTML markup lib with Gizmo with functions names after tags.  -->
-		<?php echo ul($fs->menu(), 'Menu') ?>
+		<?php echo $fs->menu() ?>
 
 	</div>
 	

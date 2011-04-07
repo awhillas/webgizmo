@@ -25,7 +25,7 @@
 	
 	<!-- This is the Menu, a list of links to the top level of folders the ul() 
 		makes it an HTML <UL> with a class = 'Menu' (for CSS styling). -->
-	<?php echo ul($fs->menu(), 'Menu') ?>
+	<?php echo $fs->menu(2, true) ?>
 	
 	
 	<!-- The main contents of the current folder comes out here. -->
