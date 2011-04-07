@@ -22,10 +22,14 @@ class ADGallery extends FSDir
 		$id = $this->getID();
 		
 		$fs = FS::get();
+		$plugins = $fs->pluginsRoot()->realURL();
 		
 		$fs->addRef(JQUERY_URL);	// Include the CLI version of JQuery.
-		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.js');
-		$fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.css');
+		// $fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.js');
+		// $fs->addRef('http://coffeescripter.com/code/ad-gallery/jquery.ad-gallery.css');
+		
+		$fs->addRef($plugins.'/adgallery/jquery.ad-gallery.pack.js');
+		$fs->addRef($plugins.'/adgallery/jquery.ad-gallery.css');
 		
 		$fs->add('
 			<script type="text/javascript">
@@ -39,33 +43,36 @@ class ADGallery extends FSDir
 		');
 		
 		$out = div('', 'ad-image-wrapper');
-		$out .= div('', 'ad-controls');
-		$out .= '
-			<div class="ad-nav">
-				<div class="ad-thumbs">
-		';
-		
-		$imgs = array();
 
 		// Assume the first folder in this folder is full of thumbnails.
 		// Thumbnails are assumed to have the exact same name as the 
 		// larger version in this folder.
 		if($thumbs = $this->getPath()->folders()->first())
 		{
+			$out .= div('', 'ad-controls');
+			
+			$out .= '
+				<div class="ad-nav">
+					<div class="ad-thumbs">
+			';
+
+			$imgs = array();
 			foreach($thumbs->images() as $Image) 
 				$imgs[] = a($this->getFileURL().'/'.$Image->getFilename(), $Image->html());
+
+			$out .= ul($imgs, 'ad-thumb-list');
+
+			$out .= '
+					</div>
+				</div>
+			';		
 		} 
 		else
 		{
-			p('No thumbnail folder detected in:'.$this->getPath());
+			// Should the gallery work without thumbnails???
+			comment('No thumbnail folder detected in:'.$this->getPath());
 		}
 
-		$out .= ul($imgs, 'ad-thumb-list');
-		
-		$out .= '
-				</div>
-			</div>
-		';		
 		return div($out, 'ad-gallery', $id);
 	}
 }
