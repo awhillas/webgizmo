@@ -46,6 +46,19 @@ function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs 
 	
 	return $out . ( $single ? ' />' : '>'.$content.'</'.$tag.'>');
 }
+
+/**
+ * HTML comment
+ *
+ * @return String
+ * @todo Make this also do IE conditional comments
+ * @package WebGizmo
+ **/
+function comment($comment)
+{
+	return '<!-- '.$comment.' -->';
+}
+
 /**
  * @return String	A well formed HTML tag
  * @package WebGizmo
@@ -98,7 +111,7 @@ function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array()
 function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs = array())
 {
 	$content = '';
-
+	
 	foreach($list_items as $li_id => $lang)
 	{
 		$li_id = (!is_numeric($li_id)) ? strtoupper($li_id): '';

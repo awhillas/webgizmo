@@ -10,7 +10,7 @@
 	// Change these variables per website
 	define('SITE_TITLE', 'Web Gizmo');	// Name of the website.
 	define('THEME_DIR', '/giz');		// Template top use. i.e. /templates/html/giz
-	define('FOLDER_DISPLAY', 'list');	// How folders are handled. Can be 'links', 'teaser' or 'none'
+	define('FOLDER_DISPLAY', 'none');	// How folders are handled. Can be 'links', 'teaser' or 'none'
 
 	// Leave this alone... assumes /gizmo folder is in the same folder as this file.
 	require dirname(__FILE__).'/gizmo/FS.class.php';
