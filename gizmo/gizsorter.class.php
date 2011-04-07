@@ -67,7 +67,7 @@ class GizSorter extends GizCommand
 	 *
 	 * @return Array
 	 **/
-	function shuffle($list) 
+	public static function shuffle($list) 
 	{ 
 		if (!is_array($list) OR count($list) < 2) 
 			return $list; 
