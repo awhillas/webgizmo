@@ -49,13 +49,12 @@ class FSFilterIterator extends FilterIterator
 			if(file_exists($ignore_filename))
 			{
 				$list = file($ignore_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-					
-				$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
 			}
 			else
 				$list = array();
+				
+			$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
 		}
-		
 		return $list;
 	}
 }

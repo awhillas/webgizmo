@@ -32,7 +32,7 @@ class GizQuery implements Iterator
 		// somewhere else? I the factory method perhaps?
 		if($sort)
 			ksort($file_list);
-		
+
 		$this->_file_list = $file_list;
 	}
 
@@ -81,9 +81,9 @@ class GizQuery implements Iterator
 		}
 
 		if(count($out))
-			while ($cmd = array_shift($commands)) 
+			while ($cmd = array_shift($commands)) // process each query command...
 			{
-				if($cmd == 'contents')
+				if($cmd == 'contents') // 'contents' command is special
 				{
 					$out = array();
 					
