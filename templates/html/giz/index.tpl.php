@@ -2,7 +2,7 @@
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head lang="<?php echo $language ?>">
-	<title><?php echo $title ?></title>
+	<title><?php echo $pagetitle ?>, <?php echo $title ?></title>
 	
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHAR_ENCODING ?>">
 	<meta name="generator" content="Web Gizmo <?php echo $gizmo_version ?>">

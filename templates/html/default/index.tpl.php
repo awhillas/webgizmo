@@ -7,7 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHAR_ENCODING ?>">
 	<meta name="generator" content="Web Gizmo <?php echo $gizmo_version ?>">
 	
-	<title><?php echo $title ?></title>
+	<title><?php echo $pagetitle ?>, <?php echo $title ?></title>
 	
 	<!-- IMPORTANT! This is always required between the <HEAD> tags. Plugins 
 		use this to put references to CSS and Javascript files as they need them -->
