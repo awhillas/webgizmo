@@ -81,9 +81,12 @@ class FormatHTML extends GizFormat
 
 			// Add the header links to CSS & Javascript etc...
 			// Must happen _after_ renderContent() as plugins use the FS::addRef() method.
-			$fs->add($this->renderFileReferences(), 'head', true);			
+			$fs->add($this->renderFileReferences(FS::get()->fileRefs()), 'head', true);	// prepend instead of append.
+			
+			// Add auto file picks like fonts and CSS etc...
+			$fs->add($this->renderFileReferences($this->getTemplateAutoIncludes($fs->templatePath($this->format))));
 
-			// Shared global vars used by plugins and handlers.
+			// Shared global vars used by plugins and handlers such as $head, $foot.
 			$tpl->assign($fs->content);
 
 			// Return the content rendered in the correct template.
@@ -225,15 +228,16 @@ class FormatHTML extends GizFormat
 
 	/**
 	 * Parses the $FS::fileReferences[] array and creates HTML code linking to each.
-	 *
-	 * @return String	HTML
+	 * @param	Array	List of file references in the format: array('Path to file reference' => 'mime/type')
+	 * @return 	String	HTML
 	 * @todo Group CSS and JS together perhaps...?
+	 * @todo If mime part is empty then guess it...
 	 **/
-	private function renderFileReferences()
+	private function renderFileReferences($file_ref_list)
 	{
 		$out = '';
 		
-		foreach(FS::get()->fileRefs() as $file => $mime)
+		foreach($file_ref_list as $file => $mime)
 		{
 			$rel = null;
 			
@@ -252,6 +256,45 @@ class FormatHTML extends GizFormat
 			}
 		}
 			
+		return $out;
+	}
+	
+	/**
+	 * Pick up files to reference from the template folder
+	 * 
+	 * This is where auto includes happen including fonts, js, css, background images etc
+	 *
+	 * @return Array	List of file URLs to include in the <head> of the page.
+	 **/
+	private function getTemplateAutoIncludes(Path $TemplatePath)
+	{
+		$fs = FS::get();
+		$out = array();
+		
+		foreach(array('fonts', 'css', 'js') as $aspect)
+		{
+			$AspectPath = $TemplatePath->add($aspect);
+			if($AspectPath->is())
+			{
+				if($aspect == 'fonts')
+				{
+					// Fonts are a special case for fonts which are in their own folders.
+					foreach($AspectPath->query('folders.contents')->name('(?i)(css)$') as $CssFile)
+					{
+						$out[$CssFile->getPath()->realURL()] = 'text/css';
+					}
+				}
+				else
+				{
+					// CSS and Javascript are the same.
+					foreach($AspectPath->files()->name('(?i)('.$aspect.')$') as $CssFile)
+					{
+						$out[$CssFile->getPath()->realURL()] = 'text/'.$aspect;
+					}
+				}
+			}
+		}
+		
 		return $out;
 	}
 	

@@ -55,7 +55,7 @@ class FSDir extends FSObject
 	 **/
 	public function images()
 	{
-		// (?i) makes the patter to the right case insensitive.
+		// (?i) = makes the pattern to the right case insensitive.
 		return $this->getContents()->files('(?i)(png|gif|jpg|jpeg)$');
 	}
 	

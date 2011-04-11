@@ -1,0 +1,20 @@
+## Designer short cuts: Drag & Drop design
+
+The templates folder offers some convenience including of files if you put them in the right place.
+
+Fonts
+: Place an unzipped folder from one of [Font Squirrel's prepackaged @font-face kits ](http://www.fontsquirrel.com/fontface) in a folder called 'fonts' and the style sheet that comes with every FontSquirrel web package will automatically be included so you can just reference it in your CSS.
+
+e.g.
+	
+	web_root/templates/html/myTemplate/fonts/CrAzY_font
+
+CSS
+: make a 'css' folder in your templates folder and any .css file will be picked up automatically and included in all templates.
+
+	web_root/templates/html/myTemplate/css/myStyle.css
+
+Javascript
+: You guessed it, just make a 'js' folder and all .js files will be included...YAY!
+
+	web_root/templates/html/myTemplate/js/kohl.js

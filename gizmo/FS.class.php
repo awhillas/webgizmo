@@ -730,7 +730,7 @@ class FS
 	 * @param	String	HTML to add to the variable.
 	 * @param	String	Name of the variable. Usually 'head' or 'foot' for 
 	 * 					standard HTML doc header or footer but can be anything.
-	 * @param	Boolean	Add to the beginning of the content?
+	 * @param	Boolean	Add to the beginning of the header includes (i.e. instead of appended to the end)?
 	 **/
 	public static function add($html, $var = 'head', $prepend = false)
 	{

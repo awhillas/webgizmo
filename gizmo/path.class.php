@@ -185,8 +185,8 @@ class Path
 	 * Append the given string to the path. 
 	 * If this Path is to a file then the string is appended between the path and the filename.
 	 * 
-	 * @param	$path	String	String to append to the path
-	 * @return 	Path	Path with the given string parsed and appended to it.
+	 * @param	String	Path to append to this path
+	 * @return 	Path with the given string parsed and appended to it.
 	 * @todo Accept a Path object as well as a String
 	 */
 	function add($path)
