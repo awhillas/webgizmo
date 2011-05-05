@@ -1,6 +1,7 @@
 ###  .htaccess
 
 # Show PHP errors for debugging purposes.
+# Errors stay hidden until DEBUG is set to True
 php_flag display_errors on
 
 <IfModule mod_rewrite.c>
