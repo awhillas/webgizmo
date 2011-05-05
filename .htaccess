@@ -1,5 +1,8 @@
 ###  .htaccess
 
+# Show PHP errors for debugging purposes.
+php_flag display_errors on
+
 <IfModule mod_rewrite.c>
 
 		# Gizmo uses this to auto-detect mod_rewrite.
