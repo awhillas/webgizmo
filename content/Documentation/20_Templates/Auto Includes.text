@@ -17,4 +17,4 @@ CSS
 Javascript
 : You guessed it, just make a 'js' folder and all .js files will be included...YAY!
 
-	web_root/templates/html/myTemplate/js/kohl.js
+	web_root/templates/html/myTemplate/js/less.min.js
