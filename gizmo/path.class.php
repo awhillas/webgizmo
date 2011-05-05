@@ -59,10 +59,14 @@ class Path
 	}
 
 	/**
-	 * Factory function for the Path object 
+	 * Factory function for the Path object
+	 * @param $path	String|Array	Arrays are imploded to become a string
 	 */
 	public static function open($path, $checkPath = false)
 	{
+		if(is_array($path))
+			$path = implode('/', $path);
+			
 		return new Path($path, $checkPath);
 	}
 	
@@ -104,9 +108,15 @@ class Path
 	/**
 	 * @return 	Array	The parts of the path string in an Array.
 	 */
-	function parts($split_on = '/')
+	function parts($split_on = DIRECTORY_SEPARATOR)
 	{
-		return explode($split_on, $this->get());
+		$out = explode($split_on, $this->get());
+		
+		// Since Path::clean() makes sure all paths start with / we need to shift one off
+		if(empty($out[0])) 
+			array_shift($out);
+		
+		return $out;
 	}
 	
 	function set($path)
@@ -139,12 +149,19 @@ class Path
 	 **/
 	public function less($needle)
 	{
+		// Path from itself is nothing
+		if($needle == $this->get())
+			return Path::open('');
+
 		if(strlen($needle) and $this->isChildOf($needle))
 		{
-			return substr($this->get(), strlen($needle), strlen($this->get()));
+			return Path::open(substr($this->get(), strlen($needle), strlen($this->get())));
 		}	
 		else
-			return false;
+		{
+			trigger_error("Can only subtract a path from one of its ancestors. Trying: $needle from: ".$this->get());
+			return null;
+		}
 	}
 	
 	/**
@@ -350,11 +367,13 @@ class Path
 		{
 			// URL encode just the bits between the '/'
 			$parts = array();
-			foreach(explode('/', FS::realToVirtual($this->less($base_path))) as $part)
+
+			foreach(FS::realToVirtual($this->less($base_path))->parts() as $part)
 				$parts[] = urlencode($part);
+			
 			$path = implode('/', $parts);
 			
-			// MAker the URL based on the mod_rewrite setup.
+			// Maker the URL based on the mod_rewrite setup.
 			if(!REWRITE_URLS)
 				return BASE_URL_PATH.'/?path='.$path;
 			else
@@ -365,7 +384,7 @@ class Path
 			return false;
 		}
 	}
-
+	
 	function mb_rawurlencode($url)
 	{
 		$encoded = '';
@@ -390,7 +409,7 @@ class Path
 		
 		if ($this->isChildOf($web_root)) 
 		{
-			return BASE_URL_PATH.$this->less($web_root);
+			return BASE_URL_PATH.$this->less($web_root)->get();
 		} 
 		else 
 		{

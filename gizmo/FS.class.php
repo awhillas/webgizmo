@@ -13,6 +13,12 @@
  * HTML tag rendering functions library.
  */
 include 'includes/html.php';
+
+/**
+ * @global	Boolean	Show debugging info, like errors.
+ */
+if (!defined('DEBUG'))	define('DEBUG', true);
+
 /**
  * Handy debugging functions
  */
@@ -28,6 +34,7 @@ include 'includes/error_handling.php';
  * @global	String	Version number of this install of Web Gizmo
  */
 if (!defined('GIZMO_VERSION'))	define('GIZMO_VERSION', '0.2beta');
+
 
 // // // // // // // // // // // // // // // // //
 // Path constants
@@ -481,15 +488,15 @@ class FS
 	 * 
 	 * Doesn't check the path exists, just processes the paths parts.
 	 * 
-	 * @param	String
+	 * @param	Path
 	 *
 	 * @return String	Virtual path from the Real path.
 	 **/
-	public static function realToVirtual($real)
+	public static function realToVirtual(Path $real)
 	{
 		$out = array();
 		
-		foreach(explode('/', $real) as $part)
+		foreach($real->parts() as $part)
 		{
 			if(!empty($part))
 			{
@@ -497,7 +504,7 @@ class FS
 				$out[] = FSObject::cleanName($part);
 			}
 		}
-		return implode('/', $out);
+		return Path::open($out);
 	}
 
 	
@@ -562,7 +569,7 @@ class FS
 		$out = array();
 		
 		if($depth > 0 OR (!is_null($leaf) AND $leaf->isChildOf($path)))
-			foreach($path->folders($regEx) as $Dir)
+			foreach($path->query('folders')->name($regEx) as $Dir)
 			{
 				$class = ( $this->currentPath()->isChildOf($Dir->getPath()) )? 'Selected': '';
 				$out[] = $Dir->htmlLink(null, $class) . FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx);

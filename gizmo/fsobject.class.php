@@ -57,17 +57,20 @@ abstract class FSObject extends SplFileInfo
 	 **/	
 	private static function parse($filename)
 	{
-		preg_match_all('/(?:_(?P<tag>[\w\d]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>[^\.]+)?(\.(?P<ext>\w+))?/', $filename, $bits, PREG_SET_ORDER);
+//echo $filename;		
+		$regex = '/(?:_(?P<tag>[\w]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>[^\.]+)?(\.(?P<ext>\w+))?/';	// My last variant
+		//$regex = '~^(?:_(?P<tag>[A-Za-z0-9]+)_)?(?:(?P<sort>\d{2})?_)?(?P<name>\w+)(\.(?P<ext>\w+))?$~';	// from stackoverflow.com
+		preg_match_all($regex, $filename, $bits, PREG_SET_ORDER);
 		
 		if(isset($bits[0]))
 		{
 			$bits = $bits[0];
-
+//pr($bits);
 			return array(
 				'tag' 		=> (isset($bits['tag']))? $bits['tag']: '',
 				'sort' 		=> (isset($bits['sort']))? $bits['sort']: '',
 				'name'		=> (isset($bits['name']))? $bits['name']: '',
-	//			'extension'	=> $bits['ext']
+				'extension'	=> (isset($bits['ext']))? $bits['ext']: '',
 			);
 		}
 	}
@@ -92,6 +95,14 @@ abstract class FSObject extends SplFileInfo
 	function getSort()
 	{
 		return $this->_name_meta['sort'];
+	}
+	
+	/**
+	 * Get Extension from filename parsing.
+	 */
+	function getExt()
+	{
+		return $this->_name_meta['extension'];
 	}
 
 	/**

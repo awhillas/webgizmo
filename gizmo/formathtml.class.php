@@ -58,6 +58,8 @@ class FormatHTML extends GizFormat
 	 **/
 	public function render()
 	{
+		global $PAGE_ERRORS;
+		
 		// Get the template for the format
 		if($tpl = $this->getTemplateEngine())
 		{
@@ -91,7 +93,7 @@ class FormatHTML extends GizFormat
 
 			// Return the content rendered in the correct template.
 			// Template is determined in $this->getTemplateEngine();
-			return $tpl->getOutput();
+			return $tpl->getOutput() . $PAGE_ERRORS;
 		}
 	}
 	
@@ -149,24 +151,22 @@ class FormatHTML extends GizFormat
 		// Where the templates live
 		$TemplatesPath = $fs->templatePath();
 		
-		// Get the current path as a Virtual path
-		$all_parts = explode('/', FS::realToVirtual($fs->currentPath()->less($fs->contentRoot())));
-//		array_shift($all_parts); // Remove the empty at the begining
+		// Get the current content path as a Virtual path
+		// which we will use to find matching templates
+		$VPath = FS::realToVirtual($fs->currentPath()->less($fs->contentRoot()));
 
 		// Special front.tpl.php (1st page intro)
 		// TODO: Check if DEFAULT_START is defined 
 		if(
-			count($all_parts) == 1 AND empty($all_parts[0]) 		// we're at '/'
-			AND file_exists($TemplatesPath . '/' . 'front.tpl.php')	// and the front.tpl.php is present
+			$VPath->get() == '' 		// we are at '/'
+			AND $TemplatesPath->add('front.tpl.php')->is()	// and the front.tpl.php is present
 		)
 			return 'front.tpl.php';
 
-
-		if(count($all_parts))
+		if(count($parts = $VPath->parts()))
 		{
 			// Look for specific templates
-			$parts = $all_parts;
-			while(count($parts) and $parts[0] != '')
+			while(count($parts))
 			{
 				$candidate = implode('_', $parts).'.tpl.php';
 
@@ -181,7 +181,7 @@ class FormatHTML extends GizFormat
 			}
 			
 			// Look for inherited/general templates
-			$parts = $all_parts;
+			
 			array_pop($parts);	// Should not affect the current folder, only children
 			foreach(array_reverse($parts) as $folder)
 			{
@@ -265,36 +265,52 @@ class FormatHTML extends GizFormat
 	 * This is where auto includes happen including fonts, js, css, background images etc
 	 *
 	 * @return Array	List of file URLs to include in the <head> of the page.
+	 * @todo 	This is clumsy and should be using the main stream Extension -> Handler mapper but specialised for the /templates folder/subfolders.
 	 **/
 	private function getTemplateAutoIncludes(Path $TemplatePath)
 	{
 		$fs = FS::get();
 		$out = array();
+		$includeLess = false;
 		
 		foreach(array('fonts', 'css', 'js') as $aspect)
 		{
 			$AspectPath = $TemplatePath->add($aspect);
-			if($AspectPath->is())
+			
+			if($AspectPath->is())	// path exists
 			{
-				if($aspect == 'fonts')
+				switch($aspect)
 				{
-					// Fonts are a special case for fonts which are in their own folders.
-					foreach($AspectPath->query('folders.contents')->name('(?i)(css)$') as $CssFile)
-					{
-						$out[$CssFile->getPath()->realURL()] = 'text/css';
-					}
-				}
-				else
-				{
-					// CSS and Javascript are the same.
-					foreach($AspectPath->files()->name('(?i)('.$aspect.')$') as $CssFile)
-					{
-						$out[$CssFile->getPath()->realURL()] = 'text/'.$aspect;
-					}
+					case 'fonts':
+						// Fonts are a special case for fonts which are in their own folders.
+						foreach($AspectPath->query('folders.contents')->name('(?i)(css)$') as $CssFile)
+						{
+							$out[$CssFile->getPath()->realURL()] = 'text/css';
+						}
+						break;
+						
+					
+					case 'css':
+						// Add support for LESS files
+						$aspect = ($aspect == 'css')? 'css|less': $aspect;	
+						
+					default:
+						// CSS and Javascript are handled the same way.
+						
+						foreach($AspectPath->files()->name('(?i)('.$aspect.')$') as $CssFile)
+						{
+							if($CssFile->getExt() == 'less') $includeLess = true;
+							$out[$CssFile->getPath()->realURL()] = 'text/'.$aspect;
+						}
+						break;
 				}
 			}
 		}
-		
+		if($includeLess)
+		{
+			$out[Path::open(INCLUDES_PATH)->less(WEB_ROOT)->add('less-1.0.41.min.js')->url()] = 'text/javascript';
+		}
+			
 		return $out;
 	}
 	
