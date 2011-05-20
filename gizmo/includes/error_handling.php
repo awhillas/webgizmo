@@ -20,8 +20,7 @@ $PAGE_ERRORS = '';
  */
 if(!defined('ERRORS_AT_END')) define('ERRORS_AT_END', true);
 
-if(!defined('ERROR_LEVEL'))	
-	define('ERROR_LEVEL', E_ALL | E_STRICT);
+if(!defined('ERROR_LEVEL'))	define('ERROR_LEVEL', E_ALL | E_STRICT);
 
 
 // Set the error reporting to use our custom funciton (which uses krumo!).
@@ -48,11 +47,11 @@ function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
 	{
 		ob_start(); // Start to capture errors...
 
-		if(empty($PAGE_ERRORS))
-		{
-			echo '<div class="protection div"></div>';
-			krumo($GLOBALS);
-		}
+		// if(empty($PAGE_ERRORS))
+		// {
+		// 	echo '<div class="protection div"></div>';
+		// 	krumo($GLOBALS);
+		// }
 	}	
 	
 //	echo 'Into '.__FUNCTION__.'() at line '.__LINE__.
@@ -65,8 +64,8 @@ function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
 	array_shift($stack);	// remove the call to this function
 	
 	// Capture errors for display after.
-	
-	krumo($stack);
+	pr($stack);
+	//krumo($stack);
 
 	if(ERRORS_AT_END)
 		$PAGE_ERRORS .= ob_get_clean();	// ... finish capturing errors.

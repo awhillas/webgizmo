@@ -17,7 +17,7 @@ include 'includes/html.php';
 /**
  * @global	Boolean	Show debugging info, like errors.
  */
-if (!defined('DEBUG'))	define('DEBUG', false);
+if (!defined('DEBUG'))	define('DEBUG', false);	// Needs to be set before
 
 /**
  * Handy debugging functions
