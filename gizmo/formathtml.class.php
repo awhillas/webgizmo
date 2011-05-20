@@ -210,7 +210,7 @@ class FormatHTML extends GizFormat
 		$out['content'] = "\n\n<!-- FormatHTML::render() start ... -->\n\n";
 		
 		if($Dir = FSObject::make(FS::get()->currentPath()) AND $Dir->isDir())
-		{
+		{			
 			foreach($Dir->getContents() as $FSObject)
 			{
 				// Instantiate a handler for the file and render
@@ -256,6 +256,9 @@ class FormatHTML extends GizFormat
 				case 'text/css':
 					$rel = 'stylesheet';
 					
+					if(FSObject::getExtension($file) == 'less')
+						$rel = 'stylesheet/less';
+					
 				default:
 					$out .= "\t".rel($file, $mime, $rel)."\n";
 			}
@@ -281,41 +284,46 @@ class FormatHTML extends GizFormat
 		foreach(array('fonts', 'css', 'js') as $aspect)
 		{
 			$AspectPath = $TemplatePath->add($aspect);
-			
+
 			if($AspectPath->is())	// path exists
 			{
+				$filter = $aspect;
+				$mime = 'text/javascript';
+				
 				switch($aspect)
 				{
 					case 'fonts':
-						// Fonts are a special case for fonts which are in their own folders.
+						// Fonts are a special case for fonts which are in their own folders= with 
+						// with a CSS file to handle the include.
 						foreach($AspectPath->query('folders.contents')->name('(?i)(css)$') as $CssFile)
 						{
 							$out[$CssFile->getPath()->realURL()] = 'text/css';
 						}
 						break;
 						
-					
 					case 'css':
 						// Add support for LESS files
-						$aspect = ($aspect == 'css')? 'css|less': $aspect;	
+						$filter = 'css|less';
+						$mime = 'text/css';
 						
 					default:
 						// CSS and Javascript are handled the same way.
 						
-						foreach($AspectPath->files()->name('(?i)('.$aspect.')$') as $CssFile)
+						foreach($AspectPath->files()->name('(?i)('.$filter.')$') as $CssFile)
 						{
 							if($CssFile->getExt() == 'less') $includeLess = true;
-							$out[$CssFile->getPath()->realURL()] = 'text/'.$aspect;
+							$out[$CssFile->getPath()->realURL()] = $mime;
 						}
 						break;
 				}
 			}
 		}
+
 		if($includeLess)
 		{
-			$out[Path::open(INCLUDES_PATH)->less(WEB_ROOT)->add('less-1.0.41.min.js')->url()] = 'text/javascript';
+			$out[Path::open(INCLUDES_PATH)->add('less-1.0.41.min.js')->realURL()] = 'text/javascript';
 		}
-			
+
 		return $out;
 	}
 	
