@@ -149,8 +149,11 @@ class Path
 	 **/
 	public function less($needle)
 	{
+		if(is_string($needle))
+			$needle = Path::open($needle);
+		
 		// Path from itself is nothing
-		if($needle == $this->get())
+		if($needle->get() == $this->get())
 			return Path::open('');
 
 		if(strlen($needle) and $this->isChildOf($needle))
@@ -381,7 +384,7 @@ class Path
 		} 
 		else 
 		{
-			return false;
+			return '';
 		}
 	}
 	
@@ -406,7 +409,7 @@ class Path
 	public function realURL()
 	{	
 		$web_root = (REALPATH_CKECKING)? realpath(WEB_ROOT): WEB_ROOT;
-		
+
 		if ($this->isChildOf($web_root)) 
 		{
 			return BASE_URL_PATH.$this->less($web_root)->get();

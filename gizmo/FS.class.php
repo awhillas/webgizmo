@@ -48,11 +48,14 @@ if (!defined('GIZMO_VERSION'))	define('GIZMO_VERSION', '0.2beta');
 /**
  * @global	string	Server side absolute path to the "web root", where the index.php file is and the request is being served from.
  */
-if (!defined('WEB_ROOT')) 		define('WEB_ROOT', 		dirname($_SERVER['SCRIPT_FILENAME'])); 
+if (!defined('WEB_ROOT')) define('WEB_ROOT', realpath(dirname($_SERVER['SCRIPT_FILENAME'])));
+	 
 /**
  * @global	string	Server path to the instillation of Gizmo i.e. where this file is.
  */
-if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
+//if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	dirname(__FILE__));
+if (!defined('GIZMO_PATH'))		define('GIZMO_PATH', 	WEB_ROOT.'/gizmo');
+
 
 /**
  * @global	string	
@@ -386,7 +389,7 @@ class FS
 	 */
 	static public function getURL($dir)
 	{
-		if(is_a($dir, 'FSObject'))
+		if($dir instanceof FSObject)
 		{
 			// Figure out its URL by subtracking the web root
 			if($dir->isDir())
@@ -441,7 +444,7 @@ class FS
 	 **/
 	public function virtualToReal($Virtual, $base_path)
 	{
-		if(!is_a($Virtual, 'Path'))
+		if(!$Virtual instanceof Path)
 			$Virtual = new Path($Virtual);
 		
 		// Virtual so have to look for it...
@@ -492,21 +495,25 @@ class FS
 	 *
 	 * @return String	Virtual path from the Real path.
 	 **/
-	public static function realToVirtual(Path $real)
+	public static function realToVirtual($real)
 	{
-		$out = array();
-		
-		foreach($real->parts() as $part)
+		if($real instanceof Path)
 		{
-			if(!empty($part))
-			{
-				// FS::rbasename($part, FSObject::getExtension($part)));
-				$out[] = FSObject::cleanName($part);
-			}
-		}
-		return Path::open($out);
-	}
+			$out = array();
 
+			foreach($real->parts() as $part)
+			{
+				if(!empty($part))
+				{
+					// FS::rbasename($part, FSObject::getExtension($part)));
+					$out[] = FSObject::cleanName($part);
+				}
+			}
+			return Path::open($out);
+		}
+		else
+			trigger_error('Need a Path to convert to virtual path, given: '.what($real));
+	}
 	
 	/**
 	 * Builds a list of HTML links to the top level folders in the Content folder
