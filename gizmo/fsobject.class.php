@@ -215,9 +215,9 @@ abstract class FSObject extends SplFileInfo
 	// Unique ID useful for CSS
 	function getID()
 	{
-		$id = trim(preg_replace('/[^a-zA-Z0-9]/', ' ', $this->getBasename()));
+		$id = trim(preg_replace('/[^a-zA-Z0-9]/', ' ', $this->getName()));
 		
-		return strtoupper(str_replace(' ', '_', $id));
+		return strtoupper(str_replace(' ', '_', $id.'_'.$this->getExt()));
 	}
 
 	/**
