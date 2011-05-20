@@ -154,9 +154,10 @@ function ol($list_items, $class = '', $id = '', $attrs = array())
  * @return String	A well formed Anchor HTML tag.
  * @package WebGizmo
  **/
-function a($href, $text, $class = '', $id = '', $attrs = array())
+function a($href, $text = '', $class = '', $id = '', $attrs = array())
 {
 	$attrs['href'] = $href;
+	$text = (empty($text))? $href: $text;
 	
 	return tag('a', false, $text, $class, $id, $attrs);
 }
