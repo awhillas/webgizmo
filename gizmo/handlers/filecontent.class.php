@@ -75,7 +75,7 @@ abstract class FileContent
 	 **/
 	public static function Factory($file) 
 	{
-		if(!is_a($file, 'SplFileInfo'))
+		if(!$file instanceof SplFileInfo)
 			return null;
 		
 		$extension = end(FileContent::getExtensions($file->getFilename()));

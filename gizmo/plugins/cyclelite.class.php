@@ -32,7 +32,7 @@ class CycleLite extends GizDirPlugin
 		foreach($this->getContents() as $File)
 		{
 			$out .= $File->html()."\n";
-			if(is_a($File, 'ImageFileContent'))
+			if($File instanceof ImageFileContent)
 			{
 				$width = ($File->width < $width)? $width: $File->width;
 				$height = ($File->height < $height)? $height: $File->height;

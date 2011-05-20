@@ -88,7 +88,7 @@ class GizQuery implements Iterator
 					$out = array();
 					
 					foreach($this->_file_list as $FSObj)
-						if(is_a($FSObj, 'FSDir'))
+						if($FSObj instanceof FSDir)
 							// Using + instead of array_merge() so we keep the keys.
 							$out = (array)$out + (array)$FSObj->getPath()->query(implode($divider, $commands))->get();
 				}
@@ -246,7 +246,7 @@ class GizQuery implements Iterator
 		$out = array();
 		
 		foreach($gizes as $gq)
-			if(is_a($gq, 'GizQuery'))
+			if($gq instanceof GizQuery)
 				$out = array_merge($out, $gq->get());
 		
 		return new GizQuery($out);

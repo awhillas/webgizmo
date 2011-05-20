@@ -124,7 +124,7 @@ abstract class FSObject extends SplFileInfo
 		{
 			$Path = $path;
 		}
-		elseif(is_a($path, 'FSObject'))
+		elseif($path instanceof FSObject)
 		{
 			return $path;
 		}
