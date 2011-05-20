@@ -87,7 +87,7 @@ class FormatHTML extends GizFormat
 			
 			// Add auto file picks like fonts and CSS etc...
 			$fs->add($this->renderFileReferences($this->getTemplateAutoIncludes($fs->templatePath($this->format))));
-
+			
 			// Shared global vars used by plugins and handlers such as $head, $foot.
 			$tpl->assign($fs->content);
 
@@ -138,19 +138,24 @@ class FormatHTML extends GizFormat
 	}
 	
 	/**
-	 * Figure out which template file we should be using for the current content.
+	 * Figure out which template file we should be using for the current content path.
+	 * 
+	 * This is also used for CSS/LESS file inclusion. This keeps the logic centralised.
 	 * 
 	 * Override this to have different template picking logic for Savant
+	 * 
+	 * @param	String	The file extension to add to the file-basename when generating file name patterns
+	 * @param	String	The default basename to use if nothing matches. $extension will be added to this.
 	 *
 	 * @return String
 	 **/
-	private function getTemplate()
+	private function getTemplate($extension = '.tpl.php', $default_basename = 'index')
 	{
 		$fs = FS::get();
 		
 		// Where the templates live
 		$TemplatesPath = $fs->templatePath();
-		
+
 		// Get the current content path as a Virtual path
 		// which we will use to find matching templates
 		$VPath = FS::realToVirtual($fs->currentPath()->less($fs->contentRoot()));
@@ -159,7 +164,7 @@ class FormatHTML extends GizFormat
 		// TODO: Check if DEFAULT_START is defined 
 		if(
 			$VPath->get() == '' 		// we are at '/'
-			AND $TemplatesPath->add('front.tpl.php')->is()	// and the front.tpl.php is present
+			AND $TemplatesPath->add('front'.$extension)->is()	// and the front.tpl.php is present
 		)
 			return 'front.tpl.php';
 
@@ -168,7 +173,7 @@ class FormatHTML extends GizFormat
 			// Look for specific templates
 			while(count($parts))
 			{
-				$candidate = implode('_', $parts).'.tpl.php';
+				$candidate = implode('_', $parts).$extension;
 
 				if(file_exists($TemplatesPath . '/' . $candidate))
 				{
@@ -185,14 +190,14 @@ class FormatHTML extends GizFormat
 			array_pop($parts);	// Should not affect the current folder, only children
 			foreach(array_reverse($parts) as $folder)
 			{
-				$candidate = $folder.'_default.tpl.php';
+				$candidate = $folder.'_default'.$extension;
 
 				if(file_exists($TemplatesPath.'/'.$candidate))
 					return $candidate;
 			}
 		}
 				
-		return 'index.tpl.php';
+		return $default_basename.$extension;
 	}
 	
 	/**
