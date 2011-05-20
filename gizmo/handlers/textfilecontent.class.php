@@ -53,7 +53,7 @@ class TextFileContent extends FSFile
 	 */
 	protected function renderHTML($format = 'html', $content)
 	{
-		$class_name = get_class($this);
+		$class_name = 'Text '.get_class($this);
 
 		$title = null;
 		
@@ -71,7 +71,7 @@ class TextFileContent extends FSFile
 			}
 				
 			return "
-			<div class=\"$class_name\">
+			<div class=\"$class_name\" id=\"".$this->getID()."\">
 				<h2 class=\"FileName\">$title</h2>
 				<div class=\"Content\">$content</div>
 			</div>
@@ -80,7 +80,7 @@ class TextFileContent extends FSFile
 		else
 		{
 			return "
-			<div class=\"$class_name\">
+			<div class=\"$class_name\" id=\"".$this->getID()."\">
 				<div class=\"Content\">$content</div>
 			</div>
 			";			
