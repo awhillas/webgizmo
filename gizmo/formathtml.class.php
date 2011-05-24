@@ -256,9 +256,6 @@ class FormatHTML extends GizFormat
 				case 'text/css':
 					$rel = 'stylesheet';
 					
-					if(FSObject::getExtension($file) == 'less')
-						$rel = 'stylesheet/less';
-					
 				default:
 					$out .= "\t".rel($file, $mime, $rel)."\n";
 			}
@@ -311,18 +308,18 @@ class FormatHTML extends GizFormat
 						
 						foreach($AspectPath->files()->name('(?i)('.$filter.')$') as $CssFile)
 						{
-							if($CssFile->getExt() == 'less') $includeLess = true;
-							$out[$CssFile->getPath()->realURL()] = $mime;
+							$url = $CssFile->getPath()->realURL();
+							
+							if($CssFile->getExt() == 'less') 
+								$out[LESS::htmlLinkUrl($CssFile->getPath()->get())] = $mime;
+							else
+								$out[$url] = $mime;
 						}
 						break;
 				}
 			}
 		}
 
-		if($includeLess)
-		{
-			$out[Path::open(INCLUDES_PATH)->add('less-1.0.41.min.js')->realURL()] = 'text/javascript';
-		}
 
 		return $out;
 	}
