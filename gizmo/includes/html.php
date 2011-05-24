@@ -267,3 +267,27 @@ function audio($source, $class = '', $id = '', $attrs = array(), $not_supported_
 	return tag('audio', false, '', $class, $id, $attrs);
 }
 
+/**
+ * "The section element represents a generic section of a document or application. A 
+ * section, in this context, is a thematic grouping of content, typically with a heading.
+ *
+ * 	Examples of sections would be chapters, the various tabbed pages in a tabbed dialog 
+ * box, or the numbered sections of a thesis. A Web site's home page could be split into 
+ * sections for an introduction, news items, and contact information.
+ *
+ *	Authors are encouraged to use the article element instead of the section element when 
+ * it would make sense to syndicate the contents of the element.
+ *
+ *	The section element is not a generic container element. When an element is needed for 
+ * styling purposes or as a convenience for scripting, authors are encouraged to use the 
+ * div element instead. A general rule is that the section element is appropriate only if 
+ * the element's contents would be listed explicitly in the document's outline."
+ * 
+ * @link http://www.whatwg.org/specs/web-apps/current-work/multipage/sections.html#the-section-element
+ * @return String	HTML Section tag
+ **/
+function section($content, $class = '', $id = '', $attrs = array())
+{
+	return tag('section', false, $class, $id, $attrs);
+}
+
