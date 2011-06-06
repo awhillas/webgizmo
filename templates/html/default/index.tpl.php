@@ -23,8 +23,10 @@
 		<a href="<?php echo $home ?>"><?php echo $title ?></a>
 	</h1>
 	
-	<!-- This is the Menu, a list of links to the top level of folders the ul() 
-		makes it an HTML <UL> with a class = 'Menu' (for CSS styling). -->
+	<!-- 
+		This is the Menu, a list of links
+		menu(<default depth to show>, <add the full current path>)
+	-->
 	<?php echo $fs->menu(2, true) ?>
 	
 	
