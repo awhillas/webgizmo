@@ -780,7 +780,7 @@ class FS
 		
 		if($mime = 'auto')
 		{
-			switch(FSObject::getExtension($path))
+			switch(FSObject::getEnd($path))
 			{
 				case 'js':
 					$mime = 'text/javascript';

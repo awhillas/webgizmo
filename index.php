@@ -13,7 +13,7 @@
 	define('THEME_DIR', 	'/less');
 	define('FOLDER_DISPLAY', 'links');	// How folders are handled. Can be 'links', 'teaser' or 'none'
 	
-	define('DEBUG', false);	// set to True to see errors.
+	define('DEBUG', true);	// set to True to see errors.
 
 	// Leave this alone... assumes /gizmo folder is in the same folder as this file.
 	require dirname(__FILE__).'/gizmo/FS.class.php';

@@ -133,7 +133,7 @@ abstract class FSObject extends SplFileInfo
 		$fallback_handler = ($Path->isDir())? 'FSDir': 'FSFile';
 		
 		// Get the extention to use in the handelr lookup map...
-		if(!$extension = strtolower(FSObject::getExtension(basename($Path->get()))))
+		if(!$extension = strtolower(FSObject::getEnd(basename($Path->get()))))
 			$extension = ($Path->isDir())? 'dir': 'file';
 
 		// Lookup content map for file hander			
@@ -164,7 +164,10 @@ abstract class FSObject extends SplFileInfo
 	 **/
 	abstract public function getContents();
 	
-	public static function getExtension($filename)
+	/**
+	 * Get the extension, but getExtention is taken by SplFileInfo and getExt is a non-static here :-/
+	 */
+	public static function getEnd($filename)
 	{
 		$parts = explode('.', $filename);
 
