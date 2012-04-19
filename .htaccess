@@ -23,3 +23,10 @@ php_flag display_errors on
 	RewriteRule ^(.*)$ index.php?path=$1 [L,QSA]
 
 </IfModule>
+
+# Security
+
+# disable directory browsing
+Options All -Indexes
+# prevent folder listing
+IndexIgnore *
