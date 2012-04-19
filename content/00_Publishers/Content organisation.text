@@ -1,0 +1,105 @@
+# Content Organisation
+
+## Overview
+
+Gizmo lets you manage your website's content using familiar files and folders. 
+
+All of your content should be in the `/content` folder. Files and folders in there will be displayed on your site.
+
+### The basics are basic
+
+The main idea behind Gizmo is that all the content for your site is in folders and these can be nested into a hierarchy, just like you organise your files on your computer. Gizmo then considers **each folder to be one webpage**. To add something to a webpage you just drop your text, images, video or whatever into that folder and hey-presto its added to the page. Simple! the Gizmo formula is then:
+
+	1 Folder = 1 Webpage
+	
+It sure ain't rocket science ;)
+
+### What files are content?
+
+Not all files are good content. The types of files that Gizmo likes are:
+
+Plain text
+: These you can make with notepad (on windows) or [TextWrangler](http://www.barebones.com/products/textwrangler/download.html) on Mac (unfortunately Textedit doesn't save as plain text :-/ ) They let you inject text into your page. Text files should end with a `.txt` extension.
+
+Text markup
+: If you want to jazz up your text a little you might consider formatting your text files using [Markdown](http://michelf.com/projects/php-markdown/concepts/), which is a ultra simple way of adding stuff like bold, italics and links to your text content. Markdown files can end with the extensions `.text`, `.mdown`, `.md`. [Textile](http://textile.thresholdstate.com/), a similar text markup system is also supported with .textile files.
+
+HTML
+: You can put `.html` or `.htm` files into the content folder and their content will be included on the page as-is. This is great for integrating with external websites that give you HTML code to embed their content on your webpage such as YouTube or Flickr. You can simply copy and pate they embed code they give you into a `.html` file and save it with your other content. It will appear on your site along with all your other content.
+
+Images
+: images that end with one of the extensions: `.gif`, `.jpeg`, `.jp2`, `.png` or `.gif`. These are the standard web image formats and are dictated by web browsers so if you have an image in some other format then you'll have to save as one of these formats.
+
+Video
+: `.mov`, `.mp4`, `.3gp`, `.ogv`, `.mkv` extensions are supported.
+
+Audio
+: `.ogg`, `.oga`, `.mp3`, `.wav`, `.spx` extensions are supported.
+
+In the future it hoped to add RTF (if a good PHP parser can be found!) and PDF support.
+
+Files that have an unrecognised extension are displayed as link so that the file can be downloaded directly.
+
+#### Note on video and audio
+
+At the time of this writing the video and audio support is very basic (i.e. HTML5 video and audio tags). This is mainly because of the battle being waged by Google and Apple over who will control the online formats. Its recommended that a service such as [Vimeo](http://vimeo.com) or [Soundcload](http://soundcloud.com) be used to upload your video or audio content and then copy/pated the embed HTML code they give you into a .html file and put this in your content folder. A standalone solution for Gizmo will be developed but it will never be as good as using these services and will require you to encode your content in 2 or more formats to get good base coverage.
+
+### Ordering page content
+
+So if you have that down then next thing will be that you want somethings to come before others on the webpage. Thats also easy. Since Gizmo works within the files/folder computer metaphor (the "file system" we say in computer geek talk) **Gizmo orders content alphabetically**, the same why your computer does. 
+
+So to _change the order_ of content you _change the file name_. Gizmo has a little built in trick that makes this easy. Just add two digits followed by an underscore '_'. This works for files and folders. 
+
+The contents of a personal home page might look like:
+
+	00_picture of me.jpg
+	10_cv.text
+	20_picture of my cat.png
+	
+### Formatting text
+
+Gizmo supports plain text with files that have an extension (end with) ".txt". This is inserted into the page as is.
+
+Gizmo also supports [Markdown](http://michelf.com/projects/php-markdown/concepts/) and [Textile](http://textile.thresholdstate.com/) which allow you to apply some formatting to text such as bold and emphasis, headings, links and make lists etc. To get Gizmo to process text files as Markdown end the file name with ether ".text" or ".markdown" or, for Textile try ".textile".
+
+### How the **menu** works
+
+By default Gizmo templates take the top level folders in your content folder and create menu links from them. It uses the _clean name_ for them which is the without the leading sorting number (i.e. "01_") nor anything after the first dot (i.e. "."). 
+
+For example: 
+
+ - `01_Hello_world` becomes just **Hello world**
+ - `02_Images.reverse` would become just **Images**.
+
+Note in the last example the `.reverse` part reverses the order that the contents of the folder are displayed in. See [Gizmo Query Language](/Developers/File+system+query+language) for more details about sorting and filtering content.
+
+## Advanced features
+
+Gizmo is very simple to use but does have some tricky features.
+
+### Placing content in different parts of a page layout
+
+Gizmo uses the idea of tagging in file names. These are picked up when it puts together the page content and funneled to the right place on the page if your Page Template is setup to use that tag.
+
+	_tag1_something random.png
+	
+Here "tag1" becomes the tag and if your template has
+
+	<?php echo $tag1 ?>
+	
+in it somewhere then all content in the currently viewed folder will be put into this place.
+
+#### Hiding stuff from the page
+
+If you start a file or folder name with an underscore '_' then by default Gizmo will skip this item when putting together the page 
+
+#### Ignoring certain files
+
+If there are files in the content directory that you would like Gizmo to ignore then you can place a special file, named '_ignore' in the root of the content folder. In this file you can put a list of file name patterns, each one on a new line, of the files you want Gizmo to ignore. Typically you wold use this to ignore hidden files that your operating system (OS X, Linux or Windows) might put in your content folder automatically.
+
+Common patterns might be:
+	
+	.DS_Store
+	Thumbs.db
+	
+Developers note: these patterns can be Regular Expressions without the delimiting start and end markers.

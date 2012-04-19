@@ -1,0 +1,7 @@
+# Plugins
+
+# Intro 
+
+Plugins allow you to easily create dynamic effects with content while being as simple to use as adding an .extension to a folder name, and in most cases thats all that is needed.
+
+Here is a list of the currently implemented plugins in Gizmo and how to format the files/folders in the /content folder in order to invoke their magical powers...

@@ -1,0 +1,40 @@
+# Making it Custom
+
+I know I said "no configuration" and out of the box Gizmo just works (or should) without any configuration. You _can_ customise Gizmo a bit however. Here are the variables you can set to customise the behavior of Gizmo:
+
+### How do I "set" a variable ###
+
+You can define a variable in the `index.php` file, which is a little bit techie (but not much). Open up that file and you should see that there are some already defined for you and look like this:
+
+	define('SITE_TITLE', 'My Site about my cat Fluffy!');
+
+... which sets the website title to:
+
+> 'My Site about my cat Fluffy!' 
+
+_Note the single quotes must remain intact when you replace the title_. There should already be a line like this in the `index.php` file. You just have to remove the "//" at the beginning of the line. 
+
+You can try and copy and paste this line into the `index.php` file, perhaps directly under the original, and replace the **SITE_TITLE** part with one of the following:
+
+### The variables ###
+
+SITE_TITLE
+: This is the title of the site and will usually go at the top of the homepage and most of your pages (depending on your template).
+
+THEME_DIR
+: This should be set to the name of the theme (skin) that you want to use for the site. This should be _exactly_ the name of the folder in the "/templates/html" that you want to use. It defaults to "/default" (funny that) and you should be able to see the default theme in the "/templates/html/default" folder. Don't forget to begin with a '/' e.g. '/yui' to use the YUI Grids based example theme that comes with Gizmo. 
+
+CONTENT_DIR
+: This should point to the folder in which you have your content. By default this is '/content'. If you want to use a different name for this folder set this variable. This can be an absolute path to anywhere on the web server.
+
+TEMPLATES_DIR
+: The path to the Savant3 templates folder. This defaults to '/templates'. Perhaps change this if you want to also share a central templates folder across many sites.
+
+REWRITE_URLS
+: If you server has mod_rewrite working then set this to true (which is its default value). If your getting a "500 Internal Server error" you might try deleting the .htaccess file and setting this to false
+
+CHAR_ENCODING
+: The default character encoding for content output. Defaults to UTF8. If you don't know what that means I wouldn't touch this.
+
+WEB_ROOT
+: The root URL of Gizmo. This is usually detected if you have it in the base of the domain name i.e. www.example.com but if you have it in a sub-folder like www.example.com/gizmo/ the you would set this e.g. to '/gizmo' for the example.

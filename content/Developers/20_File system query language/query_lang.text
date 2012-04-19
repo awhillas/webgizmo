@@ -1,0 +1,114 @@
+# Gizmo Query Language
+
+Gizmo has a simple query language for managing the content of the file system (i.e. files and folders). Since Gizmo does not use a database but the _file systems_ as its content data source a simple query language has been devised. It allows the chaining of sorting and filtering commands to get lists of files/folders. It is only for querying the file system and not for modifying it which would go against the Gizmo security philosophy.
+
+The GizQuery object is used to perform queries.
+
+## Query construction
+
+Querys are built by adding one of the **filter** or **sorter** commands in a list separated by a dot e.g.
+
+	files.ctime.first.5
+
+They are executed from left to right so this command would 
+
+1. Filter out folders.
+2. Sort by the created time.
+3. Return the first 5 items from this list.
+
+## Folder names can be querys
+
+Yup, so you can name a folder, full of photos, as follows:
+
+	01_somePictures.pick.3.gallery
+	
+and it will randomly pick three of the image files and give them to whatever handler you have mapped to the "gallery" handler (which is the AD Gallery by default). 
+
+Folder names can include many combinations of filters and sorters. Heres another image gallery example:
+
+	happySnaps.files.ctime.last.5.shuffle.gallery
+
+which would:
+
+1. Select **only the files** in the folder (`.files`)
+2. **Sort by creation time** of the images (`.ctime`)
+3. Take the **last 5** so the five most recent since we sorted by ctime (`.last.5`)
+4. Randomly sort these remaining 5 files (`.shuffle`)
+5. Pass them to the handler `.gallery`
+
+So you can see you can whittle down your list of files to get exactly what you want out the other end.
+
+## Sort and Filter commands
+
+Here is a complete list of sort and filter commands available in the Gizmo Query Language
+
+### Filters
+
+see: GizFilter class
+
+#### Folder/List filters
+
+This set of filters affects the list of files and does not look at the individual files at all.
+
+first.n
+: take the first n items.
+
+last.n
+: take the last n items.
+
+pick.n
+: Randomly select n items
+
+Note: If n is omitted then its assumed to be 1.
+
+#### File filters
+
+This set of filters looks at each file and does a comparison of some sort on ones of the files properties.
+
+has.string
+: File name contains the given string
+
+files
+: Filter out folders.
+
+folders
+: Filter out files.
+
+from.YYYY-MM-DD
+: A date filter. Files date is equal to or greater than YYYY-MM-DD. This can be abbreviated to YYYY-MM or YYYY.
+
+to.YYYY-MM-DD
+: A date filter. Files date is equal to or less than YYYY-MM-DD. This can be abbreviated to YYYY-MM or YYYY.
+
+see: GizFilter class.
+
+### Sorters
+
+These are for lists/folders and effect the way lists of files are returned. 
+
+See: GizSorter class.
+
+#### General Sorters
+
+realname, rname
+: Sort by file name in ascending order. This is the _default sorting_ behavior.
+
+nicename, name
+: Sort on the "nice name", that is the name with out the leading "01_" nor any extensions e.g. `03_fluffy_Cat.jpg` would have a nice name of just: **fluffy Cat**
+
+reverse, rev
+: Reverse order of the natural sorting.
+
+shuffle, random, rand
+: Random ordering.
+
+#### Properties Sorters
+
+filesize, size
+: Sort by file size.
+
+ctime
+: Sort by the file/folder creations date/time.
+
+mtime
+: Sort by the file/folder last modified date/time.
