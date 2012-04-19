@@ -26,7 +26,6 @@
 				<div class="yui-b"><div class="yui-g">
 
 					<!-- YOUR DATA GOES HERE -->
-
 					<?php echo $content ?>
 
 				</div></div>
@@ -35,7 +34,6 @@
 			<div class="yui-b">
 
 				<!-- YOUR DATA GOES HERE -->
-
 				<?php echo $fs->menu() ?>	
 
 			</div>
@@ -43,7 +41,7 @@
 	
 		<div id="ft" role="contentinfo">
 			<?php echo $foot ?>
-			<p>Powered by <a href="http://gizmo.tsd.net.au">WebGizmo</a></p>
+			<p>Powered by <a href="http://gizmo.tsd.net.au">WebGizmo</a> a <a href="http://www.tsd.net.au">TSD</a> invention.</p>
 		</div>
 		
 	</div>

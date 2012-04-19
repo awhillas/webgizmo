@@ -18,8 +18,6 @@ class FSFile extends FSObject
 	 * Gets the contents of the file.
 	 * 
 	 * @return String	Text if its a text file, binary otherwise.
-	 * 
-	 * @todo Figure out why the inherited getBasePath() method is returning FALSE here???
 	 **/
 	public function getContents()
 	{
