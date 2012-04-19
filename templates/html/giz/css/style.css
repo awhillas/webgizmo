@@ -1,0 +1,95 @@
+html, body { 
+	font-family: 'SFCartoonistHandRegular', Georgia, serif;
+	text-rendering: optimizeLegibility;
+	font-size: 1.1em;
+	color: #555;
+	line-height: 1.4;
+	letter-spacing: 0.06em;
+	word-spacing: 0.01em;
+}
+
+h1, h2, h3, h4 {
+	font-family: SFCartoonistHandSCBold, cursive;
+
+	letter-spacing: 0;
+	font-size: 2em;
+	line-height: 1;
+	clear: both;
+	padding: 0; margin: 0;
+	margin: 1em 0;
+}
+h1 { font-size: 1.6em; font-family: 'KomikaTitle-PaintRegular', cursive; }
+h2 { font-size: 1.4em; }
+h3 { font-size: 1.2em; }
+h4 { font-size: 1.0em; }
+
+dt {
+	line-height: 1.5;
+	font-size: 1.2em;
+}
+ol, ul { margin-left: 1.4em; }
+dl {
+	margin-left: 0;
+}
+	
+a 		{ text-decoration: none; font-weight: bold;}
+a:hover { text-decoration: underline; }
+
+code {
+	display: block;
+	padding: 1em;
+	background-color: #eee;
+	border: 1px dashed grey;
+	font-size: 0.8em;
+}
+p code, dd code, li code {
+	display: inline; 
+	padding: 0.2em;
+}
+
+/* Logo */
+
+#SITE_TITLE a {
+	background: transparent url("images/Gizmo_logo_smll.png") top left no-repeat;
+	display: block;
+	width: 112px;
+	height: 100px;
+	
+	text-indent: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	
+	float: left;
+	margin-right: 1em;
+}
+
+/* Menu and folder links */
+
+ul.Menu {
+	margin: 0.5em 0;
+	overflow: auto;
+	width: 100%;
+	
+	font-size: 2;
+}
+a.FSDir,
+ul.Menu li a {
+	font-family: 'KomikaTitle-PaintRegular', cursive;
+	text-rendering: optimizeLegibility;
+}
+
+a.FSDir {
+	float: right;
+	clear: right;	
+}
+ul.Menu a.FSDir {
+	float: none;
+}
+ul.Menu a.Selected {
+	font-size: 1.8em;
+}
+ul.Menu li {
+	margin-right: 1.8em;
+	font-size: 0.8em;
+	list-style: none;
+}

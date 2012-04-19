@@ -1,0 +1,16 @@
+/* Toy Colours for Gizmo */
+
+a 			{ color: Gold }
+a:hover 	{ color: GoldenRod }
+a:visited 	{ color: orange }
+
+h1			{ color: RoyalBlue }
+h2			{ color: DodgerBlue }
+h3			{ color: DeepSkyBlue }
+h4			{ color: SkyBlue }
+
+strong		{ color: Indigo }
+em 			{ background-color: yellow }
+dt 			{ color: Green }
+
+a.Selected	{ color: DeepPink }
