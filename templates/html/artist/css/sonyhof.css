@@ -1,0 +1,59 @@
+/* COLOURS */
+
+#hd {color: #666;}
+a {
+	text-decoration: none;
+	color: #666;
+}
+.Selected,
+a:hover { color: black; }
+
+/* FONTS */
+
+body, 
+#hd h1  { 
+	font-family: 'Droid Sans', arial, serif; 
+	line-height: 1.3;
+}
+
+h1, h2, h3, h4 { 
+	font-family: 'Droid Serif', arial, serif; 
+	font-size: large;
+	margin-bottom: 0;
+}
+h2 { font-size: x-large;}
+h3 { font-size: large;  }
+h4 { font-size: medium; }
+
+#hd h1 { 
+	font-size: 1em; 
+	font-weight: normal; 
+}
+body.Top #hd hr { display: none; }
+
+/* MENU */
+
+ul.Menu {
+	display: block;
+	text-align: justify;
+	width: 100%;
+	overflow: auto;
+	margin: 0;
+	padding: 1em 0;
+}
+
+ul.Menu li {
+	display: inline;
+	list-style: none;
+	padding-right: 1em;
+}
+
+.Selected {
+	font-weight: bold;
+}
+
+#bd a.FSDir {
+	display: block;
+}
+
+body.Top #bd a.FSDir { display: none; }
