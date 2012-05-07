@@ -8,12 +8,11 @@
 	 **/
 
 	// Change these variables per website
-	define('SITE_TITLE', 	'Web Gizmo');	// Name of the website.
-	define('THEME_DIR', 	'/yui');		// Template top use. i.e. /templates/html/giz
-	//define('THEME_DIR', 	'/less');
-	define('FOLDER_DISPLAY', 'links');	// How folders are handled. Can be 'links', 'teaser' or 'none'
+	define('SITE_TITLE', 	    'Website title here');	// Name of the website.
+	define('THEME_DIR',       '/yui');		// Template to use. Name of one of the folders in: /templates/html
+	define('FOLDER_DISPLAY',  'none');	// How subfolders are handled. Can be 'links', 'teaser' or 'none'
 	
-	define('DEBUG', true);	// set to True to see errors.
+	define('DEBUG', false);	// set to True to see errors.
 
 	// Leave this alone... assumes /gizmo folder is in the same folder as this file.
 	require dirname(__FILE__).'/gizmo/FS.class.php';
