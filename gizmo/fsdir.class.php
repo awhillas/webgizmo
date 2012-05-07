@@ -89,10 +89,17 @@ class FSDir extends FSObject
 	 **/
 	public function html($format = 'html')
 	{
-		switch(FOLDER_DISPLAY)
+		$name = $this->getName();
+		if (in_array($name[0], array('_', '.'))) 
+			$display = 'none';
+		else
+			$display = FOLDER_DISPLAY;
+		
+		switch(strTolower($display))
 		{
 			case 'none':
 				return '';
+				break;
 			
 			case 'teaser':
 				// Looks for a "_teaser" subfolder in the current folder and 
