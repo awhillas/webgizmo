@@ -1,8 +1,0 @@
-To download *Web Gizmo* just:
-
-# "Download the latest":https://github.com/awhillas/webgizmo/zipball/master (from github)
-# *Unzip this file*, by double clicking, and it should extract to a folder called something like "awhillas-webgizmo-b3f14d4".
-# *FTP into hosting server* and copy everything _inside_ the gizmo folder to your web root. Checkout the "FTP guide":/Publishers/FTP for some help with FTPing.
-# *DONE!* you should be up and running. Go to your web address and you should this website :) You can replace everything in the "content" folder with your own web page content (See the documentation for "Publishers":/Publishers to learn more about this)
-
-TOOOooooo EASY!

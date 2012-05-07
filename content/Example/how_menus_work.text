@@ -1,0 +1,10 @@
+# This is an example page
+
+There are two things you might notice about this page.
+
+1. Its created by simply making an new folder and putting a text file (in [Markdown format](http://michelf.com/projects/php-markdown/concepts/)) into it.
+2. A menu item was created for it automatically. By default the first level of folder in the `/content` folder are turned into menu items. This can be customised.
+
+Now you should know enough to create as many pages as you like.
+
+Have fun!
