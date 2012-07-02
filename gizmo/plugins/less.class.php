@@ -1,6 +1,4 @@
 <?php
-require_once 'includes/html.php';
-
 /**
 * less.php plugin for server side processing of .less files
 * 
