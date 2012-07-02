@@ -2,7 +2,9 @@
 /**
  * Global variable configuration constants
  * 
- * All global variables here can be overriden in the index.php file so can be shared by multipule websites.
+ * All global variables here can be overridden in the index.php file 
+ * so can be shared by multiple websites.
+ *
  * Naming conventions for the various PATH/DIRs, names ending in:
  *  		_PATH = Server absolute paths
  *  		_DIR = Name of single directory (not a full path)
@@ -84,7 +86,7 @@ if (!defined('REWRITE_URLS'))
 }
 /**
  * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
- * e.g. of you had gizmo in www.example.com/something then you would set this to '/something'
+ * e.g. of you had gizmo in 'www.example.com/something' then you would set this to '/something'
  * @see FS::getURL()
  * @global	String
  */

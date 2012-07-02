@@ -19,13 +19,13 @@ if (!defined('HTML_DEFAULT_VERSION'))	define('HTML_DEFAULT_VERSION',	4);
  * @global	String		URL to the latest version of JQuery. 
  * 						Useful for plugins but not sure where I should put this :-/ 
  */
-if (!defined('JQUERY_URL'))			define('JQUERY_URL',	'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
-if (!defined('JQUERY_URL'))			define('JQUERY_URL',	'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
+//if (!defined('JQUERY_URL'))	define('JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
+if (!defined('JQUERY_URL'))	define('JQUERY_URL', 'http://code.jquery.com/jquery-latest.min.js');
 
 /**
  * @global	String		URL to the latest version of the Dojo Toolkit. 
  */
-if (!defined('DOJOTOOLKIT_URL'))	define('DOJOTOOLKIT_URL',	'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js');
+if (!defined('DOJOTOOLKIT_URL'))	define('DOJOTOOLKIT_URL', 'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js');
 
 
 

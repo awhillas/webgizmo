@@ -376,7 +376,7 @@ class Path
 			
 			$path = implode('/', $parts);
 			
-			// Maker the URL based on the mod_rewrite setup.
+			// Make the URL based on the mod_rewrite setup.
 			if(!REWRITE_URLS)
 				return BASE_URL_PATH.'/?path='.$path;
 			else
