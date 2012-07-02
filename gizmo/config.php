@@ -108,7 +108,7 @@ if (!defined('DEFAULT_LANGUAGE')) define('DEFAULT_LANGUAGE', 'en');
  * @link http://php.net/manual/en/function.htmlentities.php
  * @see FS::strip()
  **/
-if (!defined('CHAR_ENCODING')) define('CHAR_ENCODING', 'UTF-8');
+if (!defined('CHAR_ENCODING')) define('CHAR_ENCODING', 'utf-8');
 
 
 // // // // // // // // // // // // // // // // //
@@ -116,9 +116,13 @@ if (!defined('CHAR_ENCODING')) define('CHAR_ENCODING', 'UTF-8');
 // // // // // // // // // // // // // // // // //
 
 /**
- * @global	string	
+ * @global	string	Website title/name
  */
 if (!defined('SITE_TITLE')) define('SITE_TITLE', 	$_SERVER['SERVER_NAME']);
+/**
+ * @global	string	Website description. Shouldn't be longer than one sentence.
+ */
+if (!defined('SITE_DESCRIPTION')) define('SITE_DESCRIPTION', '');
 /**
  * @global	string	
  */

@@ -19,5 +19,7 @@
 
 User-agent: *
 Crawl-delay: 10
-# Directories
+# Directories, you don't want to directly index the content folder.
 Disallow: /gizmo/
+Disallow: /content/
+Disallow: /templates/
