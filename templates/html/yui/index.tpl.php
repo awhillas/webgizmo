@@ -3,6 +3,7 @@
 <html lang="<?php echo $language ?>">
 <head>
 	<title><?php echo $pagetitle ?>, <?php echo $title ?></title>
+	<meta name="description" content="<?php echo $description ?>">
 	
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHAR_ENCODING ?>">
 	<meta name="generator" content="Web Gizmo <?php echo $gizmo_version ?>">
@@ -45,6 +46,15 @@
 		</div>
 		
 	</div>
+
+	<?php if(defined('GA_ID')): ?>
+		<script>
+		  var _gaq=[['_setAccount','GA_ID'],['_trackPageview']];
+		  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		  s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>
+	<?php endif ?>
 
 </body>
 </html>
