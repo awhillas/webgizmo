@@ -64,8 +64,8 @@ function errorHandler( $errno, $errstr, $errfile, $errline, $errcontext)
 	array_shift($stack);	// remove the call to this function
 	
 	// Capture errors for display after.
-	pr($stack);
-	//krumo($stack);
+	//pr($stack);
+	krumo($stack);
 
 	if(ERRORS_AT_END)
 		$PAGE_ERRORS .= ob_get_clean();	// ... finish capturing errors.
