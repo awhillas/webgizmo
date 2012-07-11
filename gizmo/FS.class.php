@@ -42,7 +42,7 @@ if(version_compare(PHP_VERSION, '5.0.0') <= 0)
 
 // Make sure our Classes get included automatically
 set_include_path( implode(PATH_SEPARATOR, array(get_include_path(), GIZMO_PATH, GIZMO_PATH.'/handlers', PLUGINS_PATH)) );
-spl_autoload_extensions('.class.php');
+spl_autoload_extensions('.class.php,.php');
 spl_autoload_register();	// Use default autoload implementation coz its fast
 
 
@@ -142,6 +142,11 @@ class FS
 			if($real = $this->virtualToReal($VPath, $content_path))
 			{
 				$this->path = new Path($content_path . $real);
+			}
+			elseif(strpos($VPath, GIZMO_PLUGIN_URL_PREFIX) === 0)
+			{
+				// Its a plugin virtual path so hand control over to the plugin.
+				$this->path = new Path($VPath);
 			}
 			else
 			{
@@ -245,19 +250,44 @@ class FS
 	 **/
 	public function http($format = 'html', $version = HTML_DEFAULT_VERSION)
 	{
-		if($this->path->is())
+		if($this->path->is())	// Content path.
 		{
 			// Get the Layoutor for the format
 			if($Layout = GizFormat::make($format, $version))
 			{
-				// Send HTTP headers
-				// ???
-
 				// output the renered content. 
 				echo $Layout->render();
 			}
 			else
 				trigger_error('Could not find render for given format: '.$format);
+		} 
+		elseif('/'.$this->path->first() == GIZMO_PLUGIN_URL_PREFIX) 
+		{
+			// Giz Plugin path!
+			$parts = $this->path->parts();
+			$plugin_class = $parts[1];
+			if(class_exists($plugin_class)) {
+				$plugin = new $plugin_class();
+				if(method_exists($plugin, 'url'))
+				{
+					echo $plugin->url(new Path('/'.implode('/', array_slice($parts, 2))));
+				}
+				else
+				{
+					header("HTTP/1.0 404 Not Found");
+					echo '404: Do not know what you are looking for?';
+				}
+			}
+			else
+			{
+				header("HTTP/1.0 501 Not Implemented");
+				echo '501: Do not know about plugin '.$plugin_class;
+			}	
+		} 
+		else
+		{
+			header("HTTP/1.0 404 Not Found");
+			echo '404: Path not found :-(';
 		}
 	}
 	
@@ -629,7 +659,7 @@ class FS
 	 * @param	Boolean	Add to the beginning of the header includes (i.e. instead of appended to the end)?
 	 **/
 	public static function add($html, $var = 'head', $prepend = false)
-	{
+	{		
 		$fs = FS::get();
 
 		if(isset($fs->content[$var]))

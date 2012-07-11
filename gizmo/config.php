@@ -55,9 +55,15 @@ if (!defined('TEMPLATES_DIR')) define('TEMPLATES_DIR', '/templates');
  */
 if (!defined('PLUGINS_DIR')) define('PLUGINS_DIR', '/plugins');
 /**
- * @global	string	
+ * @global	string	Gizmo plugins path. These should always be loaded automatically.
  */
 if (!defined('PLUGINS_PATH')) define('PLUGINS_PATH', GIZMO_PATH.PLUGINS_DIR);
+/**
+ * @global	string	Prefix of all plugin generated paths. Plugins will be passed control
+ * 		by Gizmo by using the following naming convention in the virtual path: GIZMO_PLUGIN_URL_PREFIX.'/'.<plugin class>
+ */
+if (!defined('GIZMO_PLUGIN_URL_PREFIX')) define('GIZMO_PLUGIN_URL_PREFIX', '/gizplugin');
+
 
 
 // // // // // // // // // // // // // // // // //
