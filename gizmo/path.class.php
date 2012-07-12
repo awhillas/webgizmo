@@ -175,6 +175,11 @@ class Path
 		return end(explode('/', $this->get()));
 	}
 	
+	function first()
+	{
+		return reset($this->parts());
+	}
+	
 	/**
 	 * Does this Path exist?
 	 *
@@ -359,6 +364,8 @@ class Path
 	 * Gets the Virtual URL of the dir. or file
 	 * Assumes this is a real path within the WEB_ROOT. If not then an empty 
 	 * string is returned.
+	 * 
+	 * @todo move this to FS as its business logic.
 	 * 
 	 * @return String
 	 **/

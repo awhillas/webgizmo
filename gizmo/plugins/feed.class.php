@@ -22,7 +22,8 @@ class Feed extends FSFile
 		$id = $this->getID();
 		$path = $this->getPath()->less(FS::get()->contentRoot()->get());
 		$fs->addRef(JQUERY_URL);
-		$fs->addRef('https://raw.github.com/jfhovinne/jFeed/master/build/dist/jquery.jfeed.pack.js');
+		//$fs->addRef('https://raw.github.com/jfhovinne/jFeed/master/build/dist/jquery.jfeed.pack.js');
+		$fs->addRef(PLUGINS_URL.'/feed/jquery.jfeed.pack.js');
 		$fs->add('<script>
 			jQuery(function() {
 
@@ -30,8 +31,8 @@ class Feed extends FSFile
 					url: "'.GIZMO_PLUGIN_URL_PREFIX.'/feed'.$path.'",
 					success: function(feed) {
 
-						jQuery("#result")
-							.append("feed.link feed.title");
+						jQuery("#'.$id.'")
+							.append("<h2><a href=\"" + feed.link + "\">" + feed.title + "</a></h2>");
 
 						var html = "<ol>";
 

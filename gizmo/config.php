@@ -8,6 +8,7 @@
  * Naming conventions for the various PATH/DIRs, names ending in:
  *  		_PATH = Server absolute paths
  *  		_DIR = Name of single directory (not a full path)
+ * 			_URL = The URL of the resource (direct no virtual)
  * 
  * @package WebGizmo
  * @author Alexander R B Whillas
@@ -33,10 +34,14 @@ if (!defined('DEBUG')) define('DEBUG', false);
  */
 if (!defined('WEB_ROOT')) define('WEB_ROOT', realpath(dirname($_SERVER['SCRIPT_FILENAME'])));
 /**
+ * @global	string	Gizmo folder name.
+ */
+if (!defined('GIZMO_DIR')) define('GIZMO_DIR', '/gizmo');
+/**
  * @global	string	Server path to the instillation of Gizmo i.e. where this file is.
  */
 //if (!defined('GIZMO_PATH')) define('GIZMO_PATH', dirname(__FILE__));
-if (!defined('GIZMO_PATH')) define('GIZMO_PATH',  WEB_ROOT.'/gizmo');
+if (!defined('GIZMO_PATH')) define('GIZMO_PATH',  WEB_ROOT.GIZMO_DIR);
 /**
  * @global	string	
  */
@@ -64,7 +69,19 @@ if (!defined('PLUGINS_PATH')) define('PLUGINS_PATH', GIZMO_PATH.PLUGINS_DIR);
  */
 if (!defined('GIZMO_PLUGIN_URL_PREFIX')) define('GIZMO_PLUGIN_URL_PREFIX', '/gizplugin');
 
+// URLs
 
+/**
+ * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
+ * e.g. of you had gizmo in 'www.example.com/something' then you would set this to '/something'
+ * @see FS::getURL()
+ * @global	String
+ */
+if (!defined('BASE_URL_PATH')) define('BASE_URL_PATH', '');
+/**
+ * @global	string	Plugins base URK
+ */
+if (!defined('PLUGINS_URL')) define('PLUGINS_URL', BASE_URL_PATH.GIZMO_DIR.PLUGINS_DIR);
 
 // // // // // // // // // // // // // // // // //
 // Behaviour Settings
@@ -90,13 +107,6 @@ if (!defined('REWRITE_URLS'))
 	 */		
 	define('REWRITE_URLS', $isModRewriteOn);
 }
-/**
- * If gizmo is not in the root then add this to base URL i.e. beginning of all link URLs
- * e.g. of you had gizmo in 'www.example.com/something' then you would set this to '/something'
- * @see FS::getURL()
- * @global	String
- */
-if (!defined('BASE_URL_PATH')) define('BASE_URL_PATH', '');
 /**
  * If true then you Gizmo assumes that the top level folders in /content are
  * ISO 639-1 codes and content root is taken to start under each of these.
