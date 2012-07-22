@@ -39,9 +39,6 @@ class Feed extends FSFile
 						for(var i = 0; i < feed.items.length && i < 5; i++) {
 
 							var item = feed.items[i];
-							console.log(item);
-							var date = new Date(item.updated);
-							console.log(date);
 							html += "<li>"
 							+ "<a href=\""+item.link+"\">" + item.title + "</a>"
 							+ "<div class=\"description\">" + item.description + "</div>"

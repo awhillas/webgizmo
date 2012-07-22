@@ -6,7 +6,7 @@
 	<head>
 		<meta charset="<?php echo CHAR_ENCODING ?>">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<title><?php echo $pagetitle ?>, <?php echo $title ?></title>
+		<title>Web Gizmo</title>
 		<meta name="description" content="<?php echo $description ?>">
 		
 		<!-- Please don't add "maximum-scale=1" here. It's bad for accessibility. -->
@@ -22,9 +22,9 @@
 		
 		<header>
 			<div class="wrapper">
-				<h1>A Golden Demonstration</h1>
+				<h1>Web Gizmo</h1>
 				<h2>
-					Try resizing your browser or viewing this page on different devices. Use the icon in the upper right corner to see an overlay of the grid.
+					A web system with a focus on simplicity and flexibility. Fast to setup an easy to maintain.
 				</h2>
 			</div>
 		</header>

@@ -15,7 +15,7 @@
 	define('SITE_DESCRIPTION', 'A Web Gizmo powered website!');
 	
 	// Template to use. Name of one of the folders in: /templates/html
-	define('THEME_DIR', '/yui');
+	define('THEME_DIR', '/ggs');
 
 	// Google Analytics site ID, www.google.com/analytics/. 
 	//define('GA_ID', 'UA-XXXXX-X');
