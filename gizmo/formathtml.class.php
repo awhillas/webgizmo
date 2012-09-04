@@ -75,9 +75,13 @@ class FormatHTML extends GizFormat
 			$tpl->templates = $fs->templatePath($this->format)->realURL();
 			$tpl->title = SITE_TITLE;
 			$tpl->description = SITE_DESCRIPTION;
-			$tpl->pagetitle = $fs->currentPath()->getObject()->getCleanName();
 			$tpl->language = $fs->getLanguage();
 			$tpl->gizmo_version = GIZMO_VERSION;
+
+			if($fs->currentPath()->get() != $fs->contentRoot()->get()) 
+				$tpl->pagetitle = $fs->currentPath()->getObject()->getCleanName();
+			else
+				$tpl->pagetitle = SITE_TITLE;
 	
 			// Assign the rendered content to the template
 			$tpl->assign($this->renderContent());
@@ -189,7 +193,8 @@ class FormatHTML extends GizFormat
 			// Look for inherited/general templates
 			
 			array_pop($parts);	// Should not affect the current folder, only children
-			foreach(array_reverse($parts) as $folder)
+
+			foreach(array_reverse($VPath->parts()) as $folder)
 			{
 				$candidate = $folder.'_default'.$extension;
 
@@ -211,17 +216,20 @@ class FormatHTML extends GizFormat
 		$out['content'] = "\n\n<!-- FormatHTML::render() start ... -->\n\n";
 		
 		if($Dir = FSObject::make(FS::get()->currentPath()) AND $Dir->isDir())
-		{			
+		{
 			foreach($Dir->getContents() as $FSObject)
 			{
 				// Instantiate a handler for the file and render
 				$tag = $FSObject->getTag();
 				$tag = (empty($tag))? 'content': $tag;
-			
-				if(isset($out[$tag]))
-					$out[$tag] .= $FSObject->render();
-				else
-					$out[$tag] = $FSObject->render();
+				
+				if($tag != 'content' || strpos($FSObject->getBasename(), '_') !== 0) 
+				{
+					if(isset($out[$tag]))
+						$out[$tag] .= $FSObject->render();
+					else
+						$out[$tag] = $FSObject->render();
+				}
 			}
 		}
 		else
