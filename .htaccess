@@ -8,7 +8,7 @@ php_flag display_errors on
 
 		# Gizmo uses this to auto-detect mod_rewrite.
 		# The mod_env module needs to be enabled for this to work.
-	SetEnv HTTP_MOD_REWRITE On
+	SetEnv GIZ_HTTP_MOD_REWRITE On
 
 	RewriteEngine on
 	

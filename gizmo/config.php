@@ -95,7 +95,7 @@ if (!defined('DEFAULT_START')) define('DEFAULT_START', '/');
 if (!defined('REWRITE_URLS'))
 {
 	// Try to detect if mod_rewrite is installed and the .htaccess is setup correctly.
-	if (isset($_SERVER['HTTP_MOD_REWRITE']) AND $_SERVER['HTTP_MOD_REWRITE'] == 'On')
+	if (isset($_SERVER['GIZ_HTTP_MOD_REWRITE']) AND $_SERVER['GIZ_HTTP_MOD_REWRITE'] == 'On')
 		$isModRewriteOn = true;
 	else
 		$isModRewriteOn = false;
