@@ -16,8 +16,8 @@ if (!defined('HTML_LAYOUT'))	define('HTML_LAYOUT',	'FormatHTML');
 if (!defined('HTML_DEFAULT_VERSION'))	define('HTML_DEFAULT_VERSION',	4);
 
 /**
- * @global	String		URL to the latest version of JQuery. 
- * 						Useful for plugins but not sure where I should put this :-/ 
+ * @global	String		URL to the latest version of JQuery.
+ * 						Useful for plugins but not sure where I should put this :-/
  */
 //if (!defined('JQUERY_URL'))	define('JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
 if (!defined('JQUERY_URL'))	define('JQUERY_URL', 'http://code.jquery.com/jquery-latest.min.js');
@@ -58,8 +58,6 @@ class FormatHTML extends GizFormat
 	 **/
 	public function render()
 	{
-		global $PAGE_ERRORS;
-		
 		// Get the template for the format
 		if($tpl = $this->getTemplateEngine())
 		{
@@ -91,14 +89,16 @@ class FormatHTML extends GizFormat
 			$fs->add($this->renderFileReferences(FS::get()->fileRefs()), 'head', true);	// prepend instead of append.
 			
 			// Add auto file picks like fonts and CSS etc...
-			$fs->add($this->renderFileReferences($this->getTemplateAutoIncludes($fs->templatePath($this->format))));
+			$refs = $this->getTemplateAutoIncludes($fs->templatePath($this->format));
+			
+			$fs->add($this->renderFileReferences($refs));
 			
 			// Shared global vars used by plugins and handlers such as $head, $foot.
 			$tpl->assign($fs->content);
 
 			// Return the content rendered in the correct template.
 			// Template is determined in $this->getTemplateEngine();
-			return $tpl->getOutput() . $PAGE_ERRORS;
+			return $tpl->getOutput();
 		}
 	}
 	
@@ -202,8 +202,18 @@ class FormatHTML extends GizFormat
 					return $candidate;
 			}
 		}
-				
-		return $default_basename.$extension;
+		
+		// Fall back to the default 
+		
+		$candidate = $default_basename.$extension;
+		
+		if(file_exists($TemplatesPath.'/'.$candidate))		
+			return $candidate;
+		else
+		{
+			trigger_error('Template could not be found: '.$TemplatesPath.'/'.$candidate, E_USER_ERROR);
+			die;
+		}
 	}
 	
 	/**
@@ -221,7 +231,7 @@ class FormatHTML extends GizFormat
 			{
 				// Instantiate a handler for the file and render
 				$tag = $FSObject->getTag();
-				$tag = (empty($tag))? 'content': $tag;
+				$tag = (empty($tag))? 'content': $tag;	// Default tag is "content"
 				
 				if($tag != 'content' || strpos($FSObject->getBasename(), '_') !== 0) 
 				{
@@ -233,7 +243,7 @@ class FormatHTML extends GizFormat
 			}
 		}
 		else
-			trigger_error('Can not render path: '.$Dir);
+			trigger_error('Can not render folder: '.$Dir);
 		
 		$out['content'] .= "\n\n<!-- ... FormatHTML::render() end. -->\n\n";
 		
@@ -328,8 +338,6 @@ class FormatHTML extends GizFormat
 				}
 			}
 		}
-
-
 		return $out;
 	}
 	

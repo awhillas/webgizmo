@@ -261,16 +261,16 @@ class FS
 			else
 				trigger_error('Could not find render for given format: '.$format);
 		} 
-		elseif('/'.$this->path->first() == GIZMO_PLUGIN_URL_PREFIX) 
+		elseif('/'.$this->path->first() == GIZMO_PLUGIN_URL_PREFIX)
 		{
 			// Giz Plugin path!
 			$parts = $this->path->parts();
 			$plugin_class = $parts[1];
 			if(class_exists($plugin_class)) {
-				$plugin = new $plugin_class();
-				if(method_exists($plugin, 'url'))
+				//$plugin = new $plugin_class();
+				if(method_exists($plugin_class, 'url'))
 				{
-					echo $plugin->url(new Path('/'.implode('/', array_slice($parts, 2))));
+					echo $plugin_class::url(new Path('/'.implode('/', array_slice($parts, 2))));
 				}
 				else
 				{
@@ -454,7 +454,7 @@ class FS
 	 * 
 	 * @param	Integer	From the $root, the depth that should be shown.
 	 * @param	Boolean	Should the current path (leaf) be expanded and shown?
-	 * @param	Path	The root the menu should start from.
+	 * @param	Path	The root the menu should start from, so filter parents.
 	 *
 	 * @return String
 	 **/
@@ -491,7 +491,9 @@ class FS
 			foreach($path->query('folders')->name($regEx) as $Dir)
 			{
 				$class = ( $this->currentPath()->isChildOf($Dir->getPath()) )? 'Selected': '';
-				$out[] = $Dir->htmlLink(null, $class) . FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx);
+				if($Dir->showInMenu())
+					$out[] = $Dir->htmlLink(null, $class) 
+						. FS::getMenu($Dir->getPath(), $depth - 1, $leaf, $regEx); // recurse
 			}
 		
 		return (count($out) > 0)? ul($out, 'Menu'): '';
@@ -657,6 +659,7 @@ class FS
 	 * @param	String	Name of the variable. Usually 'head' or 'foot' for 
 	 * 					standard HTML doc header or footer but can be anything.
 	 * @param	Boolean	Add to the beginning of the header includes (i.e. instead of appended to the end)?
+	 * @todo 	$var should be changed to from "WHERE" to "WHAT" so we can put Javascript in the footer.
 	 **/
 	public static function add($html, $var = 'head', $prepend = false)
 	{		
@@ -720,9 +723,17 @@ class FS
 	 *
 	 * @return void
 	 **/
-	public function fileRefs()
+	public function fileRefs($mime = null)
 	{
-		return $this->fileReferences;
+		$out = array();
+		
+		if(is_null($mime))
+			return $this->fileReferences;
+		else
+			foreach($this->fileReferences as $file => $file_mime)
+				if($file_mime == $mime)
+					$out[$file] = $mime;
+		return $out;
 	}
 }
 

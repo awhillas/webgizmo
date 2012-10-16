@@ -41,6 +41,8 @@ function tag($tag, $single = true, $content = '', $class = '', $id = '', $attrs 
 	
 	if(!empty($id)) $attrs['id'] = $id;	
 	
+	if(array_key_exists('title', $attrs)) $attrs['title'] = htmlentities($attrs['title']);
+	
 	foreach($attrs as $attr => $value) 
 		$out .= " $attr=\"$value\"";
 	
@@ -97,7 +99,7 @@ function h($content = '', $level = 1, $class = '', $id = '', $attrs = array())
 function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array())
 {
 	$attrs['src'] = $url;
-	$attrs['alt'] = $alternate_text;
+	$attrs['alt'] = htmlentities($alternate_text);
 	
 	return tag('img', true, null, $class, $id, $attrs);
 }

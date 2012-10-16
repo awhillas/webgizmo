@@ -18,18 +18,26 @@ class ImageFileContent extends FSFile
 	public $width;
 	
 	public $height;
-	
+
+	function __construct($path) 
+	{
+		parent::__construct($path);
+
+		if (extension_loaded('gd') && function_exists('getimagesize'))
+		{
+			$meta = getimagesize($this->getPath()->get());
+			$this->width = $meta[0];
+			$this->height = $meta[1]; 
+		}
+	}
+
 	function html($format = 'html')
 	{
 		$attrs = array();
 		
-		if (extension_loaded('gd') && function_exists('getimagesize'))
-		{
-			$meta = getimagesize($this->getPath()->get(), $info);
-			$attrs['width'] = $this->width = $meta[0];
-			$attrs['height'] = $this->height = $meta[1]; 
-		}
+		if($this->width) $attrs['width'] = $this->width;
+		if($this->height) $attrs['height'] = $this->height; 
 
-		return img($this->getFileURL(), $this->getCleanName(), 'ImageFileContent', $this->getID(), $attrs);
+		return img($this->getFileURL(), $this->getCleanName(), 'ImageFile', $this->getID(), $attrs);
 	}
 }

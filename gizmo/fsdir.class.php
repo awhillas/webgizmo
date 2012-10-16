@@ -9,7 +9,7 @@
 require_once 'includes/html.php';
 
 /**
- * Controls how folders are rendered by default. This can be one of 3 things:
+ * Controls how folders are rendered by default. This can be one of 3 ways:
  * - none: Do not render anything.
  * - link: Render an inline link in the order it is found in the current folders render order.3
  * - teaser: 	Looks for a _teaser_ subfolder in the current folder and 
@@ -27,14 +27,22 @@ if(!defined('FOLDER_DISPLAY')) define('FOLDER_DISPLAY', 'none');
 class FSDir extends FSObject
 {
 	/**
+	 * Should this folder appear in the menu
+	 *
+	 * @var Boolean
+	 * @see FS::getMenu()
+	 **/
+	protected $_show_in_menu = true;
+	
+	/**
 	 * Gets a list of all the content in a Directory
 	 * 
 	 * @return 	GizQuery	List of FSObjects in an Array.
 	 **/
 	public function getContents()
 	{		
-		// Get the contents of the folder using the folder name as a query string.		
-		return $this->_path->query($this->getBasename());
+		// Get the contents of the folder using the folder name as a query string.
+		return $this->getPath()->query();
 	}
 	
 	/**
@@ -44,7 +52,7 @@ class FSDir extends FSObject
 	 **/
 	public function parent()
 	{
-		return $this->_path->parent()->getObject();
+		return $this->getPath()->parent()->getObject();
 	}
 	
 	/**
@@ -119,6 +127,11 @@ class FSDir extends FSObject
 			default:
 				return $this->htmlLink();
 		}
+	}
+	
+	function showInMenu()
+	{
+		return $this->_show_in_menu;
 	}
 	
 	/**

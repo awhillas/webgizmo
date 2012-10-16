@@ -13,6 +13,6 @@
  * @subpackage	GizPlugins
  **/
 class GizDirPlugin extends FSDir
-{	
+{
+	protected $_show_in_menu = false;
 } // END class 
-

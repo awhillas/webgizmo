@@ -54,7 +54,7 @@ class AudioFileContent extends FSFile
 		{
 			case 'html5':
 			default:
-				return audio($this->getFileURL(), 'VideoFileContent', $this->getID(), $attrs);			
+				return audio($this->getFileURL(), 'AudioFileContent', $this->getID(), $attrs);			
 		}
 	}
 }

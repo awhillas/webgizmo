@@ -177,7 +177,7 @@ class Path
 	
 	function first()
 	{
-		return reset($this->parts());
+		return @reset($this->parts());
 	}
 	
 	/**
@@ -261,27 +261,31 @@ class Path
 	 * @param	$query	String	The query string which is a list of filters 
 	 * 							and sorters each optionally followed by a 
 	 * 							parameter and all joined together with the $divider
+	 * @param	$recursively	Boolean		Run query recessively on sub folders.
+	 * @param	$divider	String	
 	 * 
 	 * @return 	Object	GizQuery object for further filtering
 	 * 
 	 * @todo Sort output before we return it here. user usort()
 	 */
-	public function query($query, $recursively = FALSE, $divider = '.')
-	{
+	public function query($query = '', $recursively = FALSE, $divider = '.')
+	{		
 		$gq = new GizQuery($this->retrieve($recursively));
 
 		return $gq->run($query, $divider);
 	}
 	
 	/**
+	 * List of File System Objects (FSObjects) for the current path.
+	 * 
 	 * @param	$recursively	Boolean		Get the list of FS objects recursively?  
 	 * 
-	 * @return 	Array	List of File System Objects (FSObjects) for the current path.
+	 * @return 	Array	Keys are the files path and value is the corresponding FSObject for the path.
 	 */
 	public function retrieve($recursively = FALSE)
 	{
 		$out = array();
-		
+
 		if($recursively)
 		{
 			$contents = new FilteredRecursiveDirectoryIterator($this->get());
@@ -290,7 +294,7 @@ class Path
 		{
 			$contents = new FilteredDirectoryIterator($this->get());
 		}
-		
+
 		foreach ($contents as $File)
 		{
 			// FSObject's factory method
@@ -408,7 +412,7 @@ class Path
 	}
 	
 	/**
-	 * Get the direct link to the file or folder in the content folder
+	 * Get the direct link to the file or folder in the web root.
 	 * Assumes this is a real path within the WEB_ROOT. 
 	 * 
 	 * @return String
