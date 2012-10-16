@@ -40,7 +40,7 @@ class Feed extends FSFile
 
 							var item = feed.items[i];
 							html += "<li>"
-							+ "<a href=\""+item.link+"\">" + item.title + "</a>"
+							+ "<a href=\""+item.link+"\" class=\"Title\">" + item.title + "</a>"
 							+ "<div class=\"description\">" + item.description + "</div>"
 							+ "<small>" + item.updated + "</small>" 
 							+ "</li>";
@@ -56,14 +56,18 @@ class Feed extends FSFile
 		return div('', 'Feed', $id);
 	}
 
-	function url($Path)
+	static function url($Path)
 	{
 		$File = new Path(FS::get()->contentRoot() . $Path);
 		if($File->is())
 		{
 			header('Content-Type: text/xml; charset=utf-8');
 			$feed_url = trim(file_get_contents($File->get()));
-			echo file_get_contents($feed_url);
+			// We need to set the host for the request
+			$host = parse_url($feed_url, PHP_URL_HOST);
+			$context = stream_context_create(array('http' => array('header' => 'Host: '.$host)));
+			echo file_get_contents($feed_url, 0, $context);
+			//echo $this->get_url_contents($feed_url);
 		}
 		else
 		{
@@ -71,4 +75,16 @@ class Feed extends FSFile
 			echo '404: Bad path';
 		}
 	}
+	
+	function get_url_contents ($Url) {
+	    if (!function_exists('curl_init')){ 
+	        die('CURL is not installed!');
+	    }
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_URL, $Url);
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	    $output = curl_exec($ch);
+	    curl_close($ch);
+	    return $output;
+	}	
 }

@@ -22,10 +22,8 @@ class CycleLite extends GizDirPlugin
 	{
 		$fs = FS::get();
 		
-//		$fs->addRef('http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
 		$fs->addRef(JQUERY_URL);
-//		$fs->addRef('http://cloud.github.com/downloads/malsup/cycle/jquery.cycle.lite.1.0.min.js');	// Lte
-		$fs->addRef('http://cloud.github.com/downloads/malsup/cycle/jquery.cycle.all.latest.js');	// Full
+		$fs->addRef('http://malsup.github.com/jquery.cycle.all.js');	// Full
 				
 		$out = '';
 		$width = $height = 0;
@@ -41,10 +39,10 @@ class CycleLite extends GizDirPlugin
 		
 		$fs->add('
 			<script type="text/javascript">
-				$(document).ready(function() { $("#'.$this->getID().'").cycle() });
+				$(document).ready(function() { $("#'.$this->getID().'").cycle({ pause: true, timeout: 8000 }) });
 			</script>
 		');		
 				
-		return div("\n".$out, 'CycleLite', $this->getID());
+		return div($out, 'CycleLite', $this->getID());
 	}
 }

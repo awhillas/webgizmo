@@ -14,7 +14,7 @@
  * @subpackage	GizPlugins
  * @author Alexander R B Whillas
  */
-class Twitter extends FSDir
+class Twitter extends FSFile
 {
 	function html($format = 'html')
 	{
@@ -26,9 +26,11 @@ class Twitter extends FSDir
 		
 		$fs->addRef('http://twitterjs.googlecode.com/svn/trunk/src/twitter.min.js');
 		
+		$twitter_name  = trim($this->getContents());
+		
 		$fs->add('
 		<script type="text/javascript" charset="utf-8">
-			getTwitters("'.$id.'", { id: "'.$this->getName().'", count: 1 });
+			getTwitters("'.$id.'", { id: "'.$twitter_name.'", count: 1 });
 		</script>		
 		');
 

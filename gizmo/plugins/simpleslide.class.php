@@ -15,12 +15,10 @@ class SimpleSlide extends GizDirPlugin
 	 */
 	function html($format = 'html')
 	{
-		static $count = 1;
-		
 		FS::get()->addRef(JQUERY_URL);
 		
 		// Add to the header...
-		FS::get()->add('<script type="text/javascript">$(document).ready( function(){ simpleSlide(); });</script>');
+		FS::get()->add('<script>$().ready( function(){ simpleSlide(); });</script>');
 		
 		// Auto-sildeshow 
 		FS::get()->add(
@@ -32,23 +30,20 @@ class SimpleSlide extends GizDirPlugin
 		</script>'
 		);
 		
-		// $name = $this->getCleanName(); // clean name ain't so clean yet
-		$name = 'simpleslide'.$count;
+		$id = $this->getID();
 		
 		$out = '
-		<div class="simpleSlide-window" rel="'.$name.'">
-		    <div class="simpleSlide-tray" rel="'.$name.'">
+		<div class="simpleSlide-window" rel="'.$id.'">
+		    <div class="simpleSlide-tray" rel="'.$id.'">
 		';
 		
 		foreach($this->getContents() as $File) 
-			$out .= "\n".div($File->html(), 'simpleSlide-slide auto-slider', '', array('rel' => $name));
+			$out .= "\n".div($File->html(), 'simpleSlide-slide auto-slider', '', array('rel' => $id));
 		
 		$out .= '
 		    </div>
 		</div>
 		';
-		
-		$count++;
 		
 		return $out;
 	}
