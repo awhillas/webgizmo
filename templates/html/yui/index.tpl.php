@@ -35,7 +35,7 @@
 			<div class="yui-b">
 
 				<!-- YOUR DATA GOES HERE -->
-				<?php echo $fs->menu() ?>	
+				<?php echo $fs->menu(1, true) // depth = 1 & show leafs ?>	
 
 			</div>
 		</div>

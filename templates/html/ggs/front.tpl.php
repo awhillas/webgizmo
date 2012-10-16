@@ -6,7 +6,7 @@
 	<head>
 		<meta charset="<?php echo CHAR_ENCODING ?>">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<title>Web Gizmo</title>
+		<title><?php echo $title ?></title>
 		<meta name="description" content="<?php echo $description ?>">
 		
 		<!-- Please don't add "maximum-scale=1" here. It's bad for accessibility. -->

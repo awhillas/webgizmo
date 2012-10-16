@@ -8,7 +8,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	
 	<title><?php echo $pagetitle ?>, <?php echo $title ?></title>
-	<meta name="description" content="<?php echo $description ?>">
+	<meta name="description" content="<?php echo @$description ?>">
 	
 	<meta http-equiv="imagetoolbar" content="false" />
 	
@@ -39,7 +39,7 @@
 	</footer>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+	<script>window.jQuery || document.write('<script src="<?php echo $templates ?>/js/libs/jquery-1.7.1.min.js"><\/script>')</script>
 	<?php if(defined('GA_ID')): ?>
 		<script>
 		  var _gaq=[['_setAccount','GA_ID'],['_trackPageview']];
