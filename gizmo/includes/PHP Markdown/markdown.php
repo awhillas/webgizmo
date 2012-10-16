@@ -3,7 +3,7 @@
 # Markdown Extra  -  A text-to-HTML conversion tool for web writers
 #
 # PHP Markdown & Extra
-# Copyright (c) 2004-2009 Michel Fortin  
+# Copyright (c) 2004-2012 Michel Fortin  
 # <http://michelf.com/projects/php-markdown/>
 #
 # Original Markdown
@@ -12,8 +12,8 @@
 #
 
 
-define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
-define( 'MARKDOWNEXTRA_VERSION',  "1.2.4" ); # Sat 10 Oct 2009
+define( 'MARKDOWN_VERSION',  "1.0.1o" ); # Sun 8 Jan 2012
+define( 'MARKDOWNEXTRA_VERSION',  "1.2.5" ); # Sun 8 Jan 2012
 
 
 #
@@ -33,6 +33,13 @@ define( 'MARKDOWNEXTRA_VERSION',  "1.2.4" ); # Sat 10 Oct 2009
 # Optional class attribute for footnote links and backlinks.
 @define( 'MARKDOWN_FN_LINK_CLASS',         "" );
 @define( 'MARKDOWN_FN_BACKLINK_CLASS',     "" );
+
+# Fenced code block class prefix
+@define( 'MARKDOWN_CODE_CLASS_PREFIX',     "" );
+
+# User-specified class attribute for code blocks goes on the "code" tag,
+# but setting this to true will put attributes on the "pre" tag instead
+@define( 'MARKDOWN_ATTR_ON_PRE', false );
 
 
 #
@@ -71,7 +78,7 @@ function Markdown($text) {
 Plugin Name: Markdown Extra
 Plugin URI: http://michelf.com/projects/php-markdown/
 Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.com/projects/php-markdown/">More...</a>
-Version: 1.2.4
+Version: 1.2.5
 Author: Michel Fortin
 Author URI: http://michelf.com/
 */
@@ -950,7 +957,7 @@ class Markdown_Parser {
 
 		# Re-usable patterns to match list item bullets and number markers:
 		$marker_ul_re  = '[*+-]';
-		$marker_ol_re  = '\d+[.]';
+		$marker_ol_re  = '\d+[\.]';
 		$marker_any_re = "(?:$marker_ul_re|$marker_ol_re)";
 
 		$markers_relist = array(
@@ -1011,7 +1018,7 @@ class Markdown_Parser {
 	function _doLists_callback($matches) {
 		# Re-usable patterns to match list item bullets and number markers:
 		$marker_ul_re  = '[*+-]';
-		$marker_ol_re  = '\d+[.]';
+		$marker_ol_re  = '\d+[\.]';
 		$marker_any_re = "(?:$marker_ul_re|$marker_ol_re)";
 		
 		$list = $matches[1];
@@ -1141,17 +1148,17 @@ class Markdown_Parser {
 
 
 	var $em_relist = array(
-		''  => '(?:(?<!\*)\*(?!\*)|(?<!_)_(?!_))(?=\S|$)(?![.,:;]\s)',
+		''  => '(?:(?<!\*)\*(?!\*)|(?<!_)_(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'*' => '(?<=\S|^)(?<!\*)\*(?!\*)',
 		'_' => '(?<=\S|^)(?<!_)_(?!_)',
 		);
 	var $strong_relist = array(
-		''   => '(?:(?<!\*)\*\*(?!\*)|(?<!_)__(?!_))(?=\S|$)(?![.,:;]\s)',
+		''   => '(?:(?<!\*)\*\*(?!\*)|(?<!_)__(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'**' => '(?<=\S|^)(?<!\*)\*\*(?!\*)',
 		'__' => '(?<=\S|^)(?<!_)__(?!_)',
 		);
 	var $em_strong_relist = array(
-		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<!_)___(?!_))(?=\S|$)(?![.,:;]\s)',
+		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<!_)___(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'***' => '(?<=\S|^)(?<!\*)\*\*\*(?!\*)',
 		'___' => '(?<=\S|^)(?<!_)___(?!_)',
 		);
@@ -1885,7 +1892,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 				|
 					# Fenced code block marker
 					(?> ^ | \n )
-					[ ]{'.($indent).'}~~~+[ ]*\n
+					[ ]{0,'.($indent).'}~~~+[^\n]*\n
 				' : '' ). ' # End (if not is span).
 				)
 			}xs';
@@ -1947,20 +1954,12 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 				}
 			}
 			#
-			# Check for: Indented code block.
-			#
-			else if ($tag{0} == "\n" || $tag{0} == " ") {
-				# Indented code block: pass it unchanged, will be handled 
-				# later.
-				$parsed .= $tag;
-			}
-			#
 			# Check for: Fenced code block marker.
 			#
-			else if ($tag{0} == "~") {
+			else if (preg_match('{^\n?[ ]{0,'.($indent+3).'}~}', $tag)) {
 				# Fenced code block marker: find matching end marker.
 				$tag_re = preg_quote(trim($tag));
-				if (preg_match('{^(?>.*\n)+?'.$tag_re.' *\n}', $text, 
+				if (preg_match('{^(?>.*\n)+?[ ]{0,'.($indent).'}'.$tag_re.'[ ]*\n}', $text, 
 					$matches)) 
 				{
 					# End marker found: pass text unchanged until marker.
@@ -1971,6 +1970,14 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 					# No end marker: just skip it.
 					$parsed .= $tag;
 				}
+			}
+			#
+			# Check for: Indented code block.
+			#
+			else if ($tag{0} == "\n" || $tag{0} == " ") {
+				# Indented code block: pass it unchanged, will be handled 
+				# later.
+				$parsed .= $tag;
 			}
 			#
 			# Check for: Opening Block level tag or
@@ -2552,34 +2559,89 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 				(
 					~{3,} # Marker: three tilde or more.
 				)
-				[ ]* \n # Whitespace and newline following marker.
 				
-				# 2: Content
+				# 2: Attributes or whitespace
+				([^\n]*)
+				
+				\n # Newline following marker.
+				
+				# 3: Content
 				(
 					(?>
-						(?!\1 [ ]* \n)	# Not a closing marker.
+						(?!\1 [^\n]* \n)	# Not a closing marker.
 						.*\n+
 					)+
 				)
 				
 				# Closing marker.
-				\1 [ ]* \n
+				\1
+				
+				# 4: Attributes or whitespace
+				([^\n]*)
+				
+				# End of line
+				\n
 			}xm',
 			array(&$this, '_doFencedCodeBlocks_callback'), $text);
 
 		return $text;
 	}
 	function _doFencedCodeBlocks_callback($matches) {
-		$codeblock = $matches[2];
+		$codeblock = $matches[3];
 		$codeblock = htmlspecialchars($codeblock, ENT_NOQUOTES);
 		$codeblock = preg_replace_callback('/^\n+/',
 			array(&$this, '_doFencedCodeBlocks_newlines'), $codeblock);
-		$codeblock = "<pre><code>$codeblock</code></pre>";
+		
+		$attrs      = ! empty($matches[2]) ? $matches[2] : ( ! empty($matches[4]) ? $matches[4] : '');
+		$attrs      = $this->_doFencedCodeBlocks_parseAttrs($attrs);
+		$pre_attrs  = MARKDOWN_ATTR_ON_PRE ? $attrs : '';
+		$code_attrs = MARKDOWN_ATTR_ON_PRE ? '' : $attrs;
+		$codeblock  = "<pre$pre_attrs><code$code_attrs>$codeblock</code></pre>";
+		
 		return "\n\n".$this->hashBlock($codeblock)."\n\n";
 	}
 	function _doFencedCodeBlocks_newlines($matches) {
 		return str_repeat("<br$this->empty_element_suffix", 
 			strlen($matches[0]));
+	}
+	function _doFencedCodeBlocks_parseAttrs($attrs) {
+		$attrs = trim($attrs, ' {}');
+		
+		if ( ! preg_match_all('/([#\.][^#\.]+)/', $attrs, $matches) AND ! empty($attrs))
+			return ' class="'.MARKDOWN_CODE_CLASS_PREFIX.$attrs.'"';
+		
+		if (isset($matches[0]) AND ! empty($matches[0])) {
+			$list = array();
+			$list['class'] = '';
+			
+			foreach ($matches[0] as $match) {
+				switch ($match[0]) {
+					case '#':
+						$list['id'] = trim($match, ' #');
+						break;
+					case '.':
+						$list['class'] .= trim($match, ' .').' ';
+						break;
+				}
+			}
+			
+			if ( ! empty($list['class'])) {
+				$list['class'] = MARKDOWN_CODE_CLASS_PREFIX.$list['class'];
+			}
+			
+			$attrs = '';
+			
+			foreach ($list as $attr => $value) {
+				if ( ! empty($value)) {
+					$attrs .= $attr.'="'.trim($this->encodeAttribute($value)).'" ';
+				}
+			}
+			
+			if ( ! empty($attrs))
+				return ' '.trim($attrs);
+		}
+		
+		return '';
 	}
 
 
@@ -2588,17 +2650,17 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 	# work in the middle of a word.
 	#
 	var $em_relist = array(
-		''  => '(?:(?<!\*)\*(?!\*)|(?<![a-zA-Z0-9_])_(?!_))(?=\S|$)(?![.,:;]\s)',
+		''  => '(?:(?<!\*)\*(?!\*)|(?<![a-zA-Z0-9_])_(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'*' => '(?<=\S|^)(?<!\*)\*(?!\*)',
 		'_' => '(?<=\S|^)(?<!_)_(?![a-zA-Z0-9_])',
 		);
 	var $strong_relist = array(
-		''   => '(?:(?<!\*)\*\*(?!\*)|(?<![a-zA-Z0-9_])__(?!_))(?=\S|$)(?![.,:;]\s)',
+		''   => '(?:(?<!\*)\*\*(?!\*)|(?<![a-zA-Z0-9_])__(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'**' => '(?<=\S|^)(?<!\*)\*\*(?!\*)',
 		'__' => '(?<=\S|^)(?<!_)__(?![a-zA-Z0-9_])',
 		);
 	var $em_strong_relist = array(
-		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<![a-zA-Z0-9_])___(?!_))(?=\S|$)(?![.,:;]\s)',
+		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<![a-zA-Z0-9_])___(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'***' => '(?<=\S|^)(?<!\*)\*\*\*(?!\*)',
 		'___' => '(?<=\S|^)(?<!_)___(?![a-zA-Z0-9_])',
 		);
