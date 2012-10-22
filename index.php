@@ -7,7 +7,6 @@
 	 * @license http://www.gnu.org/copyleft/lesser.html LGPL
 	 **/
 
-
 	// Change these variables per website...
 
 	// Name of the website.
@@ -15,16 +14,11 @@
 	define('SITE_DESCRIPTION', 'A Web Gizmo powered website!');
 	
 	// Template to use. Name of one of the folders in: /templates/html
-	define('THEME_DIR', '/ggs');
-
-	// Google Analytics site ID, www.google.com/analytics/. 
-	//define('GA_ID', 'UA-XXXXX-X');
-
+	define('THEME_DIR', '/yui');
 
 
 	//  - - - - - - - - - - - - leave this part alone...
 
 	//  assumes /gizmo folder is in the same folder as this file.
-	require dirname(__FILE__).'/gizmo/FS.class.php';
-	
+	require dirname(__FILE__).'/gizmo/FS.class.php';	
 	echo FS::get()->http();
