@@ -3,6 +3,9 @@
 # Show PHP errors for debugging purposes.
 # Errors stay hidden until DEBUG is set to True
 php_flag display_errors on
+php_admin_flag engine on
+php_admin_value safe_mode off
+php_admin_flag register_globals off
 
 <IfModule mod_rewrite.c>
 
