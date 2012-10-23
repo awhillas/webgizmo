@@ -600,7 +600,7 @@ class FS
 		// Make a list of hyperlinks out of it.
 		$out = array();
 		foreach($lang_names as $code => $name)
-			$out[] = a('?lang='.$code, $name, $code, 'LANG-'.ucwords($code), array('lang' => $code));
+			$out[] = a('/?lang='.$code, $name, $code, 'LANG-'.ucwords($code), array('lang' => $code));
 		
 		return html_list($out, 'ul', 'LanguagePicker');
 	}
