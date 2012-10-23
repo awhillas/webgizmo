@@ -32,6 +32,8 @@
 	</div>
 	<nav>
 		<?php echo $fs->menu() ?>
+		
+		<?php echo $fs->getLanguageLinks() ?>
 	</nav>
 	<footer role="contentinfo">
 		<?php echo $foot ?>

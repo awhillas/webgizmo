@@ -567,6 +567,8 @@ class FS
 	 */
 	function getLanguageLinks() 
 	{
+		if(!MULTI_LINGUAL) return '';
+			
 		$content_languages = FS::getContentLanaguages();
 		
 		$lang_names = array_fill_keys($content_languages, '');

@@ -29,6 +29,7 @@
 	-->
 	<?php echo $fs->menu(2, true) ?>
 	
+	<?php echo $fs->getLanguageLinks() ?>
 	
 	<!-- The main contents of the current folder comes out here. -->
 	<?php echo $content ?>

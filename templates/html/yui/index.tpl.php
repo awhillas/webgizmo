@@ -33,10 +33,12 @@
 			</div>
 
 			<div class="yui-b">
-
+				
 				<!-- YOUR DATA GOES HERE -->
-				<?php echo $fs->menu(1, true) // depth = 1 & show leafs ?>	
-
+				<?php echo $fs->menu(1, true) // depth = 1 & show leafs ?>
+				
+				<?php echo $fs->getLanguageLinks() ?>
+				
 			</div>
 		</div>
 	
