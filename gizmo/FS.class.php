@@ -555,7 +555,52 @@ class FS
 	 **/
 	function getContentLanaguages()
 	{
-		return array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR));
+		foreach(array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR)) as $path)
+			$iso_codes[] = basename($path);
+		
+		return $iso_codes;
+	}
+	
+	/**
+	 * Generates a list of links for changing the language. 
+	 * Looks up the native name for the language.
+	 */
+	function getLanguageLinks() 
+	{
+		$content_languages = FS::getContentLanaguages();
+		
+		$lang_names = array_fill_keys($content_languages, '');
+		
+		$langfile = INCLUDES_PATH.'/ISO_639-1.csv';	// List of languages names
+		if (file_exists($langfile) != FALSE) 
+		{
+			foreach($this->getContentLanaguages() as $lang) 
+			{
+				$handle = @fopen($langfile, 'r');
+				if ($handle) {
+					while (($buffer = fgets($handle)) !== false) {
+						$lang = explode(',', $buffer);
+						if(in_array($lang[0], $content_languages)) {
+							$name = explode(';', end($lang));
+							$lang_names[$lang[0]] = trim(ucfirst($name[0]));
+						}
+					}
+					if (!feof($handle)) {
+						trigger_error('Problem reading language names file', E_USER_WARNING);
+					}
+					fclose($handle);
+				}
+			}
+		} 
+		else 
+			trigger_error('Could not find Languages file: '.$langfile, E_USER_WARNING);
+		
+		// Make a list of hyperlinks out of it.
+		$out = array();
+		foreach($lang_names as $code => $name)
+			$out[] = a('?lang='.$code, $name, $code, 'LANG-'.ucwords($code), array('lang' => $code));
+		
+		return html_list($out, 'ul', 'LanguagePicker');
 	}
 	
 	/**
