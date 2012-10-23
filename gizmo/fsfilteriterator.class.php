@@ -31,10 +31,8 @@ class FSFilterIterator extends FilterIterator
 		$current = $this->current();
 
 		foreach($this->getIgnoreList() as $pattern)
-			if(strpos($pattern, $current->getFilename()) !== false)
-			{
+			if(preg_match('/'.$pattern.'/', $current->getFilename()))
 				return false;
-			}
 		
         return true;
     }
@@ -52,8 +50,8 @@ class FSFilterIterator extends FilterIterator
 			}
 			else
 				$list = array();
-				
-			$list = array_merge(array('.', '..', GZ_IGNORE_FILENAME), $list);
+			// ^\.{1,2}[\w\s]* is anything beginning with 1 or 2 periods followed by characters or spaces.
+			$list = array_merge(array('^\.{1,2}[\w\s]*', GZ_IGNORE_FILENAME), $list);
 		}
 		return $list;
 	}
