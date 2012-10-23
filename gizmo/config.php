@@ -18,7 +18,7 @@
 /**
  * @global	String	Version number of this install of Web Gizmo
  */
-if (!defined('GIZMO_VERSION')) define('GIZMO_VERSION', '0.3-beta');
+if (!defined('GIZMO_VERSION')) define('GIZMO_VERSION', '0.3 beta');
 /**
  * @global	Boolean	Show debugging info, like errors.
  */
