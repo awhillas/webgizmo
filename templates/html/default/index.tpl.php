@@ -27,7 +27,7 @@
 		This is the Menu, a list of links
 		menu(<default depth to show>, <add the full current path>)
 	-->
-	<?php echo $fs->menu(2, true) ?>
+	<?php echo $fs->menu(1, true) ?>
 	
 	<?php echo $fs->getLanguageLinks() ?>
 	
@@ -37,6 +37,16 @@
 	
 	<!-- This is also always required, juts before the final </BODY> tag. -->
 	<?php echo $foot ?>
+
+
+	<?php if(defined('GA_ID')): ?>
+		<script>
+		  var _gaq=[['_setAccount','<?php echo GA_ID ?>'],['_trackPageview']];
+		  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		  s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>
+	<?php endif ?>
 	
 </body>
 </html>

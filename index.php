@@ -15,7 +15,8 @@
 	
 	// Template to use. Name of one of the folders in: /templates/html
 	define('THEME_DIR', '/yui');
-
+	// Google Analytics. Must be setup in template. See end of /yui/index.tpl.php
+	// define('GA_ID', 'UA-XXXXXXXX-X') 
 
 	//  - - - - - - - - - - - - leave this part alone...
 
