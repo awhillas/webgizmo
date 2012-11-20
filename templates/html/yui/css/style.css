@@ -36,9 +36,9 @@ body.Top #hd hr { display: none; }
 ul.Menu {
 	display: block;
 	width: 100%;
-	overflow: auto;
+	overflow: hidden;
 	margin: 0;
-	padding: 1em 0;
+	padding: 0 1em;
 }
 
 ul.Menu li {
