@@ -109,23 +109,21 @@ class FSDir extends FSObject
 				return '';
 				break;
 			
-			case 'teaser':
+			case 'link':
+			default:
 				// Looks for a "_teaser" subfolder in the current folder and 
 				// renders the contents of that with a link to itself.
 				if($TeaserDir = $this->getContents()->folders('^_teaser')->first())
 				{
 					$out = '';
-					
+
 					foreach($TeaserDir->getContents() as $FSObject)
 						$out .= $FSObject->render();
-					
+
 					return div($this->htmlLink($out), 'Teaser');
 				}
-				break;
-				
-			case 'link':
-			default:
-				return $this->htmlLink();
+				else
+					return $this->htmlLink();
 		}
 	}
 	
