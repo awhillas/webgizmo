@@ -1,0 +1,3 @@
+[submodule "gizmo/plugins/flowplayer"]
+	path = gizmo/plugins/flowplayer
+	url = https://github.com/flowplayer/flowplayer.git
