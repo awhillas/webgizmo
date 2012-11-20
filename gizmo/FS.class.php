@@ -503,6 +503,7 @@ class FS
 	 * Get the Content tree starting at the given virtual path
 	 * 
 	 * @param	String	Virtual content path to start from. Should begin with a '/'.
+	 * @param	Integer	How many levels deep should we go?
 	 * @param	Boolean	Only return Directories, ignore files?
 	 * @return 	Array	Multidimensional array representing the directory structure.
 	 **/
@@ -555,8 +556,11 @@ class FS
 	 **/
 	function getContentLanaguages()
 	{
+		$iso_codes = array();
+		
 		foreach(array_keys(FS::getDirectoryTree(WEB_ROOT.CONTENT_DIR)) as $path)
-			$iso_codes[] = basename($path);
+			if(is_dir($path) && strlen(basename($path)) == 2)
+				$iso_codes[] = basename($path);
 		
 		return $iso_codes;
 	}
@@ -564,27 +568,41 @@ class FS
 	/**
 	 * Generates a list of links for changing the language. 
 	 * Looks up the native name for the language.
+	 * @param	String	One of the translations in the ISO_639-1.csv file. 
+	 * 		Options are: en, fr, es, it, de, pt, ca, native. Defaults to 'native'
+	 * @param	Boolean	Show the current language in the list of options.
 	 */
-	function getLanguageLinks() 
+	function getLanguageLinks($display_lang = 'native', $show_current = false) 
 	{
 		if(!MULTI_LINGUAL) return '';
-			
+		
 		$content_languages = FS::getContentLanaguages();
 		
-		$lang_names = array_fill_keys($content_languages, '');
+		$current_lang = $this->getLanguage();
 		
+		$lang_names = array_fill_keys($content_languages, '');
+		if(!$show_current) 
+			unset($lang_names[$current_lang]);
+
 		$langfile = INCLUDES_PATH.'/ISO_639-1.csv';	// List of languages names
 		if (file_exists($langfile) != FALSE) 
 		{
-			foreach($this->getContentLanaguages() as $lang) 
+			$csv_keys = array('ISO 639-1','ISO 639-2/B','ISO 639-2/T','en','fr','es','it','de','pt','ca','native');
+			
+			foreach($lang_names as $lang => $blank) 
 			{
 				$handle = @fopen($langfile, 'r');
 				if ($handle) {
 					while (($buffer = fgets($handle)) !== false) {
-						$lang = explode(',', $buffer);
-						if(in_array($lang[0], $content_languages)) {
-							$name = explode(';', end($lang));
-							$lang_names[$lang[0]] = trim(ucfirst($name[0]));
+						$translations = explode(',', $buffer);
+						if($translations[0] == $lang) {
+							$index = array_search($display_lang, $csv_keys);
+							if(!$index)
+							{ 
+								$index = array_search('native', $csv_keys);
+							};
+							$name = explode(';', $translations[$index]);
+							$lang_names[$translations[0]] = trim(ucfirst($name[0]));
 						}
 					}
 					if (!feof($handle)) {
@@ -602,7 +620,7 @@ class FS
 		foreach($lang_names as $code => $name)
 			$out[] = a('/?lang='.$code, $name, $code, 'LANG-'.ucwords($code), array('lang' => $code));
 		
-		return html_list($out, 'ul', 'LanguagePicker');
+		return html_list($out, 'ul', 'LanguagePicker Menu');
 	}
 	
 	/**
