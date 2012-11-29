@@ -1,3 +1,6 @@
 [submodule "gizmo/plugins/flowplayer"]
 	path = gizmo/plugins/flowplayer
 	url = https://github.com/flowplayer/flowplayer.git
+[submodule "gizmo/plugins/bxslider"]
+	path = gizmo/plugins/bxslider
+	url = https://github.com/wandoledzep/bxslider-4
