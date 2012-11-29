@@ -23,7 +23,8 @@ class CycleLite extends GizDirPlugin
 		$fs = FS::get();
 		
 		$fs->addRef(JQUERY_URL);
-		$fs->addRef('http://malsup.github.com/jquery.cycle.all.js');	// Full
+		//$fs->addRef('http://malsup.github.com/jquery.cycle.all.js');	// Full
+		$fs->addRef(PLUGINS_URL.'/cyclelite/jquery.cycle.all.js');
 				
 		$out = '';
 		$width = $height = 0;
