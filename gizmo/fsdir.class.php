@@ -36,13 +36,18 @@ class FSDir extends FSObject
 	
 	/**
 	 * Gets a list of all the content in a Directory
-	 * 
+	 * @param	$query	String	Query string to accept
 	 * @return 	GizQuery	List of FSObjects in an Array.
 	 **/
-	public function getContents()
-	{		
-		// Get the contents of the folder using the folder name as a query string.
-		return $this->getPath()->query();
+	public function getContents($query = '')
+	{
+		$path = $this->getPath();
+		
+		// If a specific query isn't given then the path is used.
+		if(empty($query))
+			$query = $path->get();
+		
+		return $path->query($query);
 	}
 	
 	/**
