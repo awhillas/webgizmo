@@ -81,20 +81,8 @@ class FormatHTML extends GizFormat
 			else
 				$tpl->pagetitle = SITE_TITLE;
 	
-			// Assign the rendered content to the template
+			// Get rendered content grouped by _tag_
 			$tpl->assign($this->renderContent());
-
-			// Add the header links to CSS & Javascript etc...
-			// Must happen _after_ renderContent() as plugins use the FS::addRef() method.
-			$fs->add($this->renderFileReferences(FS::get()->fileRefs()), 'head', true);	// prepend instead of append.
-			
-			// Add auto file picks like fonts and CSS etc...
-			$refs = $this->getTemplateAutoIncludes($fs->templatePath($this->format));
-			
-			$fs->add($this->renderFileReferences($refs));
-			
-			// Shared global vars used by plugins and handlers such as $head, $foot.
-			$tpl->assign($fs->content);
 
 			// Return the content rendered in the correct template.
 			// Template is determined in $this->getTemplateEngine();
@@ -246,7 +234,22 @@ class FormatHTML extends GizFormat
 			trigger_error('Can not render folder: '.$Dir);
 		
 		$out['content'] .= "\n\n<!-- ... FormatHTML::render() end. -->\n\n";
+
+		$fs = FS::get();
+		// Add the header links to CSS & Javascript etc...
+		// Must happen _after_ reother content is rendfered as plugins use the FS::addRef() method.
+		$fs->add($this->renderFileReferences(FS::get()->fileRefs()), 'head', true);	// prepend
 		
+		// Add auto file picks like fonts and CSS etc...
+		$refs = $this->getTemplateAutoIncludes($fs->templatePath($this->format));
+		$fs->add($this->renderFileReferences($refs));
+
+		foreach($fs->content as $tag => $html)
+			if(array_key_exists($tag, $out))
+				$out[$tag] .= $html;
+			else
+				$out[$tag] = $html;
+
 		return $out;
 	}
 
