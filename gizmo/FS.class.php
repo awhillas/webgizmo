@@ -350,6 +350,7 @@ class FS
 	 **/
 	public function virtualToReal($Virtual, $base_path)
 	{
+		
 		if(!$Virtual instanceof Path)
 			$Virtual = new Path($Virtual);
 		
@@ -367,9 +368,7 @@ class FS
 				else
 				{
 					// Get a list of all the folders in the $current path
-					
 					$found = false;
-
 					// Compare their clean names to the given part
 					foreach(scandir($base_path . $current) as $file)
 					{
@@ -382,7 +381,6 @@ class FS
 							break;
 						}
 					}
-				
 					// if nothing matches. 
 					if(!$found)
 					{
