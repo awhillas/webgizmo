@@ -221,18 +221,16 @@ class GizQuery implements Iterator
 
 	/**
 	 * Return GizQuery of all the content in the sub-folders of the folders in the current list.
-	 * @param	String	Regular Expression to filter the name of the FSObjects by
+	 *
+	 * @param	String	Regular Expression to filter the folders on
 	 * @return 	GizQuery
 	 */
 	function contents($regex = '')
 	{
 		$out = array();
 
-		foreach($this->run('folders') as $folder)
-		{
-			if($folder->getContents()->tally() > 0)
-				$out[] = $folder;
-		}
+		foreach($this->folders($regex) as $Dir)
+			$out[] = $Dir;
 
 		return GizQuery::merge($out);
 	}

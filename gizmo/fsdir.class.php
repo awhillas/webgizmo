@@ -36,6 +36,7 @@ class FSDir extends FSObject
 	
 	/**
 	 * Gets a list of all the content in a Directory
+	 * 
 	 * @param	$query	String	Query string to accept
 	 * @return 	GizQuery	List of FSObjects in an Array.
 	 **/

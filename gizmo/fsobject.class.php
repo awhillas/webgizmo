@@ -210,9 +210,9 @@ abstract class FSObject extends SplFileInfo
 	public static function clean($value = '')
 	{
 		// Replace underscores with spaces
-		$value = preg_replace('/_/', ' ', $value);
+		return $value = preg_replace('/_/', ' ', $value);
 		
-		return htmlentities($value, ENT_NOQUOTES, CHAR_ENCODING);
+		//return htmlentities($value, ENT_NOQUOTES, CHAR_ENCODING);
 	}
 	
 	// Unique ID useful for CSS

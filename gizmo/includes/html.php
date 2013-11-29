@@ -157,7 +157,7 @@ function ol($list_items, $class = '', $id = '', $attrs = array())
  * @package WebGizmo
  **/
 function a($href, $text = '', $class = '', $id = '', $attrs = array())
-{
+{	
 	$attrs['href'] = $href;
 	$text = (empty($text))? $href: $text;
 	

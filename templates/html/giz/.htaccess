@@ -3,6 +3,18 @@
 # Show PHP errors for debugging purposes.
 # Errors stay hidden until DEBUG is set to True
 #php_flag display_errors on
+# php_admin_flag engine on
+# php_admin_value safe_mode off
+# php_admin_flag register_globals off
+
+# Security
+
+# disable directory browsing
+#Options All -Indexes
+# prevent folder listing
+#IndexIgnore *
+
+
 
 <IfModule mod_rewrite.c>
 
@@ -23,16 +35,6 @@
 	RewriteRule ^(.*)$ index.php?path=$1 [L,QSA,B]
 
 </IfModule>
-
-# Security
-
-# disable directory browsing
-#Options All -Indexes
-# prevent folder listing
-#IndexIgnore *
-
-
-
 
 # Some stuff from HTML5 Boilerplate... 
 

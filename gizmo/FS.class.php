@@ -30,8 +30,6 @@ include 'includes/debug.php';
 include 'includes/error_handling.php';
 
 
-
-
 // // // // // // // // // // // // // // // // //
 // Boring stuff...
 // // // // // // // // // // // // // // // // //
@@ -115,17 +113,14 @@ class FS
 	 */
 	private function __construct($content_path = '', $templates_path = '', $plugins_path = '')
 	{
-		$content_path 	= (empty($content_path)) 	? WEB_ROOT . CONTENT_DIR					: $content_path;
-		$content_path 	= (MULTI_LINGUAL) 			? $content_path . '/'.$this->getLanguage() 	: $content_path;
-
-		$templates_path = (empty($templates_path))	? WEB_ROOT . TEMPLATES_DIR					: $templates_path;
-		$plugins_path = (empty($plugins_path))		? PLUGINS_PATH								: $plugins_path;
+		$content_path = (empty($content_path)) ? WEB_ROOT . CONTENT_DIR : $content_path;
+		$content_path = (MULTI_LINGUAL) ? $content_path . '/'.$this->getLanguage() : $content_path;
+		$templates_path = (empty($templates_path)) ? WEB_ROOT . TEMPLATES_DIR : $templates_path;
+		$plugins_path = (empty($plugins_path)) ? PLUGINS_PATH : $plugins_path;
 		
 		// __set() should turn these into Path objects and store them in $this->_paths. uber nur PHP5.3 
 		$this->contentRoot = new Path($content_path, true);
-
 		$this->templatesRoot = new Path($templates_path, true);
-
 		$this->pluginsRoot = new Path($plugins_path	, true);
 
 		// Current real Content path
@@ -152,7 +147,7 @@ class FS
 			{
 				// if nothing matches then 404 :( 
 				header("HTTP/1.0 404 Not Found");
-				die("Could not find path $VPath");
+				die("404: Could not find path $VPath");
 			}	
 		}
 
@@ -192,7 +187,6 @@ class FS
 	{
 		return $this->get();
 	}
-
 
 	/**
 	 * @return Path object
@@ -325,14 +319,14 @@ class FS
 	 * Get the CGI virtual 'path' variable value
 	 *
 	 * @return String	The current virtual path (relative to the base URL)
-	 * @todo make this a gett'r for a Singleton
 	 * @todo rename to reflect that its a virtual URL _not_ a system path
 	 */
 	public static function getPath()
 	{
-		return (isset($_GET['path'])) 
-			? new Path($_GET['path'])
-			: new Path('/');
+		return (isset($_GET['path']))
+			? new Path(urldecode($_GET['path']))
+			: new Path('/')
+		;
 	}
 	
 	/**
@@ -364,6 +358,8 @@ class FS
 		foreach($Virtual->parts() as $part)
 		{
 			if(!empty($part))
+			{
+				// Try simple case first...
 				if(file_exists($base_path . '/'. $part))
 				{
 					$current .= '/'.$part;
@@ -372,8 +368,8 @@ class FS
 				{
 					// Get a list of all the folders in the $current path
 					
-					$found = false;						
-					
+					$found = false;
+
 					// Compare their clean names to the given part
 					foreach(scandir($base_path . $current) as $file)
 					{
@@ -393,6 +389,7 @@ class FS
 						return false;
 					}
 				}
+			}
 		}
 		return $current;
 	}
@@ -425,28 +422,6 @@ class FS
 		}
 		else
 			trigger_error('Need a Path to convert to virtual path, given: '.what($real));
-	}
-	
-	/**
-	 * Builds a list of HTML links to the top level folders in the Content folder
-	 * 
-	 * @param	Integer	Number of nested levels deep the menu should show.
-	 * @param	Boolean	Output nested lists of links for all the menu items. False means just the current path.
-	 * 
-	 * @return 	Array	List of HTML anchor tags to the top level folders.
-	 */
-	function _old_menu()
-	{
-		$out = array();
-
-		foreach($this->contentRoot()->query('folders.has.^[^_]') as $Dir)
-		{
-			$class = ( $this->currentPath()->url() == $Dir->getURL() )? 'Selected': '';
-			
-			$out[$Dir->getCleanName()] = $Dir->htmlLink(null, $class);
-		}
-
-		return $out;
 	}
 	
 	/**
@@ -572,42 +547,50 @@ class FS
 	 * 		Options are: en, fr, es, it, de, pt, ca, native. Defaults to 'native'
 	 * @param	Boolean	Show the current language in the list of options.
 	 */
-	function getLanguageLinks($display_lang = 'native', $show_current = false) 
+	function getLanguageLinks($display_lang = 'native', $show_current = false, $order = array()) 
 	{
 		if(!MULTI_LINGUAL) return '';
 		
 		$content_languages = FS::getContentLanaguages();
-		
 		$current_lang = $this->getLanguage();
 		
 		$lang_names = array_fill_keys($content_languages, '');
 		if(!$show_current) 
 			unset($lang_names[$current_lang]);
 
+		if(count($order)) {
+			$order = array_flip($order);
+			$lang_names = $order + array_diff_key($lang_names, $order);
+		}
+
 		$langfile = INCLUDES_PATH.'/ISO_639-1.csv';	// List of languages names
 		if (file_exists($langfile) != FALSE) 
 		{
-			$csv_keys = array('ISO 639-1','ISO 639-2/B','ISO 639-2/T','en','fr','es','it','de','pt','ca','native');
+			$csv_keys = array('ISO 639-1', 'ISO 639-2/B', 'ISO 639-2/T', 'en', 'fr', 'es', 'it', 'de', 'pt', 'ca', 'native');
 			
+			// Lookup display names for the language codes.
 			foreach($lang_names as $lang => $blank) 
 			{
 				$handle = @fopen($langfile, 'r');
-				if ($handle) {
-					while (($buffer = fgets($handle)) !== false) {
+				if ($handle) 
+				{
+					while (($buffer = fgets($handle)) !== false) 
+					{
 						$translations = explode(',', $buffer);
-						if($translations[0] == $lang) {
+						if($translations[0] == $lang) 
+						{
 							$index = array_search($display_lang, $csv_keys);
-							if(!$index)
+							if($index === false)
 							{ 
 								$index = array_search('native', $csv_keys);
-							};
+							}
 							$name = explode(';', $translations[$index]);
 							$lang_names[$translations[0]] = trim(ucfirst($name[0]));
 						}
 					}
-					if (!feof($handle)) {
+					if (!feof($handle)) 
 						trigger_error('Problem reading language names file', E_USER_WARNING);
-					}
+
 					fclose($handle);
 				}
 			}
@@ -618,10 +601,28 @@ class FS
 		// Make a list of hyperlinks out of it.
 		$out = array();
 		foreach($lang_names as $code => $name)
-			$out[] = a('/?lang='.$code, $name, $code, 'LANG-'.ucwords($code), array('lang' => $code));
-		
+		{
+			$selected = ($current_lang == $code)? ' Selected': '';
+			$out[] = a('/?lang='.$code, $name, $code.$selected, 'LANG-'.ucwords($code), array('lang' => $code));
+		}
 		return html_list($out, 'ul', 'LanguagePicker Menu');
 	}
+	
+	/**
+	 * Sort one array using the order of another with the same values.
+	 */
+	function sortArrayByArray($array, $orderArray) {
+
+		
+		$ordered = array();
+		foreach($orderArray as $key) {
+			if(array_key_exists($key,$array)) {
+				$ordered[$key] = $array[$key];
+				unset($array[$key]);
+			}
+		}
+		return $ordered + $array;
+	}	
 	
 	/**
 	 * Determine the Language of the content
@@ -751,6 +752,7 @@ class FS
 	 * determined from the file extension is the second argument is 'auto' (its
 	 * default value), otherwise this can be forced by passing a MIME type for 
 	 * the file.
+	 * @param	String	$path	Absolute file path.
 	 *
 	 * @return boolean	TRUE if all went well, false if extension was not recognised.
 	 **/

@@ -33,6 +33,7 @@ if (!defined('DOJOTOOLKIT_URL'))	define('DOJOTOOLKIT_URL', 'http://ajax.googleap
  * Basic HTML render'er 
  * 
  * Not too specific to any particular version of HTML.
+ * This merges the templates folder with the content of the current page.
  *
  * @package WebGizmo
  * @subpackage	Layoutors
@@ -180,9 +181,9 @@ class FormatHTML extends GizFormat
 			
 			// Look for inherited/general templates
 			
+			$parts = $VPath->parts();
 			array_pop($parts);	// Should not affect the current folder, only children
-
-			foreach(array_reverse($VPath->parts()) as $folder)
+			foreach(array_reverse($parts) as $folder)
 			{
 				$candidate = $folder.'_default'.$extension;
 
@@ -211,6 +212,8 @@ class FormatHTML extends GizFormat
 	 **/
 	public function renderContent()
 	{
+		$fs = FS::get();
+		
 		$out['content'] = "\n\n<!-- FormatHTML::render() start ... -->\n\n";
 		
 		if($Dir = FSObject::make(FS::get()->currentPath()) AND $Dir->isDir())
@@ -220,7 +223,7 @@ class FormatHTML extends GizFormat
 				// Instantiate a handler for the file and render
 				$tag = $FSObject->getTag();
 				$tag = (empty($tag))? 'content': $tag;	// Default tag is "content"
-				
+
 				if($tag != 'content' || strpos($FSObject->getBasename(), '_') !== 0) 
 				{
 					if(isset($out[$tag]))
@@ -235,14 +238,18 @@ class FormatHTML extends GizFormat
 		
 		$out['content'] .= "\n\n<!-- ... FormatHTML::render() end. -->\n\n";
 
-		$fs = FS::get();
 		// Add the header links to CSS & Javascript etc...
-		// Must happen _after_ reother content is rendfered as plugins use the FS::addRef() method.
+		// Must happen _after_ other content is rendered as plugins use the FS::addRef() method.
 		$fs->add($this->renderFileReferences(FS::get()->fileRefs()), 'head', true);	// prepend
 		
 		// Add auto file picks like fonts and CSS etc...
 		$refs = $this->getTemplateAutoIncludes($fs->templatePath($this->format));
 		$fs->add($this->renderFileReferences($refs));
+
+		// Look for special "_js" and "_css" folders in the current content dir. and
+		// include their files as references (potentially dangerous)
+		foreach($Dir->getPath()->folders('^_meta$') as $Dir)
+			$fs->add($this->renderFileReferences($this->getTemplateAutoIncludes($Dir->getPath())));
 
 		foreach($fs->content as $tag => $html)
 			if(array_key_exists($tag, $out))
@@ -267,7 +274,7 @@ class FormatHTML extends GizFormat
 		foreach($file_ref_list as $file => $mime)
 		{
 			$rel = null;
-			
+						
 			switch($mime)
 			{
 				// case 'text/javascript':
@@ -332,10 +339,7 @@ class FormatHTML extends GizFormat
 						{
 							$url = $CssFile->getPath()->realURL();
 							
-							if($CssFile->getExt() == 'less') 
-								$out[LESS::htmlLinkUrl($CssFile->getPath()->realURL())] = $mime;
-							else
-								$out[$url] = $mime;
+							$out[$url] = $mime;
 						}
 						break;
 				}

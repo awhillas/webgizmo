@@ -172,7 +172,8 @@ class Path
 	 */
 	function last()
 	{
-		return end(explode('/', $this->get()));
+		$parts = explode('/', $this->get());
+		return end($parts);
 	}
 	
 	function first()
@@ -269,7 +270,7 @@ class Path
 	 * @todo Sort output before we return it here. user usort()
 	 */
 	public function query($query = '', $recursively = FALSE, $divider = '.')
-	{		
+	{
 		$gq = new GizQuery($this->retrieve($recursively));
 
 		return $gq->run($query, $divider);
@@ -381,12 +382,11 @@ class Path
 		{
 			// URL encode just the bits between the '/'
 			$parts = array();
-
-			foreach(FS::realToVirtual($this->less($base_path))->parts() as $part)
+			foreach(FS::realToVirtual($this->less($base_path))->parts() as $part){
 				$parts[] = urlencode($part);
-			
+			}
 			$path = implode('/', $parts);
-			
+
 			// Make the URL based on the mod_rewrite setup.
 			if(!REWRITE_URLS)
 				return BASE_URL_PATH.'/?path='.$path;
@@ -413,7 +413,7 @@ class Path
 	
 	/**
 	 * Get the direct link to the file or folder in the web root.
-	 * Assumes this is a real path within the WEB_ROOT. 
+	 * Assumes this is a real path within the WEB_ROOT.
 	 * 
 	 * @return String
 	 **/
