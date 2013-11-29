@@ -339,7 +339,10 @@ class FormatHTML extends GizFormat
 						{
 							$url = $CssFile->getPath()->realURL();
 							
-							$out[$url] = $mime;
+							if($CssFile->getExt() == 'less') 
+								$out[LESS::htmlLinkUrl($CssFile->getPath()->realURL())] = $mime;
+							else
+								$out[$url] = $mime;
 						}
 						break;
 				}

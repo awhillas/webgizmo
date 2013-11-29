@@ -13,7 +13,7 @@ class LESS
 	
 	public static function htmlLinkUrl($less_file_url)
 	{
-		$p = Path::open(INCLUDES_PATH.'/less.php/less.php');
+		$p = Path::open(WEB_ROOT.'/less.php');
 		
 		return $p->realURL().'?file='.$less_file_url;
 	}
