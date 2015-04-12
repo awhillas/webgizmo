@@ -1,0 +1,24 @@
+.Top #main .FSDir {
+	display: none;
+}
+
+.FSDir {
+	display: block;
+}
+
+table {
+	width: 100%
+}
+table td {
+	padding: 0.4em;
+	border: 1px solid #666
+}
+
+#main li {
+	padding: 0
+}
+#main ul {
+	padding: 0;
+	padding-left: 1em;
+	margin: 0;
+}
