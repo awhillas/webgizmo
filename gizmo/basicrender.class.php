@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
@@ -11,7 +11,7 @@
  * Basic rendered. Example of a render class. Inherit and override ...
  *
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @todo Delete this class and replace to call to it in FS with GizLayoutor::make()
  **/
 class BasicRender

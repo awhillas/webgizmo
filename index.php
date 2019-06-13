@@ -3,7 +3,7 @@
 	 * Handles HTTP Requests for HTML renderings of a path in the content directory.
 	 * 
 	 * @package WebGizmo
-	 * @author Alexander R B Whillas
+	 * @author Alexander Whillas
 	 * @license http://www.gnu.org/copyleft/lesser.html LGPL
 	 **/
 

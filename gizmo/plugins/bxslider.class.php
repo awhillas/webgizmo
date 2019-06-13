@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
@@ -16,7 +16,7 @@
  * 
  * @package WebGizmo
  * @subpackage	GizPlugins
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  */
 class bxSlider extends GizDirPlugin
 {

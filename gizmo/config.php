@@ -11,7 +11,7 @@
  * 			_URL = The URL of the resource (direct no virtual)
  * 
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 

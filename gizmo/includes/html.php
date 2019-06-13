@@ -9,7 +9,7 @@
  * 
  * Usually: tag($content, $class, $id, $other_attributes)
  *
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @version $Id$
  * @copyright Taylor Square Designs P/L, 19 April, 2010
  * @package WebGizmo
@@ -108,7 +108,7 @@ function img($url, $alternate_text = '', $class = '', $id = '', $attrs = array()
  * List
  *
  * @return String	HTML List
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  **/
 function html_list($list_items, $list_type = 'ul', $class = '', $id = '', $attrs = array())
 {

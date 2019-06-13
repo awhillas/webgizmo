@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
@@ -29,7 +29,7 @@ if (!defined('ADGALLERY_DESCRIPTION_WRAPPER')) define('ADGALLERY_DESCRIPTION_WRA
  * 
  * @package WebGizmo
  * @subpackage	GizPlugins
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  */
 class ADGallery extends GizDirPlugin
 {

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WebGizmo
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  **/
 
@@ -19,7 +19,7 @@ include_once(INCLUDES_PATH.'/classTextile.php');
  *
  * @package WebGizmo
  * @subpackage	ContentHanders
- * @author Alexander R B Whillas
+ * @author Alexander Whillas
  * @see http://textile.thresholdstate.com/
  **/
 class TextileFileContent extends TextFileContent
